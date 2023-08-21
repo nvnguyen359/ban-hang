@@ -16,7 +16,7 @@
   },
   "build": {
     "appId": "com.nvnguyen359.autoupdater",
-    "artifactName": "${name}-${version}.${ext}",
+    "artifactName": "${name}Setup.${ext}",
     "win": {
       "target": "nsis"
     },
