@@ -1,8 +1,14 @@
+require('dotenv').config();
 const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
 const MainScreen = require("./screens/main/mainScreen");
 const Globals = require("./globals");
 const { autoUpdater, AppUpdater } = require("electron-updater");
 
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
+const SHEET_ID = process.env.SHEET_ID;
 let curWindow;
 
 //Basic flags
@@ -11,6 +17,7 @@ autoUpdater.autoInstallOnAppQuit = true;
 
 function createWindow() {
   curWindow = new MainScreen();
+  console.log('SHEET_ID ',SHEET_ID);
 }
 
 app.whenReady().then(() => {
