@@ -1,6 +1,6 @@
 {
   "name": "electron-app",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "My test electron app",
   "main": "main.js",
   "scripts": {
@@ -16,7 +16,6 @@
   },
   "build": {
     "appId": "com.coderjeet.autoupdaterx",
-    "productName": "Orders",
     "win": {
       "target": "nsis"
     },
