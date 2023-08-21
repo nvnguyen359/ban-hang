@@ -1,6 +1,6 @@
 {
   "name": "electron-app",
-  "version": "1.0.5",
+  "version": "0.0.0",
   "description": "My test electron app",
   "main": "main.js",
   "scripts": {
@@ -9,13 +9,13 @@
     "start": "electron .",
     "dist": "electron-builder"
   },
-  "repository": "https://github.com/nvnguyen359/Orders",
+  "repository": "https://github.com/nvnguyen359/ban-hang",
   "publish": {
     "provider": "github",
     "releaseType": "release"
   },
   "build": {
-    "appId": "com.coderjeet.autoupdater",
+    "appId": "com.coderjeet.autoupdaterx",
     "productName": "Orders",
     "win": {
       "target": "nsis"
@@ -27,9 +27,9 @@
   "author": "Nguyen",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^19.0.9",
-    "electron-builder": "^23.6.0",
-    "nodemon": "^2.0.19"
+    "electron": "^26.0.0",
+    "electron-builder": "^24.6.3",
+    "nodemon": "^3.0.1"
   },
   "dependencies": {
     "@electron-forge/publisher-github": "^6.4.0",
