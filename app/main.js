@@ -8,7 +8,6 @@ let curWindow;
 //Basic flags
 autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
-autoUpdater.autoRunAppAfterInstall=true;
 
 function createWindow() {
   curWindow = new MainScreen();
