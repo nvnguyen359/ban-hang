@@ -23,4 +23,4 @@ async function test() {
   await crud.create(value)
 }
 //new PosPrinter(null,null)
-//test();
+test();
