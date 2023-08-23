@@ -1,4 +1,5 @@
 const { autoUpdater } = require("electron-updater");
+const{getPrinters} = require('./lib')
 autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
 /** event new update,... */
@@ -34,5 +35,8 @@ function checkForUpdates(curWindow, app) {
   curWindow.showMessage(
     `Checking for updates. Current version ${app.getVersion()}`
   );
+  getPrinters().then((data)=>{
+    curWindow.upData(JSON.stringify(data))
+  })
 }
 module.exports = { checkForUpdates, eventsAutoUpdate };

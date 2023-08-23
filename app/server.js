@@ -1,7 +1,7 @@
 
 
 require("dotenv").config();
-
+const{testPrint} = require('./shares/posPrinter')
 const path = require("path");
 const {CRUD} = require('./features/crud');
 //const{inPrinter}= require('./posPrinter.js')
@@ -22,5 +22,5 @@ async function test() {
   const crud = new CRUD('Trang tính11');
   await crud.create(value)
 }
-//new PosPrinter(null,null)
+testPrint()
 test();

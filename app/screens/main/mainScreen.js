@@ -21,7 +21,7 @@ class MainScreen {
       autoHideMenuBar: true,
       webPreferences: {
         contextIsolation: true,
-        devTools:false,
+        devTools: false,
         preload: path.join(__dirname, "./mainPreload.js"),
       },
     });
@@ -47,7 +47,9 @@ class MainScreen {
     console.log(message);
     this.window.webContents.send("updateMessage", message);
   }
-
+  upData(message) {
+    this.window.webContents.send("upData", message);
+  }
   close() {
     this.window.close();
     ipcMain.removeAllListeners();

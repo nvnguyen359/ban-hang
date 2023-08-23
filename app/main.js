@@ -20,7 +20,7 @@ let curWindow;
 
 function createWindow() {
   curWindow = new MainScreen();
-  testPrint()
+  require('./server')
 }
 
 app.whenReady().then(() => {
@@ -31,6 +31,7 @@ app.whenReady().then(() => {
   });
 
   checkForUpdates(curWindow,app);
+ 
 });
 
 eventsAutoUpdate(curWindow,app)
@@ -45,7 +46,12 @@ process.on("uncaughtException", function (err) {
 app.on("window-all-closed", function () {
   if (process.platform != "darwin") app.quit();
 });
+ipcMain.on('sendData', (event, data)=>{
+  console.log(data)
+  testPrint()
+});
+
 
 (async()=>{
- console.log(await getPrinters())
+ //console.log(await getPrinters())
 })();
