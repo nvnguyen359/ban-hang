@@ -1,4 +1,5 @@
 require("dotenv").config();
+const lib = require("./../shares/lib");
 const moment = require("moment");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const { JWT } = require("google-auth-library");
@@ -7,9 +8,9 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
 const SHEET_ID = process.env.SHEET_ID;
 class CRUD {
+  doc = null;
   constructor(nameSheet) {
     this.nameSheet = nameSheet;
-    this.doc = null;
   }
 
   /**
@@ -30,14 +31,158 @@ class CRUD {
     await doc.loadInfo();
     this.doc = doc;
   }
-  async create(values, nameSheet = null) {
+  async initLoad(nameSheet) {
     if (!nameSheet) nameSheet = this.nameSheet;
     await this.loadInfo();
+    return nameSheet;
+  }
+  async create(values, nameSheet = null) {
+    await this.initLoad();
     const sheet = this.doc.sheetsByTitle[nameSheet];
     if (!Array.isArray(values)) {
       values = [values];
     }
     sheet.addRows(values);
   }
+  async getAll(limit = null, offset = null) {
+    try {
+      await this.initLoad(this.nameSheet);
+      const sheet = this.doc.sheetsByTitle[this.nameSheet];
+      let options = {};
+      if (limit) {
+        options = { limit, offset };
+      }
+      const rows = !limit
+        ? await sheet.getRows()
+        : await sheet.getRows(options); // can pass in { limit, offset };
+      return new Promise((res, rej) => {
+        let data = [];
+        rows.forEach(async (row) => {
+          data.push(await this.convertObject(row));
+        });
+        res(data);
+      });
+    } catch (error) {
+      return error;
+    }
+  }
+  async convertObject(row) {
+    const _headerValues = row._worksheet._headerValues;
+    return new Promise((res, rej) => {
+      let result = {};
+      Array.from(_headerValues).forEach((x) => {
+        result[x] = row.get(x);
+      });
+      return res(result);
+    });
+  }
+  async getId(id) {
+    try {
+      await this.initLoad(this.nameSheet);
+      const sheet = this.doc.sheetsByTitle[this.nameSheet];
+      const rows = Array.from(await sheet.getRows());
+      const row = rows.find((x, index) => {
+        return rows[index].get("Id") == id;
+      });
+      return new Promise(async (res, rej) => {
+        res(await this.convertObject(row));
+      });
+    } catch (error) {
+      return error;
+    }
+  }
+  async post(values) {
+    try {
+      await this.initLoad(this.nameSheet);
+      const sheet = this.doc.sheetsByTitle[this.nameSheet];
+
+      if (!Array.isArray(values)) {
+        values = [values];
+      }
+      const rows = Array.from(await sheet.getRows());
+      const keys = Object.keys(values[0]);
+      const count = rows.length;
+
+      const newRows = values.map((x, index) => {
+        x[keys[0]] = lib.createIdRow(count + index, this.nameSheet);
+        return x;
+      });
+      //  console.log(keys[0],count,newRows)
+      sheet.addRows(newRows);
+      return "200";
+    } catch (error) {
+      return error;
+    }
+  }
+  async put(value) {
+    try {
+      let values = Array.isArray(value) ? value : [value];
+      await this.initLoad(this.nameSheet);
+      const sheet = this.doc.sheetsByTitle[this.nameSheet];
+      const array = await sheet.getRows();
+      const keys = Object.keys(values[0]);
+      const keyId = keys[0];
+
+      return new Promise(async (res, rej) => {
+        array.forEach(async (row) => {
+
+          const rowExist = values.find((v, index) => {
+            return v[keyId] == row.get(keyId);
+          });
+          keys.forEach(key=>{
+            if(key.includes('Ngày')|| key.includes("Thời gian")){
+             // rowExist[key] =  rowExist[key].convertStringVNToDateISO();
+            }
+          })
+          if (rowExist) {
+            row.assign(rowExist);
+            await row.save();
+          }
+        });
+        res("200");
+      });
+    } catch (error) {
+      return error;
+    }
+  }
+  async deleteId(id) {
+    await this.initLoad(this.nameSheet);
+    const sheet = this.doc.sheetsByTitle[this.nameSheet];
+    const rows = Array.from(await sheet.getRows());
+    const _headerValues = rows[0]._worksheet._headerValues;
+    const row = rows.find((x, index) => {
+      return rows[index].get(_headerValues[0]) == id;
+    });
+    if (row) {
+      row.delete();
+      return "200";
+    } else {
+      return `${id} does not exist`;
+    }
+  }
+  async filters(text) {
+    const getAll = await this.getAll();
+    const keys = Object.keys(getAll[0]);
+    return new Promise((res, rej) => {
+      let data = [];
+      keys.forEach((key) => {
+        const filter = Array.from(getAll).filter((x) =>
+          `${x[key]}`
+            .xoaDau()
+            .toLowerCase()
+            .includes(text.xoaDau().toLowerCase())
+        );
+        if (filter.length > 0) {
+          data.push(...filter);
+        }
+      });
+      const map = new Map();
+      for (const obj of data) {
+        map.set(obj[keys[0]], obj);
+      }
+      res([...map.values()]);
+    });
+  }
 }
+
 module.exports = { CRUD };

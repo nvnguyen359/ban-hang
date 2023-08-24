@@ -20,7 +20,7 @@ let curWindow;
 
 function createWindow() {
   curWindow = new MainScreen();
-  require('./server')
+  require('./server/server')
 }
 
 app.whenReady().then(() => {

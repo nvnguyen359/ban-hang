@@ -1,5 +1,20 @@
 const { exec } = require("child_process");
-
+String.prototype.removeAccents = function(){
+  return this.normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
+String.prototype.xoaDau = function(){
+  return this.normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
+String.prototype.convertStringVNToDateISO =function(){
+  const str = this.split('/').map(x=>parseInt(x));
+  let thang = str[1] < 10 ? "0" + (str[1] ) : str[1];
+  let ngay = str[0] < 10 ? "0" + str[0] : str[0];
+  return str[2] + "-" + thang + "-" + ngay;
+}
 const getPrinters = () => {
   return new Promise((res, rej) => {
     exec('wmic printer list brief', (err, stdout, stderr) => {
@@ -30,4 +45,30 @@ const getPrinters = () => {
   });
 };
 
-module.exports = { getPrinters };
+function createIdRow(id, nameSheet, startId = "NH") {
+  if (!startId) startId = createFirstId(nameSheet);
+  if (!id) {
+    id = "0";
+  } else {
+    if (typeof id == "number") {
+      id = `${startId}${id}`;
+    }
+  }
+  const t = "000000";
+  id =
+    id == "0"
+      ? parseInt(`${id}`.split(startId)[0])
+      : parseInt(`${id}`.split(startId)[1]);
+  const x = parseInt(id) + 1;
+  return `${x}`.length < t.length
+    ? `${startId}${t.slice(`${x}`.length)}${x}`
+    : `${startId}${x}`;
+}
+function createFirstId(str) {
+  s = "";
+  Array.from(str.split(" ")).forEach((x) => {
+    s += x[0];
+  });
+  return s.toUpperCase();
+}
+module.exports = { getPrinters,createIdRow };
