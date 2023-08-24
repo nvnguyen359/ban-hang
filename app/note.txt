@@ -1,0 +1,1 @@
+npm i google-auth-library  @electron-forge/publisher-github body-parser dotenv electron-pos-printer express google-auth-library google-spreadsheet html-pdf-node moment node-thermal-printer pdf-to-printer npm-run-all --save --force

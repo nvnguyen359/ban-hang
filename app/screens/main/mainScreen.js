@@ -15,13 +15,13 @@ class MainScreen {
       width: this.position.width,
       height: this.position.height,
       title: "This is a test application",
-      show: false,
+      show: true,
       removeMenu: true,
       acceptFirstMouse: true,
-      autoHideMenuBar: true,
+      autoHideMenuBar: false,
       webPreferences: {
         contextIsolation: true,
-        devTools: false,
+        devTools: true,
         preload: path.join(__dirname, "./mainPreload.js"),
       },
     });
@@ -37,9 +37,10 @@ class MainScreen {
     this.handleMessages();
 
     let wc = this.window.webContents;
-    wc.openDevTools({ mode: "undocked" });
+    wc.openDevTools();
 
     this.window.loadFile("./screens/main/main.html");
+    this.window.webContents.openDevTools();
   }
 
   showMessage(message) {
