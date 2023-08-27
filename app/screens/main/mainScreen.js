@@ -39,7 +39,7 @@ class MainScreen {
     let wc = this.window.webContents;
     wc.openDevTools();
 
-    this.window.loadFile("./screens/main/main.html");
+    this.window.loadFile("./screens/main/dist/index.html");
     this.window.webContents.openDevTools();
   }
 

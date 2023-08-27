@@ -1,4 +1,5 @@
 const { exec } = require("child_process");
+const fs = require('fs');
 String.prototype.removeAccents = function(){
   return this.normalize('NFD')
   .replace(/[\u0300-\u036f]/g, '')
@@ -71,4 +72,14 @@ function createFirstId(str) {
   });
   return s.toUpperCase();
 }
-module.exports = { getPrinters,createIdRow };
+function createFolder(folderName ){
+  try {
+    if (!fs.existsSync(folderName)) {
+      fs.mkdirSync(folderName);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+module.exports = { getPrinters,createIdRow ,createFolder};

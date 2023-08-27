@@ -1,14 +1,22 @@
-require('dotenv').config();
-const {testPrint} = require('./shares/posPrinter');
-const {checkForUpdates,eventsAutoUpdate} = require('./shares/autoUpdater');
-const {getPrinters} = require('./shares/lib');
+require("dotenv").config({ path: './.env' })
+const path = require("path");
+const pathServer = path.join(__dirname, "server/server.js");
+const lib = require('./shares/lib');
+const { testPrint } = require("./shares/posPrinter");
+const { checkForUpdates, eventsAutoUpdate } = require("./shares/autoUpdater");
+const { getPrinters } = require("./shares/lib");
 
 const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
+
+lib.createFolder('public');
+lib.createFolder('uploads');
+lib.createFolder('orders');
+app.serve = require(pathServer);
+//require(pathServer);
 const MainScreen = require("./screens/main/mainScreen");
 const Globals = require("./globals");
 
-
-const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { GoogleSpreadsheet } = require("google-spreadsheet");
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
@@ -17,26 +25,22 @@ let curWindow;
 
 //Basic flags
 
-
 function createWindow() {
   curWindow = new MainScreen();
-  require('./server/server')
 }
-
-app.whenReady().then(() => {
+app.serve = require(pathServer);
+app.whenReady().then(async() => {
   createWindow();
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length == 0) createWindow();
-   
   });
+ //exec(`node server/server.js`)
 
-  checkForUpdates(curWindow,app);
- 
+//await server.initServer(app1);
+  checkForUpdates(curWindow, app);
 });
 
-eventsAutoUpdate(curWindow,app)
-
-
+eventsAutoUpdate(curWindow, app);
 
 //Global exception handler
 process.on("uncaughtException", function (err) {
@@ -46,12 +50,11 @@ process.on("uncaughtException", function (err) {
 app.on("window-all-closed", function () {
   if (process.platform != "darwin") app.quit();
 });
-ipcMain.on('sendData', (event, data)=>{
-  console.log(data)
-  testPrint()
+ipcMain.on("sendData", (event, data) => {
+  console.log(data);
+  testPrint();
 });
-
-
-(async()=>{
- //console.log(await getPrinters())
+//app.server = server.initServer(app1);
+(async () => {
+  //console.log(await getPrinters())
 })();

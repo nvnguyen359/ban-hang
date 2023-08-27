@@ -10,15 +10,18 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatSidenavModule } from "@angular/material/sidenav";
-import { NgIf ,NgFor} from "@angular/common";
-import {CdkMenu, CdkMenuItem} from '@angular/cdk/menu';
-import {MatListModule} from '@angular/material/list';
-import { MenuLeftComponent } from './components/menu-left/menu-left.component';
+import { NgIf, NgFor } from "@angular/common";
+import { CdkMenu, CdkMenuItem } from "@angular/cdk/menu";
+import { MatListModule } from "@angular/material/list";
+import { MenuLeftComponent } from "./components/menu-left/menu-left.component";
+import { ReactiveFormsModule } from "@angular/forms";
+
+import { HttpClientModule } from "@angular/common/http";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+
 @NgModule({
-  declarations: [
-    AppComponent,
-     MenuLeftComponent,
-    MenuLeftComponent],
+  declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -30,7 +33,12 @@ import { MenuLeftComponent } from './components/menu-left/menu-left.component';
     MatListModule,
     NgIf,
     NgFor,
-    CdkMenu, CdkMenuItem
+    CdkMenu,
+    CdkMenuItem,
+    ReactiveFormsModule,
+    HttpClientModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   providers: [IpcService],
   bootstrap: [AppComponent],

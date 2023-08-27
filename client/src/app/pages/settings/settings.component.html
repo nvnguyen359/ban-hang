@@ -1,0 +1,71 @@
+<div class="settings">
+  <form (ngSubmit)="onSubmit()" [formGroup]="formPrinter" >
+    <fieldset>
+      <legend>Cấu Hình Máy In</legend>
+  
+      <mat-form-field class="full-width" *ngIf="printers">
+        <mat-label>Chọn Máy In</mat-label>
+        <mat-select formControlName="namePrinter" required (selectionChange)="onSubmit()">
+          <mat-option  *ngFor="let item of printers" [value]="item.deviceId" aria-selected="true">
+          {{item.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="full-width" *ngIf="pageSizes">
+        <mat-label>Chọn Cỡ Giấy</mat-label>
+        <mat-select formControlName="pageSize" required (selectionChange)="onSubmit()">
+          <mat-option  *ngFor="let item of pageSizes" [value]="item">
+          {{item}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="full-width flex" style="display: flex;justify-content: end;">
+        <button mat-flat-button type="submit" *ngIf="formPrinter.valid" color="primary">Lưu</button>
+        <button mat-flat-button type="button" (click)="onExportPdf()" color="accent">Xuất File Pdf</button>
+        <button mat-flat-button type="button" (click)="onPrintFile()" >Test Print</button>
+      </div>
+    </fieldset>
+  </form>
+  <form style="display: flex;">
+    <fieldset>
+      <legend>Thông Tin Cửu Hàng</legend>
+      <mat-form-field class="full-width">
+        <mat-label>Tên Cửa Hàng</mat-label>
+        <input matInput>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Địa Chỉ</mat-label>
+        <input matInput>
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Liên Hệ</mat-label>
+        <input matInput type="text">
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Nội Dung</mat-label>
+        <textarea matInput placeholder="Ex. 100 Main St">1600 Amphitheatre Pkwy</textarea>
+      </mat-form-field>
+      <div class="full-width">
+        <button mat-raised-button type="submit" color="primary">Primary</button>
+      </div>
+    </fieldset>
+  </form>
+  
+  <form style="display: flex;">
+    <fieldset>
+      <legend>Thông Tin Ngân Hàng</legend>
+      <mat-form-field class="full-width">
+        <mat-label>Tên Ngân Hàng</mat-label>
+        <input matInput name="namebank">
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Số Tài Khoản</mat-label>
+        <input matInput name="numberbank">
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Tên Chủ Tài Khoản</mat-label>
+        <input matInput type="text" name="name">
+      </mat-form-field>
+    </fieldset>
+  </form>
+</div>

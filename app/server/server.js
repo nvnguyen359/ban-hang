@@ -1,14 +1,23 @@
-require("dotenv").config();
-const path = require('path');
+require("dotenv").config({ path: './../.env' });
+const mime = require('mime');
+const path = require("path");
 const cors = require("cors");
 const apis = require("./apis/apiCrud");
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
+const port = process.env.PORT;
+app.get("/", (req, res, next) => {
+  res.send("Api ready!");
+  next();
+});
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
 
 const allowedOrigins = ["http://localhost:3177", "http://localhost:3177/#/"];
 //require('./apis/apiExcute')
-const port = process.env.PORT;
+
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
@@ -46,14 +55,11 @@ app.use((req, res, next) => {
 // Function to serve all static files
 // inside public directory.
 app.use(express.static("public"));
-
+apis.callApis(app);
 app.use("/uploads", express.static("uploads"));
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/imgs", express.static(path.join(__dirname, "imgs")));
-app.get("/", (req, res) => {
-  res.send("Api ready!");
-});
-apis.callApis(app);
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+app.use("/public", express.static("public"));
+app.use("/app/public", express.static("public"));
+
+module.exports = app;

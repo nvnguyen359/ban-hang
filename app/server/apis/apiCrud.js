@@ -1,4 +1,5 @@
-const lib = require('./../../shares/lib')
+const lib = require('./../../shares/lib');
+const apis= require('./apiExcute');
 const callApis = (app) => {
   const { CRUD } = require("../../features/crud");
   const array = [
@@ -43,6 +44,7 @@ const callApis = (app) => {
     deleteId(element, app, crud);
     put(element, app, crud);
   });
+apis.apis(app);
 };
 const getAll = (element, app, crud) => {
   app.get(`/${element.value.trim()}`, async (req, res, next) => {
@@ -79,7 +81,7 @@ const post = (element, app, crud) => {
 };
 const put = (element, app, crud) => {
   app.put(`/${element.value.trim()}`, async (req, res, next) => {
-    const row = req.body ? req.body : null;
+    const q = req.body ? req.body : null;
     //console.log(row)
     await crud.put(row);
     res.send("200");
