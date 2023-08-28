@@ -1,4 +1,5 @@
 require("dotenv").config({ path: './../.env' });
+var bodyParser = require('body-parser');
 const mime = require('mime');
 const path = require("path");
 const cors = require("cors");
@@ -52,6 +53,12 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json({
+  type: '*/*'
+}));
 // Function to serve all static files
 // inside public directory.
 app.use(express.static("public"));

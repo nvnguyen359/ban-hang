@@ -1,12 +1,18 @@
-const lib = require('./../../shares/lib')
-const autoUpdater = require("./../../shares/autoUpdater");
+const lib = require("./../../shares/lib");
+const initPrinter = require('./../../shares/posPrinter')
+const fs = require('fs')
+//const autoUpdater = require("./../../shares/autoUpdater");
 const path = require("path");
-const html_to_pdf = require("html-pdf-node");
+
+//const pdf = require("html-pdf");
+const PDFDocument = require("pdfkit");
 const { print, getDefaultPrinter, getPrinters } = require("pdf-to-printer");
-const fs = require("fs");
+
 const mime = require("mime");
+
 const apis = async (app) => {
   getListPrinter(app);
+  printOrders(app)
 };
 const getListPrinter = (app) => {
   app.get("/printers", async (req, res, next) => {
@@ -20,124 +26,86 @@ const getListPrinter = (app) => {
       }
       return x;
     });
-    //await testPrinter();
     res.send(result);
     next();
   });
-  app.put("/download-order", async (req, res, next) => {
-    const q = req.body ? req.body : null;
-    const content = q?.content;
-    const formatPage = q?.formatPage;
-    const namePrinter = q?.namePrinter;
-    const filePdf = await createFilePdf(content, formatPage, namePrinter);
-    var filename = path.basename(filePdf.filePath);
-    var mimetype = mime.getType(filePdf.filePath);
-    console.log(filePdf);
-    res.setHeader("Content-disposition", "attachment; filename=" + filename);
-    res.setHeader("Content-type", mimetype);
 
-    //res.send(filePdf)
-    res.setHeader("Content-type", "application/pdf");
-    res.download(filePdf.filePath, (err) => {
-      console.log("download ", err);
-    });
-
-    // next();
-  });
-  app.get("/download-order1", async (req, res, next) => {
-    const q = req.body ? req.body : null;
-    const content = q?.content;
-    const formatPage = q?.formatPage;
-    const namePrinter = q?.namePrinter;
-    const filePdf = await createFilePdf(content, formatPage, namePrinter);
-
-    console.log(filePdf);
-
-    //res.send(filePdf)
-    res.setHeader("Content-type", "application/pdf");
-    res.download(filePdf.filePath, (err) => {
-      console.log("download ", err);
-    });
-
-    // next();
-  });
-  app.get("/download", async (req, res, next) => {
-    const q = req.body ? req.body : null;
-    const content = q?.content;
-    const formatPage = q?.formatPage;
-    const namePrinter = q?.namePrinter;
-    const filePdf = await createFilePdf(content, formatPage, namePrinter);
-    // res.download(filePdf.filePath,'report.pdf',(err)=>{
-    //   if(err)
-    //   console.log('download ', err)
-    // });
-    res.send(filePdf);
-  });
-  app.put("/export", (req, res, next) => {
-    const q = req.body ? req.body : null;
-    const content = q?.content;
-    const formatPage = q?.formatPage;
-    const namePrinter = q?.namePrinter;
-    const filePdf = createFilePdf(content, formatPage, namePrinter);
-    res.send(filePdf);
-    // res.send({a:1,b:2})
-    // next();
-  });
-  app.put("/print-order", async (req, res, next) => {
-    const q = req.body ? req.body : null;
-    const content = q?.content;
-    const formatPage = q?.formatPage;
-    const namePrinter = q?.namePrinter;
-    const filePdf = await createFilePdf(content, formatPage, namePrinter);
-    const options = {
-      printer: namePrinter,
-      printDialog: false,
-      paperSize: formatPage,
-      silent: true,
-    };
-    console.log("print ", filePdf.filePath);
-    print(filePdf.filePath, options)
-      .then((e) => res.send(e))
-      .catch((err) => {
-        console.log("err", err);
-      });
-  });
-  app.get("/check-auto-update", async (req, res, next) => {
-    res.send("");
-    next();
-  });
 };
+const printOrders =(app)=>{
+  app.get("/print-order", async (req, res, next) => {
+    console.log('req.query ',req.query)
+    const printerName = req.query.printerName;
+    initPrinter.testPrint(printerName)
+    res.send(printerName)
+  });
+}
 
 ///===================
-const createFilePdf = (content, formatPage, namePrinter) => {
-  let result ={}
-  let options = {};
-  if (formatPage) {
-    options.format = formatPage;
-  }
-  if (namePrinter) {
-    options.printer = namePrinter;
-  }
-  let file = { content: "<h1>Tao file test thanh cong</h1>" };
-  if (content) file.content = content;
+const exportPdf = () => {
   const fileName = "report.pdf"; // The default name the browser will use
   const filePath = false
     ? `${__dirname}/public/${fileName}`
     : `D:/public/${fileName}`;
-    lib.createFolder(filePath+'/Haha')
-    result ={filePath:filePath+'/Haha'}
-  try {
-    html_to_pdf.generatePdf(file, options).then((createBuffer) => {
-     
-      fs.writeFileSync(filePath, createBuffer);
-      console.log('tao file thanh cong')
-     
-    });
-    result = { fileName, filePath };
    
-  } catch (error) {
-    result =  { error, path: `erorr ${filePath} ` };
-  }
-  return result;
+
+// Prepare the PDF Generation schema.
+const generation = {
+	html: 'template.html',
 };
+
+// Read the HTML template from disk.
+const template = fs.readFileSync(path.join(__dirname,'./template.html'), { encoding: 'utf8' });
+var pdf = require("pdf-creator-node");
+
+var html =template;
+var options = {
+    format: "A4",
+    orientation: "portrait",
+    border: "8mm",
+    header: {
+        height: "20mm",
+    },
+    footer: {
+        height: "20mm",
+        contents: {
+            default:"This is footer."
+        }
+    }
+};
+var document = {
+    html: html,
+    data: {},
+    path: filePath,
+    type: "",
+  };
+
+  pdf
+  .create(document, options)
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+};
+const htmlPdf =()=>{
+  const html = fs.readFileSync(path.join(__dirname,'./template.html'), { encoding: 'utf8' });
+  const fileName = "report.pdf"; // The default name the browser will use
+  const filePath = false
+    ? `${__dirname}/public/${fileName}`
+    : `D:/public/${fileName}`;
+    var pdf = require('html-pdf');
+    pdf.create(html).toStream(function(err, stream){
+      stream.pipe(fs.createWriteStream(filePath));
+    });
+}
+const html2pdfq = ()=>{
+  const html = fs.readFileSync(path.join(__dirname,'./template.html'), { encoding: 'utf8' });
+  const fileName = "report.pdf"; // The default name the browser will use
+  const filePath = false
+    ? `${__dirname}/public/${fileName}`
+    : `D:/public/${fileName}`;
+const {html2pdf} = require('html2pdf.js')
+html2pdf().from(html).save();
+}
 module.exports = { apis };

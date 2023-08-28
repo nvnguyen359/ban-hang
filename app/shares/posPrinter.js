@@ -1,11 +1,11 @@
 const {PosPrinter} = require("electron-pos-printer");
-function testPrint() {
+function testPrint(printerName) {
 
   const options = {
     preview: false, //  width of content body
     margin: "auto", // margin of content body
     copies: 1, // Number of copies to print
-    printerName: "HP LaserJet P2035", // printerName: string, check with webContent.getPrinters()
+    printerName, // printerName: string, check with webContent.getPrinters()
     timeOutPerLine: 1000,
     pageSize: "80mm", // page size
   };

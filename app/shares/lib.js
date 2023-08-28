@@ -1,48 +1,48 @@
 const { exec } = require("child_process");
-const fs = require('fs');
-String.prototype.removeAccents = function(){
-  return this.normalize('NFD')
-  .replace(/[\u0300-\u036f]/g, '')
-  .replace(/đ/g, 'd').replace(/Đ/g, 'D');
-}
-String.prototype.xoaDau = function(){
-  return this.normalize('NFD')
-  .replace(/[\u0300-\u036f]/g, '')
-  .replace(/đ/g, 'd').replace(/Đ/g, 'D');
-}
-String.prototype.convertStringVNToDateISO =function(){
-  const str = this.split('/').map(x=>parseInt(x));
-  let thang = str[1] < 10 ? "0" + (str[1] ) : str[1];
+const fs = require("fs");
+String.prototype.removeAccents = function () {
+  return this.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+};
+String.prototype.xoaDau = function () {
+  return this.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+};
+String.prototype.convertStringVNToDateISO = function () {
+  const str = this.split("/").map((x) => parseInt(x));
+  let thang = str[1] < 10 ? "0" + str[1] : str[1];
   let ngay = str[0] < 10 ? "0" + str[0] : str[0];
   return str[2] + "-" + thang + "-" + ngay;
-}
+};
 const getPrinters = () => {
   return new Promise((res, rej) => {
-    exec('wmic printer list brief', (err, stdout, stderr) => {
-        if (err) {
-          // node couldn't execute the command
-          rej(err);
+    exec("wmic printer list brief", (err, stdout, stderr) => {
+      if (err) {
+        // node couldn't execute the command
+        rej(err);
+      }
+      // list of printers with brief details
+      console.log(stdout);
+      // the *entire* stdout and stderr (buffered)
+      stdout = stdout.split("  ");
+      var printers = [];
+      j = 0;
+      stdout = stdout.filter((item) => item);
+      for (i = 0; i < stdout.length; i++) {
+        if (stdout[i] == " \r\r\n" || stdout[i] == "\r\r\n") {
+          printers[j] = stdout[i + 1];
+          j++;
         }
-        // list of printers with brief details
-        console.log(stdout);
-        // the *entire* stdout and stderr (buffered)
-        stdout=stdout.split("  ");
-        var printers=[];
-        j=0;
-        stdout = stdout.filter(item => item);
-        for (i = 0; i < stdout.length; i++)
-        {
-          if(stdout[i]==" \r\r\n" ||stdout[i]=="\r\r\n")
-          {
-             printers[j]=stdout[i+1];
-             j++; 
-          }
-        }
-        // list of only printers name
-  
-        console.log(stderr);
-        res(printers) ;
-      });
+      }
+      // list of only printers name
+
+      console.log(stderr);
+      res(printers);
+    });
   });
 };
 
@@ -72,7 +72,7 @@ function createFirstId(str) {
   });
   return s.toUpperCase();
 }
-function createFolder(folderName ){
+function createFolder(folderName) {
   try {
     if (!fs.existsSync(folderName)) {
       fs.mkdirSync(folderName);
@@ -81,5 +81,19 @@ function createFolder(folderName ){
     console.error(err);
   }
 }
+function writeFileSync(filePath, data) {
+  const arr = filePath.split("/");
+ 
+  const filename = arr[arr.length - 1];
+  const folderName = filePath.replace(filename,'').trim();
+  console.log(folderName,filename)
+  createFolder(folderName);
+  try {
+    fs.writeFileSync(filePath, data);
+    return filePath;
+  } catch (error) {
+    return error;
+  }
+}
 
-module.exports = { getPrinters,createIdRow ,createFolder};
+module.exports = { getPrinters, createIdRow, createFolder,writeFileSync };
