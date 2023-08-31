@@ -1,1 +1,42 @@
-<p>nhaphang works!</p>
+<mat-accordion class="example-headers-align" multi *ngIf="groupsDate">
+    <mat-expansion-panel *ngFor="let element of groupsDate" style="max-width: 1200px;">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <mat-icon>date_range</mat-icon> {{element.date| date:'dd/MM/YYYY'}} &nbsp; <mat-chip color="accent"
+                    cdkDrag>Sản Phẩm:&nbsp;{{element.count}}</mat-chip>
+            </mat-panel-title>
+            <mat-panel-description style="justify-self: end!important;">
+                <div style="width: 240px;">Thanh Toán: &nbsp; {{element.tong|currency:'đ'}} &nbsp;<mat-chip>{{element.quantity|number}}</mat-chip></div>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <table class="table-ngay">
+            <thead>
+                <th>No.</th>
+                <th>Sản Phẩm</th>
+                <th>Số Lượng</th>
+                <th>ĐVT</th>
+                <th>Giá Nhập</th>
+                <th>Giá Bán</th>
+                <th>Thanh Toán</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of element?.nhaphang">
+                    <td [innerText]="row.index" style="text-align: right;"></td>
+                    <td [innerText]="row['Tên sản phẩm']"></td>
+                    <td [innerText]="row['Số Lượng']|number" style="text-align: right;"></td>
+                    <td [innerText]="row['Đơn Vị Tính']" style="text-align: right;"></td>
+                    <td [innerText]="row['Giá Nhập']|number" style="text-align: right;"></td>
+                    <td [innerText]="row['Giá Bán']|number" style="text-align: right;"></td>
+                    <td [innerText]="row['Thành tiền']|number" style="text-align: right;"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="flex" style="justify-content: right;margin-top:8px">
+            <button  mat-stroked-button color="primary">Cập Nhật</button>
+            <button mat-stroked-button color="accent">Xóa</button>
+        </div>
+    </mat-expansion-panel>
+
+
+</mat-accordion>
