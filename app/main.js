@@ -1,4 +1,5 @@
-require("dotenv").config({ path: './.env' })
+require("dotenv").config({ path: './.env' });
+
 const path = require("path");
 const pathServer = path.join(__dirname, "server/server.js");
 const lib = require('./shares/lib');
@@ -8,12 +9,9 @@ const { getPrinters } = require("./shares/lib");
 
 const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
 
-lib.createFolder('public');
-lib.createFolder('uploads');
-lib.createFolder('orders');
 app.serve = require(pathServer);
 //require(pathServer);
-const MainScreen = require("./screens/main/mainScreen");
+const MainScreen = require(path.join(__dirname,"./screens/main/mainScreen"));
 const Globals = require("./globals");
 
 const { GoogleSpreadsheet } = require("google-spreadsheet");
@@ -23,10 +21,10 @@ const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
 const SHEET_ID = process.env.SHEET_ID;
 let curWindow;
 
-//Basic flags
-
 function createWindow() {
   curWindow = new MainScreen();
+  //process.noAsar = true;
+  //localStorage.setItem('userData',app.getPath('userData'))
 }
 app.serve = require(pathServer);
 app.whenReady().then(async() => {

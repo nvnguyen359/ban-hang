@@ -1,4 +1,8 @@
 <div class="settings">
+  <mat-form-field class="full-width">
+    <mat-label>Chọn Đường Dẫn Lưu File Đơn Hàng</mat-label>
+    <input matInput placeholder="D:/Don-Hang">
+  </mat-form-field>
   <form (ngSubmit)="onSubmit()" [formGroup]="formPrinter" >
     <fieldset>
       <legend>Cấu Hình Máy In</legend>
@@ -22,6 +26,7 @@
       <div class="full-width flex" style="display: flex;justify-content: end;">
         <button mat-flat-button type="submit" *ngIf="formPrinter.valid" color="primary">Lưu</button>
         <button mat-flat-button type="button" (click)="onExportPdf()" color="accent">Xuất File Pdf</button>
+        <button mat-flat-button type="button" (click)="onPrintPdf()" >Test Print PDF</button>
         <button mat-flat-button type="button" (click)="onPrintFile()" >Test Print</button>
       </div>
     </fieldset>

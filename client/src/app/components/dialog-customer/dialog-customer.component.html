@@ -1,0 +1,27 @@
+<h2 mat-dialog-title style="margin-bottom: 15px;">Khách hàng Mới</h2>
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="formKhachHang" #formKh (ngSubmit)="onSubmit()" cdkTrapFocus>
+        <mat-form-field appearance="outline" class="full-width" style="margin-top: 8px;" >
+            <mat-label>Tên Khách Hàng</mat-label>
+            <input matInput type="text"  required formControlName="Tên Khách Hàng" >
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Số Điện Thoại</mat-label>
+            <input matInput type="phone" required="true" formControlName="Phone">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Địa Chỉ</mat-label>
+            <input matInput type="text" formControlName="Địa Chỉ">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="Email">
+        </mat-form-field>
+        <input type="hidden" formControlName="Id">
+        <mat-dialog-actions align="end">
+            <button mat-button mat-dialog-close>Cancel</button>
+            <button mat-button (click)="formKhachHang.reset()" style="color: cornflowerblue;">Reset</button>
+            <button mat-button [mat-dialog-close]="reultCode"  color="primary" type="submit" [disabled]="!formKhachHang.valid" type="submit" cdkFocusInitial >Save</button>
+        </mat-dialog-actions>
+    </form>
+</mat-dialog-content>

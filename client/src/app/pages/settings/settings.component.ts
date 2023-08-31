@@ -1,3 +1,4 @@
+import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 
 import {
@@ -24,8 +25,10 @@ export class SettingsComponent {
   });
   constructor(
     private fb: FormBuilder,
-    private readonly apiService: ApiService
+    private readonly apiService: ApiService,
+    private http: HttpClient
   ) {
+    this.apiService.get('nhaphang').then((data)=>console.log(data))
     this.apiService.get("printers").then((data) => {
       this.printers = data as PrinterModel[];
       this.selectedPrinter = this.printers.find(
@@ -63,11 +66,35 @@ export class SettingsComponent {
   }
  async onExportPdf() {
     const form = this.formPrinter.value;
-  (await this.apiService.put('export',null,null)).subscribe((x)=>console.log('xxx ',x))
+    const data ={
+      "html":"<h1>ha ha </h1> <img src='https://img.vietqr.io/image/vietinbank-113366668888-compact.jpg'/>",
+      "idDonHang":"0002",
+      "pageSize":form.pageSize,
+      "pathForder":"D:/public"
+    }
+    const pathUrl = `${this.baseServer}/export`;
+    this.http.put(pathUrl,data).subscribe({next:data=> console.log(data),error:error=>{console.log(error.message)}})
    
+  }
+ baseServer = "http://localhost:3176";
+  onPrintPdf(){
+    const form = this.formPrinter.value;
+    const data ={
+      "html":"<h1>ha ha </h1> <img src='https://img.vietqr.io/image/vietinbank-113366668888-compact.jpg'/>",
+      "idDonHang":"0002",
+      "pageSize":form.pageSize,
+      "pathForder":"D:/public",
+      'printerName':form.namePrinter
+    }
+     const pathUrl = `${this.baseServer}/printpdf`;
+    this.http.put(pathUrl,data).subscribe({next:data=> console.log(data),error:error=>{console.log(error.message)}})
   }
   onPrintFile(){
     const form = this.formPrinter.value;
-    this.apiService.put('print-order',form,null).then((e)=>console.log)
+    const name =`${form.namePrinter}`
+    const url=`print-order`
+    const pathUrl = `${this.baseServer}/${url}`;
+    this.http.put(pathUrl,{printerName:name}).subscribe({next:data=> console.log(data),error:error=>{console.log(error.message)}})
+  
   }
 }

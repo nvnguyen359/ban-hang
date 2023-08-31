@@ -20,6 +20,10 @@ const callApis = (app) => {
       value: "donhang",
     },
     {
+      nameSheet: "Khách Hàng",
+      value: "khachhang",
+    },
+    {
       nameSheet: "Chi Tiết Đơn Hàng",
       value: "chitietdonhang",
     },
@@ -37,7 +41,8 @@ const callApis = (app) => {
     },
   ];
   array.forEach((element) => {
-    const crud = new CRUD(element.nameSheet.trim());
+    let crud = new CRUD(element.nameSheet.trim());
+    
     getAll(element, app, crud);
     getId(element, app, crud);
     post(element, app, crud);
@@ -72,6 +77,9 @@ const getId = (element, app, crud) => {
   });
 };
 const post = (element, app, crud) => {
+ 
+  //crud.nameSheetTitle=element.nameSheet.trim()
+ // console.log(crud.nameSheetTitle)
   app.post(`/${element.value.trim()}`, async (req, res, next) => {
     const row = req.body ? req.body : null;
     await crud.post(row);
@@ -80,8 +88,9 @@ const post = (element, app, crud) => {
   });
 };
 const put = (element, app, crud) => {
+  crud.nameSheetTitle=element.nameSheet.trim()
   app.put(`/${element.value.trim()}`, async (req, res, next) => {
-    const q = req.body ? req.body : null;
+    const row = req.body ? req.body : null;
     //console.log(row)
     await crud.put(row);
     res.send("200");

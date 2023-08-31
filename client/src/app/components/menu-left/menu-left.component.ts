@@ -19,11 +19,11 @@ links=[
     icon:'shopping_basket'
   },{
     text:'Nhập Hàng',
-    link:'/import-goods',
+    link:'/nhaphang',
     icon:'credit_card'
   },{
     text:'Khách Hàng',
-    link:'/customer',
+    link:'/customers',
     icon:'account_box'
   },{
     text:'Chi Phí',

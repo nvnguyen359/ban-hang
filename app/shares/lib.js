@@ -1,5 +1,7 @@
 const { exec } = require("child_process");
 const fs = require("fs");
+const puppeteer = require("puppeteer");
+const path = require("path");
 String.prototype.removeAccents = function () {
   return this.normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -46,7 +48,7 @@ const getPrinters = () => {
   });
 };
 
-function createIdRow(id, nameSheet, startId = "NH") {
+function createIdRow(id, nameSheet, startId ) {
   if (!startId) startId = createFirstId(nameSheet);
   if (!id) {
     id = "0";
@@ -83,10 +85,9 @@ function createFolder(folderName) {
 }
 function writeFileSync(filePath, data) {
   const arr = filePath.split("/");
- 
+
   const filename = arr[arr.length - 1];
-  const folderName = filePath.replace(filename,'').trim();
-  console.log(folderName,filename)
+  const folderName = filePath.replace(filename, "").trim();
   createFolder(folderName);
   try {
     fs.writeFileSync(filePath, data);
@@ -95,5 +96,38 @@ function writeFileSync(filePath, data) {
     return error;
   }
 }
-
-module.exports = { getPrinters, createIdRow, createFolder,writeFileSync };
+const exportPdfFromPupetteerSync = async (
+  html,
+  idDonHang,
+  pageSize = "A6",
+  rootPathExport = "D:/Don-Hang"
+) => {
+  console.log(new Date().toISOString())
+  const date = (new Date().toISOString()).split("T")[0];
+  const pathFile = `${idDonHang}_${date}.pdf`;
+//${rootPathExport}/
+  createFolder(rootPathExport);
+  const browser = await puppeteer.launch({headless:false});
+  const page = await browser.newPage();
+  await page.setContent(html);
+ 
+  await page.pdf({
+    path: pathFile,
+    format: pageSize,
+    margin: {
+      top: "20px",
+      left: "20px",
+      right: "20px",
+      bottom: "20px",
+    },
+  });
+  await browser.close();
+  return { data: pathFile };
+};
+module.exports = {
+  getPrinters,
+  createIdRow,
+  createFolder,
+  writeFileSync,
+  exportPdfFromPupetteerSync,
+};

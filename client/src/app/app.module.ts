@@ -19,9 +19,14 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { DialogCustomerComponent } from './components/dialog-customer/dialog-customer.component';
+
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+
+
 
 @NgModule({
-  declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent],
+  declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent, DialogCustomerComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -39,6 +44,7 @@ import { MatInputModule } from "@angular/material/input";
     HttpClientModule,
     MatFormFieldModule,
     MatInputModule,
+    MatDialogModule
   ],
   providers: [IpcService],
   bootstrap: [AppComponent],

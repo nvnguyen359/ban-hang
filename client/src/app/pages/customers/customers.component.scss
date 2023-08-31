@@ -1,0 +1,27 @@
+table {
+    width: 100%;
+  }
+  
+  .mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+  
+
+  .mat-mdc-header-row .mat-mdc-header-cell:nth-child(1){
+    width: 64px;
+  }
+
+  .mat-column-number,
+.mat-column-state {
+  max-width: 64px;
+}
+.btnDelete{
+  display: none;
+  opacity: 0;
+  transition: 0.5s all;
+}
+.btnDelete.show{
+  display: block;
+  opacity: 1;
+}
