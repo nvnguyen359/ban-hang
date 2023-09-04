@@ -33,10 +33,17 @@
             </tbody>
         </table>
         <div class="flex" style="justify-content: right;margin-top:8px">
-            <button  mat-stroked-button color="primary">Cập Nhật</button>
-            <button mat-stroked-button color="accent">Xóa</button>
+            <button  mat-stroked-button color="primary"(click) ="onUpdate(element)">Cập Nhật</button>
+            <button mat-stroked-button color="accent" (click)="onDelete(element)">Xóa</button>
         </div>
     </mat-expansion-panel>
 
 
 </mat-accordion>
+<div class="bt-sti">
+    <button mat-fab (click)="onUpdate()">
+        <mat-icon mat-icon-button>edit</mat-icon>
+    </button>
+
+</div>
+<div id="test1" [innerHTML]="innerHTML"></div>

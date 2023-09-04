@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 
 import { AppRoutingModule } from "./app-routing.module";
@@ -22,11 +22,14 @@ import { MatInputModule } from "@angular/material/input";
 import { DialogCustomerComponent } from './components/dialog-customer/dialog-customer.component';
 
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { DialogConfirmComponent } from './components/dialog-confirm/dialog-confirm.component';
+import { OnNhapHangComponent } from './components/on-nhap-hang/on-nhap-hang.component';
+import { ProductComponent } from './components/product/product.component';
 
-
-
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };
 @NgModule({
-  declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent, DialogCustomerComponent],
+  declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent, DialogCustomerComponent, DialogConfirmComponent, OnNhapHangComponent, ProductComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -44,9 +47,13 @@ import { MatDialog, MatDialogModule } from "@angular/material/dialog";
     HttpClientModule,
     MatFormFieldModule,
     MatInputModule,
-    MatDialogModule
+    MatDialogModule,
+    SocketIoModule.forRoot(config)
   ],
   providers: [IpcService],
   bootstrap: [AppComponent],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
+  ]
 })
 export class AppModule {}

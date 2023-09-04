@@ -1,4 +1,6 @@
 const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
+
+//console.log('tin nhan nhan duoc',socket.getMessage())
 const path = require("path");
 
 class MainScreen {
@@ -38,7 +40,7 @@ class MainScreen {
 
     let wc = this.window.webContents;
     wc.openDevTools();
-
+    this.window.minimize()
     this.window.loadFile("./screens/main/dist/index.html");
     this.window.webContents.openDevTools();
   }
@@ -46,6 +48,7 @@ class MainScreen {
   showMessage(message) {
     console.log("showMessage trapped");
     console.log(message);
+
     this.window.webContents.send("updateMessage", message);
   }
   upData(message) {

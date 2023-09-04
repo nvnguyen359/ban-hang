@@ -1,6 +1,5 @@
 require("dotenv").config({ path: './../.env' });
 var bodyParser = require('body-parser');
-const mime = require('mime');
 const path = require("path");
 const cors = require("cors");
 const apis = require("./apis/apiCrud");
@@ -16,7 +15,7 @@ app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
-const allowedOrigins = ["http://localhost:3177", "http://localhost:3177/#/"];
+const allowedOrigins = ["http://localhost:3177", "http://localhost:3177/#/"," http://localhost:18092"];
 //require('./apis/apiExcute')
 
 app.use(express.json()); // for parsing application/json

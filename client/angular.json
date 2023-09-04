@@ -33,7 +33,7 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
-            "scripts": ["src/assets/mainView.js"]
+            "scripts": ["src/assets/mainView.js","src/assets/lib.js"]
           },
           "configurations": {
             "production": {

@@ -1,8 +1,9 @@
-require("dotenv").config({ path: './.env' });
-
+require("dotenv").config({ path: "./.env" });
+const {SocketIo} = require("./socket");
+const socket= new SocketIo()
 const path = require("path");
 const pathServer = path.join(__dirname, "server/server.js");
-const lib = require('./shares/lib');
+const lib = require("./shares/lib");
 const { testPrint } = require("./shares/posPrinter");
 const { checkForUpdates, eventsAutoUpdate } = require("./shares/autoUpdater");
 const { getPrinters } = require("./shares/lib");
@@ -11,7 +12,7 @@ const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
 
 app.serve = require(pathServer);
 //require(pathServer);
-const MainScreen = require(path.join(__dirname,"./screens/main/mainScreen"));
+const MainScreen = require(path.join(__dirname, "./screens/main/mainScreen"));
 const Globals = require("./globals");
 
 const { GoogleSpreadsheet } = require("google-spreadsheet");
@@ -27,18 +28,21 @@ function createWindow() {
   //localStorage.setItem('userData',app.getPath('userData'))
 }
 app.serve = require(pathServer);
-app.whenReady().then(async() => {
+app.whenReady().then(async () => {
   createWindow();
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length == 0) createWindow();
   });
- //exec(`node server/server.js`)
+  //exec(`node server/server.js`)
 
-//await server.initServer(app1);
-  checkForUpdates(curWindow, app);
+  //await server.initServer(app1);
+ const u = checkForUpdates(curWindow, app);
+ socket.sendMessage(u)
+ console.log('checkForUpdates:',u)
 });
 
-eventsAutoUpdate(curWindow, app);
+const evemt= eventsAutoUpdate(curWindow, app);
+socket.sendMessage(evemt)
 
 //Global exception handler
 process.on("uncaughtException", function (err) {

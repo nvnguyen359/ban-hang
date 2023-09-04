@@ -1,13 +1,11 @@
 interface String {
   add(...strings: string[]): string;
   removeAccents(): string;
-  convertDateVNToISO():Date
+  convertDateVNToISO(): Date;
 }
 String.prototype.add = function (...strings) {
   return this + strings.join("");
 };
-
-
 
 String.prototype.removeAccents = function () {
   const result: string = this.normalize("NFD")
@@ -16,10 +14,8 @@ String.prototype.removeAccents = function () {
     .replace(/Đ/g, "D");
   return result.toString();
 };
-interface Date{
-  
-}
-String.prototype.convertDateVNToISO = function(){
-  const t = this.split('/');
-  return new Date(parseInt(t[2]),parseInt(t[1]),parseInt(t[0]))
-}
+interface Date {}
+String.prototype.convertDateVNToISO = function () {
+  const t = this.split("/");
+  return new Date(parseInt(t[2]), parseInt(t[1]), parseInt(t[0]));
+};

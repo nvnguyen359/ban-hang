@@ -39,6 +39,6 @@ function checkForUpdates(curWindow, app) {
   getPrinters().then((data) => {
     curWindow.upData(JSON.stringify(data));
   });
-  return mes;
+  return {mes,ver:app.getVersion()};
 }
 module.exports = { checkForUpdates, eventsAutoUpdate };
