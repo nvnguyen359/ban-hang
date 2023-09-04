@@ -16,11 +16,11 @@ class MainScreen {
     this.window = new BrowserWindow({
       width: this.position.width,
       height: this.position.height,
-      title: "This is a test application",
+      title: "Ứng dụng quản lý bán hàng",
       show: true,
       removeMenu: true,
       acceptFirstMouse: true,
-      autoHideMenuBar: false,
+      autoHideMenuBar: true,
       webPreferences: {
         contextIsolation: true,
         devTools: true,
@@ -40,7 +40,6 @@ class MainScreen {
 
     let wc = this.window.webContents;
     wc.openDevTools();
-    this.window.minimize()
     this.window.loadFile("./screens/main/dist/index.html");
     this.window.webContents.openDevTools();
   }

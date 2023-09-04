@@ -25,19 +25,19 @@ export class AppComponent {
     private readonly apiService: ApiService,
     private socket: SocketService
   ) {
-    const t = this.socket.getMessage();
-    //  console.log(t)
-    t.subscribe((x) => {
-      console.log("nhan tin nhan ", x);
+    this.getVersion();
+    setTimeout(() => {
+      this.getVersion();
+    }, 10000);
+  }
+  getVersion() {
+    this.socket.getMessage().subscribe((x: any) => {
       if (x?.ver) {
         if (!localStorage.getItem("ver")) {
           localStorage.setItem("ver", x.ver);
         } else {
-          this.ver = x.mes;
+          this.ver = x.ver;
         }
-        setTimeout(() => {
-          this.ver = 'Version: '+ x.ver;
-        }, 5000);
         console.log(this.ver);
       }
     });

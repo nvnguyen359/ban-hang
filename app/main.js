@@ -1,11 +1,10 @@
 require("dotenv").config({ path: "./.env" });
-const {SocketIo} = require("./socket");
-const socket= new SocketIo()
+
 const path = require("path");
 const pathServer = path.join(__dirname, "server/server.js");
 const lib = require("./shares/lib");
 const { testPrint } = require("./shares/posPrinter");
-const { checkForUpdates, eventsAutoUpdate } = require("./shares/autoUpdater");
+const { eventsAutoUpdate } = require("./shares/autoUpdaterJs");
 const { getPrinters } = require("./shares/lib");
 
 const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
@@ -36,13 +35,7 @@ app.whenReady().then(async () => {
   //exec(`node server/server.js`)
 
   //await server.initServer(app1);
- const u = checkForUpdates(curWindow, app);
- socket.sendMessage(u)
- console.log('checkForUpdates:',u)
 });
-
-const evemt= eventsAutoUpdate(curWindow, app);
-socket.sendMessage(evemt)
 
 //Global exception handler
 process.on("uncaughtException", function (err) {
@@ -52,11 +45,4 @@ process.on("uncaughtException", function (err) {
 app.on("window-all-closed", function () {
   if (process.platform != "darwin") app.quit();
 });
-ipcMain.on("sendData", (event, data) => {
-  console.log(data);
-  testPrint();
-});
-//app.server = server.initServer(app1);
-(async () => {
-  //console.log(await getPrinters())
-})();
+eventsAutoUpdate(app);

@@ -7,26 +7,26 @@ import { SocketService } from "src/app/services/socket.service";
   styleUrls: ["./menu-left.component.scss"],
 })
 export class MenuLeftComponent {
-  
   constructor(private socket: SocketService) {
-    const t = this.socket.getMessage();
-    //  console.log(t)
-    t.subscribe((x) => {
-      console.log('nhan tin nhan ',x)
+    this.getVersion();
+    setTimeout(() => {
+      this.getVersion();
+    }, 5000);
+  }
+  getVersion() {
+    this.socket.getMessage().subscribe((x: any) => {
       if (x?.ver) {
-       
-        if(!localStorage.getItem('ver')){
-          localStorage.setItem('ver',x.ver)
-        }else{
+        if (!localStorage.getItem("ver")) {
+          localStorage.setItem("ver", x.ver);
+        } else {
           this.ver = x.ver;
         }
-      
-        console.log(this.ver)
+        console.log(this.ver);
       }
     });
-    console.log();
   }
-  ver: string = JSON.stringify(localStorage.getItem('ver'));
+
+  ver: string = JSON.stringify(localStorage.getItem("ver"));
   links = [
     {
       text: "Trang Chủ",

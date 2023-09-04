@@ -107,7 +107,7 @@ const exportPdfFromPupetteerSync = async (
   const pathFile = `${idDonHang}_${date}.pdf`;
 //${rootPathExport}/
   createFolder(rootPathExport);
-  const browser = await puppeteer.launch({headless:false});
+  const browser = await puppeteer.launch({headless:true});
   const page = await browser.newPage();
   await page.setContent(html);
  

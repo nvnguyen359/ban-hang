@@ -60,3 +60,13 @@ body {
 .flex {
     display: flex;
 }
+
+.docs-component-category-list-card {
+    border: 1px solid rgba(0, 0, 0, .12);
+    border-radius: 4px;
+    background: white;
+    padding: 4px;
+}
+.mat-drawer-inner-container{
+    overflow-x: hidden!important;
+  }

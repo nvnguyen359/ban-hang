@@ -1,14 +1,15 @@
 <div class="menu" cdkMenu>
-    <a  *ngFor="let item of links" routerLink="{{item.link}}" class="menu-item" cdkMenuItem > <mat-icon>{{item.icon}}</mat-icon>&nbsp;<span>{{item.text}}</span></a>
-  </div>
-  <div>
-    <div>Thông Tin Hệ Thống</div>
-    <table>
-      <tbody>
-        <tr >
-          <td>Version:</td>
-          <td ><span>{{ver.toString()}}</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <a *ngFor="let item of links" routerLink="{{item.link}}" class="menu-item" cdkMenuItem>
+    <mat-icon>{{item.icon}}</mat-icon>&nbsp;<span>{{item.text}}</span></a>
+</div>
+<div class="docs-component-category-list-card">
+  <div>Thông Tin Hệ Thống</div>
+  <table>
+    <tbody>
+      <tr>
+        <td>Version:</td>
+        <td><span>{{ver.toString()}}</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

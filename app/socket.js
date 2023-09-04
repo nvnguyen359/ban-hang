@@ -32,8 +32,9 @@ class SocketIo {
   sendMessage(meg,key) {
     if(!key)key=this.keyMeg
     io.on('connection', (socket) => {
-      console.log('gui:',meg)
-      socket.broadcast.emit(key, meg);
+      console.log('gui:',new Date().toLocaleTimeString(),meg)
+      //socket.broadcast.emit(key, meg);
+      io.emit(key, meg);
     });
   }
 }
