@@ -26,12 +26,6 @@ export class NhaphangComponent {
   constructor(private apiService: ApiService, public dialog: MatDialog,private sanitizer:DomSanitizer) {
     this.getAll("nhaphang");
     this.getProduct();
-    const columns = `
-    <mat-form-field class="example-full-width">
-     <mat-label>Favorite food</mat-label>
-     <input matInput placeholder="Ex. Pizza" value="Sushi">
-   </mat-form-field>`;
-   this.innerHTML = this.sanitizer.bypassSecurityTrustHtml(columns)
   }
   getAll(nameSheet: string, item?: any) {
     this.apiService.get(nameSheet).then((e) => {
