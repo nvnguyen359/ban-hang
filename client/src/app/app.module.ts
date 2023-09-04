@@ -25,7 +25,7 @@ import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { DialogConfirmComponent } from './components/dialog-confirm/dialog-confirm.component';
 import { OnNhapHangComponent } from './components/on-nhap-hang/on-nhap-hang.component';
 import { ProductComponent } from './components/product/product.component';
-
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };
 @NgModule({
@@ -48,6 +48,7 @@ const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
+    MatProgressSpinnerModule,
     SocketIoModule.forRoot(config)
   ],
   providers: [IpcService],

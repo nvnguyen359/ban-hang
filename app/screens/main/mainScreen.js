@@ -23,7 +23,7 @@ class MainScreen {
       autoHideMenuBar: true,
       webPreferences: {
         contextIsolation: true,
-        devTools: true,
+        devTools: false,
         preload: path.join(__dirname, "./mainPreload.js"),
       },
     });
@@ -39,7 +39,7 @@ class MainScreen {
     this.handleMessages();
 
     let wc = this.window.webContents;
-    wc.openDevTools();
+    //wc.openDevTools();
     this.window.loadFile("./screens/main/dist/index.html");
     this.window.webContents.openDevTools();
   }

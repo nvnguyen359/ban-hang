@@ -14,7 +14,10 @@
     <app-menu-left></app-menu-left>
 
   </mat-drawer>
-  <mat-drawer-content>
+  <mat-drawer-content class="drawer-content-1">
+    <div class="spin-1"  *ngIf="isLoading | async">
+      <mat-spinner></mat-spinner>
+    </div>
     <router-outlet></router-outlet>
   </mat-drawer-content>
 </mat-drawer-container>
