@@ -4,5 +4,6 @@ export interface SanPham{
     'Name'?:string,
     'Giá Nhập'?:number,
     'Giá Bán'?:number,
-    'Đơn Vị Tính'?:string
+    'Đơn Vị Tính'?:string,
+    'count':number
 }

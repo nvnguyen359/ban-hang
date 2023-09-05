@@ -5,7 +5,7 @@ const cors = require("cors");
 const apis = require("./apis/apiCrud");
 const express = require("express");
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT||3176;
 app.get("/", (req, res, next) => {
   res.send("Api ready!");
   next();

@@ -1,6 +1,13 @@
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+function removeAccents(str) {
+  return `${str}`
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+}
 function createDiv(classList = ["form-floating"]) {
   let div = document.createElement("div");
   classList.forEach((x) => {

@@ -27,9 +27,14 @@ import { OnNhapHangComponent } from './components/on-nhap-hang/on-nhap-hang.comp
 import { ProductComponent } from './components/product/product.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { OrderComponent } from './components/order/order.component';
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
+import { ShowTextPipe } from './pipes/show-text.pipe';
+import { MatRippleModule } from "@angular/material/core";
 const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };
 @NgModule({
-  declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent, DialogCustomerComponent, DialogConfirmComponent, OnNhapHangComponent, ProductComponent],
+  declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent, DialogCustomerComponent, DialogConfirmComponent, OnNhapHangComponent, ProductComponent, OrderComponent, AutocompleteComponent, ShowTextPipe],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -49,7 +54,9 @@ const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };
     MatInputModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    SocketIoModule.forRoot(config)
+    SocketIoModule.forRoot(config),
+    MatAutocompleteModule,
+    MatRippleModule
   ],
   providers: [IpcService],
   bootstrap: [AppComponent],
