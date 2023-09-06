@@ -32,6 +32,9 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { ShowTextPipe } from './pipes/show-text.pipe';
 import { MatRippleModule } from "@angular/material/core";
+import {MatCardModule} from '@angular/material/card';
+
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };
 @NgModule({
   declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent, DialogCustomerComponent, DialogConfirmComponent, OnNhapHangComponent, ProductComponent, OrderComponent, AutocompleteComponent, ShowTextPipe],
@@ -56,7 +59,9 @@ const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };
     MatProgressSpinnerModule,
     SocketIoModule.forRoot(config),
     MatAutocompleteModule,
-    MatRippleModule
+    MatRippleModule,
+    MatCardModule,
+    MatButtonToggleModule
   ],
   providers: [IpcService],
   bootstrap: [AppComponent],
