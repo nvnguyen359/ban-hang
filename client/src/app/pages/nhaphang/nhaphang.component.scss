@@ -1,18 +1,24 @@
-.table-ngay{
+.table-ngay {
     border-collapse: collapse;
     width: 100%;
 }
-th{
+
+th {
     color: whitesmoke;
 }
-thead{
+
+thead {
     background: cadetblue;
 }
-.table-ngay, td, th {
+
+.table-ngay,
+td,
+th {
     border: 1px solid rgba(56, 56, 56, 0.452);
     padding: 4px;
-   
-  }
-  .mat-expansion-panel-header-description{
+
+}
+
+.mat-expansion-panel-header-description {
     justify-content: end;
-  }
+}

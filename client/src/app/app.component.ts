@@ -3,9 +3,17 @@ import { IpcService } from "src/ipc.service";
 import { ApiService } from "./services/api.service";
 import { PrinterModel } from "./Models/printer";
 import { SocketService } from "./services/socket.service";
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from "@angular/router";
+import {
+  NavigationCancel,
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router,
+} from "@angular/router";
 import { Observable, filter } from "rxjs";
-import { IsLoadingService } from '@service-work/is-loading';
+import { IsLoadingService } from "@service-work/is-loading";
+import { MatDialog } from "@angular/material/dialog";
+import { OrderComponent } from "./components/order/order.component";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -30,15 +38,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     private readonly apiService: ApiService,
     private socket: SocketService,
     private router: Router,
-    private isLoadingService: IsLoadingService
+    private isLoadingService: IsLoadingService,
+    private readonly dialog: MatDialog
   ) {
     this.getVersion();
     setTimeout(() => {
       this.getVersion();
     }, 10000);
-
   }
-  
+
   getVersion() {
     this.socket.getMessage().subscribe((x: any) => {
       if (x?.ver) {
@@ -51,33 +59,37 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
-  ngOnInit(){
+  loading() {
     this.isLoading = this.isLoadingService.isLoading$();
     this.router.events
-    .pipe(
-      filter(
-        event =>
-          event instanceof NavigationStart ||
-          event instanceof NavigationEnd ||
-          event instanceof NavigationCancel ||
-          event instanceof NavigationError,
-      ),
-    )
-    .subscribe(event => {
-      // if it's the start of navigation, `add()` a loading indicator
-      if (event instanceof NavigationStart) {
-      console.log('loading');
-      this.isLoadingService.add();
-        return;
-      }
-      this.isLoadingService.remove();
-      // else navigation has ended, so `remove()` a loading indicator
-     console.log('loaded')
-    });
+      .pipe(
+        filter(
+          (event) =>
+            event instanceof NavigationStart ||
+            event instanceof NavigationEnd ||
+            event instanceof NavigationCancel ||
+            event instanceof NavigationError
+        )
+      )
+      .subscribe((event) => {
+        // if it's the start of navigation, `add()` a loading indicator
+        if (event instanceof NavigationStart) {
+          console.log("loading");
+          this.isLoadingService.add();
+          return;
+        }
+        this.isLoadingService.remove();
+        // else navigation has ended, so `remove()` a loading indicator
+        console.log("loaded");
+      });
+  }
+  onOpenDialog(){
+    this.dialog.open(OrderComponent)
+  }
+  ngOnInit() {
+    this.loading();
+   // this.onOpenDialog();
   }
 
-  ngAfterViewInit() {
-   
-  }
+  ngAfterViewInit() {}
 }

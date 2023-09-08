@@ -14,7 +14,7 @@ import { NgIf, NgFor } from "@angular/common";
 import { CdkMenu, CdkMenuItem } from "@angular/cdk/menu";
 import { MatListModule } from "@angular/material/list";
 import { MenuLeftComponent } from "./components/menu-left/menu-left.component";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { HttpClientModule } from "@angular/common/http";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -31,10 +31,13 @@ import { OrderComponent } from './components/order/order.component';
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { ShowTextPipe } from './pipes/show-text.pipe';
-import { MatRippleModule } from "@angular/material/core";
+import { MAT_DATE_LOCALE, MatNativeDateModule, MatRippleModule } from "@angular/material/core";
 import {MatCardModule} from '@angular/material/card';
-
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { MatSelectModule } from "@angular/material/select";
+import { MatTableModule } from "@angular/material/table";
+
 const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };
 @NgModule({
   declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent, DialogCustomerComponent, DialogConfirmComponent, OnNhapHangComponent, ProductComponent, OrderComponent, AutocompleteComponent, ShowTextPipe],
@@ -61,9 +64,13 @@ const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };
     MatAutocompleteModule,
     MatRippleModule,
     MatCardModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    FormsModule ,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,MatTableModule, NgFor, MatButtonModule, NgIf, MatIconModule
   ],
-  providers: [IpcService],
+  providers: [IpcService, {provide: MAT_DATE_LOCALE, useValue: 'vi-VN'}],
   bootstrap: [AppComponent],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

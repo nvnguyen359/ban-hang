@@ -28,20 +28,7 @@ import { DialogCustomerComponent } from "src/app/components/dialog-customer/dial
   templateUrl: "./customers.component.html",
   styleUrls: ["./customers.component.scss"],
 })
-/**
- * Id
-: 
-"KH004"
-Phone
-: 
-"096 884 32 79"
-Tên Khách hàng
-: 
-"Hoàng Bách"
-Địa Chỉ
-: 
-"Ngã Ba cung"
- */
+
 export class CustomersComponent implements AfterViewInit {
   dataSource: any;
   displayedColumns: string[] = ["Index", "Tên Khách Hàng", "Phone", "Địa Chỉ"];

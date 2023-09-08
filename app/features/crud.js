@@ -119,9 +119,8 @@ class CRUD {
         }
         return x;
       });
-      console.log("newRows", newRows);
       sheet.addRows(newRows);
-      return "200";
+      return newRows;
     } catch (error) {
       return error;
     }

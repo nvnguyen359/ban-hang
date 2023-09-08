@@ -10,7 +10,7 @@ declare var removeAccents: any;
 export class AutocompleteComponent {
   filteredOptions?: Observable<any[]>;
   @Input() data: any;
-
+@Input()required:any= false
   @Input() options: any = {
     name: "Name",
     showtext: "Name",

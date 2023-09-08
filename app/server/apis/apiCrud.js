@@ -82,8 +82,7 @@ const post = (element, app, crud) => {
  // console.log(crud.nameSheetTitle)
   app.post(`/${element.value.trim()}`, async (req, res, next) => {
     const row = req.body ? req.body : null;
-    await crud.post(row);
-    res.send("200");
+    res.send(await crud.post(row));
     next();
   });
 };
@@ -92,8 +91,7 @@ const put = (element, app, crud) => {
   app.put(`/${element.value.trim()}`, async (req, res, next) => {
     const row = req.body ? req.body : null;
     //console.log(row)
-    await crud.put(row);
-    res.send("200");
+    res.send(  await crud.put(row));
     next();
   });
 };

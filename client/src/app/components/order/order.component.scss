@@ -1,3 +1,7 @@
+:root {
+    --height: 560px
+}
+
 .btn-left {
     width: 100px;
     margin: 4px;
@@ -13,7 +17,11 @@
 
 .groupkhs {
     justify-content: flex-start;
-    max-width: 650px;
+
+}
+
+.left0 {
+    margin-left: 0;
 }
 
 mat-button-toggle-group {
@@ -36,10 +44,10 @@ mat-button-toggle-group {
 
 .main {
     display: flex;
-    max-height: 800px;
+    max-height: 720px;
     overflow-y: auto;
     flex-direction: row;
-
+    width: 1197px;
 }
 
 th td:not(:nth-child(0)) {
@@ -69,10 +77,11 @@ table {
 }
 
 .main .center {
-    max-height: 640px;
+    max-height: 620px;
     overflow-y: auto;
     display: flex;
     flex-flow: wrap;
+    height: 100%;
     width: 650px;
     justify-content: flex-start;
     align-content: flex-start;
@@ -93,7 +102,7 @@ table {
 }
 
 .btns-left {
-    max-height: 800px;
+    max-height: 740px;
     width: 130px;
     overflow-y: scroll;
     overflow-x: hidden;

@@ -7,7 +7,7 @@ class MainScreen {
   window;
 
   position = {
-    width: 1200,
+    width: 1500,
     height: 800,
     maximized: false,
   };
@@ -16,7 +16,7 @@ class MainScreen {
     this.window = new BrowserWindow({
       width: this.position.width,
       height: this.position.height,
-      title: "?ng d?ng qu?n l? bán hàng",
+      title: "?ng d?ng qu?n l? bï¿½n hï¿½ng",
       show: true,
       removeMenu: true,
       acceptFirstMouse: true,

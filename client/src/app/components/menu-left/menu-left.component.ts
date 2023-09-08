@@ -35,7 +35,7 @@ export class MenuLeftComponent {
     },
     {
       text: "Đơn Hàng",
-      link: "/order",
+      link: "/donhang",
       icon: "shopping_basket",
     },
     {

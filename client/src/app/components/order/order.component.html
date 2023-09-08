@@ -1,5 +1,5 @@
 <div class="main">
-    <mat-card class="btns-left">
+    <mat-card class="btns-left" style="min-width: 120px;">
         <mat-card-content>
             <button mat-stroked-button class="btn-left" color="primary" *ngFor="let item of groups"
                 (click)="onClick(item)">{{item}}</button>
@@ -8,70 +8,141 @@
     <div class="flex" style="width: 100%;flex-direction: column;">
         <mat-card>
             <mat-card-content>
-                <div style="width: 100%;flex-direction: column;" class="flex">
-                    <app-autocomplete [data]="khachhangs" *ngIf="khachhangs.length>0" [options]="optionsKhs"
-                        (selectTed)="onSelectedKh($event)" class="max-width490"></app-autocomplete>
-                    <div class="flex groupkhs">
-                        <mat-form-field appearance="fill" style="min-width: 90px;">
-                            <mat-label>Tiền Công</mat-label>
-                            <input matInput placeholder="Tiền Công" type="number" min="0">
-                            
-                          </mat-form-field>
-                          <mat-form-field appearance="fill" style="min-width: 90px;">
-                            <mat-label>Phí Ship</mat-label>
-                            <input matInput placeholder="Tiền Ship" type="number" min="0">
-                           
-                          </mat-form-field>
-                          <mat-button-toggle-group  aria-label="Favorite Color" value="vnd">
-                            <mat-button-toggle value="vnd">VND</mat-button-toggle>
-                            <mat-button-toggle value="%">%</mat-button-toggle>
-                          </mat-button-toggle-group>
-                          <mat-form-field appearance="fill" style="min-width: 90px;">
-                            <mat-label>Giảm</mat-label>
-                            <input matInput placeholder="Giảm" type="number" min="0">
-                          </mat-form-field>
-                    </div>
-                    <app-autocomplete [data]="products" *ngIf="products.length>0" (selectTed)="onSelected($event)"
-                        (nameText)="onKeyupSanPham($event)" class="max-width490"></app-autocomplete>
-
-                </div>
                 <div class="flex" style="flex-direction: row;">
-                    <div class="center">
-                        <button mat-flat-button class="btn-center" color="primary" (click)="onClickSanPham(item,$event)"
-                            (keypress)="keyPress($event,item)"
-                            *ngFor="let item of filterProducts">{{item['Name']}}</button>
+                    <div class="flex" style="flex-direction: column;">
+                        <div class="full-width">
+                            <app-autocomplete [data]="products" *ngIf="products.length>0"
+                                (selectTed)="onSelected($event)" (nameText)="onKeyupSanPham($event)"
+                                class="max-width490"></app-autocomplete>
+                        </div>
+                        <div class="full-width center">
+                            <button mat-flat-button class="btn-center" color="primary"
+                                (click)="onClickSanPham(item,$event)" (keypress)="keyPress($event,item)"
+                                *ngFor="let item of filterProducts">{{item['Name']}}</button>
+                        </div>
                     </div>
-                    <div class="right">
-                        <table class="table-right">
-                            <thead>
-                                <th>#</th>
-                                <th>Tên Hàng</th>
-                                <th>SL</th>
-                                <th>ĐV</th>
-                                <th>ĐG</th>
-                                <th>T. Tiền</th>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let item of orders;let i= index">
-                                    <td><span>{{i+1}}</span></td>
-                                    <td><span>{{item['Name']}}</span></td>
-                                    <td style="text-align: right;"><span>{{item['count']}}</span></td>
-                                    <td style="text-align: right;"><span>{{item['Đơn Vị Tính']}}</span></td>
-                                    <td style="text-align: right;"><span>{{item['Giá Bán']|number}}</span></td>
-                                    <td style="text-align: right;"><span>{{(item['Giá
-                                            Bán']*item['count'])|number}}</span></td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <td colspan="2">Tổng</td>
-                                <td colspan="1"></td>
-                                <td colspan="2"></td>
-                                <td colspan="1"></td>
+                    <div class="right flex" style="flex-direction: column; margin-left:8px;max-width:400px">
+                        <div>
+                            <app-autocomplete [data]="khachhangs" *ngIf="khachhangs.length>0" [options]="optionsKhs"
+                                class="left0" (selectTed)="onSelectedKh($event)" [required]="true"
+                                class="max-width490"></app-autocomplete>
+                            <div class="flex groupkhs">
+                                <div style="margin-right:4px">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Tiền Công</mat-label>
+                                        <input matInput placeholder="Tiền Công" type="number" min="0" (keyup)="onCal()"
+                                            [(ngModel)]="tiencong">
+                                    </mat-form-field>
+                                </div>
+                                <div style="margin-right:4px">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Phí Ship</mat-label>
+                                        <input matInput placeholder="Tiền Ship" type="number" min="0" (keyup)="onCal()"
+                                            [(ngModel)]="phiship">
+                                    </mat-form-field>
+                                </div>
+                                
+                            </div>
+                            <div class="flex" style="flex-grow:1;margin-right:4px">
+                                <mat-button-toggle-group [(ngModel)]="groupGiamgia" (click)="onCal()">
+                                    <mat-button-toggle value="vnd">VND</mat-button-toggle>
+                                    <mat-button-toggle value="%">%&nbsp;&nbsp;</mat-button-toggle>
+                                </mat-button-toggle-group>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Giảm</mat-label>
+                                    <input matInput placeholder="Giảm" type="number" min="0" [(ngModel)]="giamgia"
+                                        (keyup)="onCal()">
+                                </mat-form-field>
+                            </div>
+                            <div class="flex">
+                                <mat-form-field style="margin-right:4px">
+                                    <mat-label>Choose one</mat-label>
+                                    <mat-select [(value)]="selectDv">
+                                        <mat-option value="1000">x1000đ</mat-option>
+                                        <mat-option value="100">x100đ</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Choose a date</mat-label>
+                                    <input matInput [matDatepicker]="picker" [formControl]="ngay">
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                        </div>
 
-                            </tfoot>
-                        </table>
+                        <div class="show-table" style="flex-grow: 1;">
+                            <table class="table-right" [hidden]="orders?.length<1">
+                                <thead>
+                                    <th>#</th>
+                                    <th>Tên Hàng</th>
+                                    <th>SL</th>
+                                    <th>ĐV</th>
+                                    <th>ĐG</th>
+                                    <th>T. Tiền</th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of orders;let i= index">
+                                        <td><span>{{i+1}}</span></td>
+                                        <td><span>{{item['Name']}}</span></td>
+                                        <td style="text-align: right;"><span>{{item['Số Lượng']}}</span></td>
+                                        <td style="text-align: right;"><span>{{item['Đơn Vị Tính']}}</span></td>
+                                        <td style="text-align: right;"><span>{{item['Giá Bán']|number}}</span></td>
+                                        <td style="text-align: right;"><span>{{(item['Giá
+                                                Bán']*item['Số Lượng'])|number}}</span></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2">Tổng</td>
+                                        <td colspan="1" style="text-align: right;">
+                                            <span>{{sumEnd?.sumCount|number}}</span>
+                                        </td>
+                                        <td colspan="2"></td>
+                                        <td colspan="1" style="text-align: right;">
+                                            <span>{{sumEnd?.tt|number}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="sumEnd?.tiencong">
+                                        <td colspan="5">Tiền Công</td>
+                                        <td colspan="1" style="text-align: right;">
+                                            <span>{{sumEnd?.tiencong|number}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="sumEnd?.phiship">
+                                        <td colspan="5">Phí Ship</td>
+                                        <td colspan="1" style="text-align: right;">
+                                            <span>{{sumEnd?.phiship|number}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="sumEnd?.giamgia">
+                                        <td colspan="5">Giảm Giá</td>
+                                        <td colspan="1" style="text-align: right;">
+                                            <span>{{sumEnd?.giamgia|number}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5">Thanh Toán</td>
+                                        <td colspan="1" style="text-align: right;">
+                                            <span>{{sumEnd?.thanhtoan|number}}</span>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="flex full-width" style="justify-content: flex-end;">
+                            <button mat-flat-button color="primary" type="submit" (click)="onSave()"
+                                [disabled]="!checkDk">Lưu</button>
+                            <button mat-flat-button color="accent" (click)="onSavePrint()" [disabled]="!checkDk">Lưu &
+                                In</button>
+                            <button mat-flat-button color="warn" (click)="onReset()">Reset</button>
+                        </div>
+
                     </div>
+
                 </div>
+
+
             </mat-card-content>
         </mat-card>
     </div>
