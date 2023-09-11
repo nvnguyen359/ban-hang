@@ -10,4 +10,5 @@ export interface ChiTietDonHang{
     'Ngày':Date,
     'Giá Nhập':number,
     'Đơn Hàng':Date,
+    'STT':number
 }

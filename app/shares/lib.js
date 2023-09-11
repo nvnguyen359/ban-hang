@@ -72,7 +72,7 @@ function createFirstId(str) {
   Array.from(str.split(" ")).forEach((x) => {
     s += x[0];
   });
-  return s.toUpperCase();
+  return s.toUpperCase().removeAccents();
 }
 function createFolder(folderName) {
   try {

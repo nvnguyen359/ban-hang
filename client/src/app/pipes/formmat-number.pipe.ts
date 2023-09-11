@@ -1,13 +1,15 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
-  name: 'formmatNumberX'
+  name: "formmatNumberX",
 })
 export class FormmatNumberPipeX implements PipeTransform {
   transform(value: any): unknown {
-    const result= Number.isInteger(value)?String(value).replace(/(.)(?=(\d{3})+$)/g,'$1,'): value;
-    console.log(result)
-    return result
+    //console.log(value,Number.isInteger(value))
+    const result = Number.isInteger(value)
+      ? String(value).replace(/(.)(?=(\d{3})+$)/g, "$1,")
+      : value;
+     
+    return result;
   }
-
 }

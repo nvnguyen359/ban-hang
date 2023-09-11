@@ -1,6 +1,11 @@
 
 
-<app-bangmorong [data]="donhangs" *ngIf="donhangs" [hideColumns]="hideColumns"></app-bangmorong>
+<app-bangmorong [data]="donhangs" *ngIf="donhangs"
+ [hideColumns]="hideColumns"
+ [options]="options" 
+(eventClickButton)="eventClickButton($event)"
+(onPrint)="onPrint($event)"
+(eventDeleteOrUpdate)="eventDeleteOrUpdate($event)"></app-bangmorong>
 <div class="bt-sti">
     <button mat-fab (click)="onDialog()">
         <mat-icon mat-icon-button>edit</mat-icon>

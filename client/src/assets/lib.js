@@ -15,6 +15,7 @@ function createDiv(classList = ["form-floating"]) {
   });
   return div;
 }
+
 /**
  *
  * @param {*} id // id input

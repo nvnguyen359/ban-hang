@@ -2,13 +2,15 @@
     <table mat-table *ngIf="dataSource" [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" matSort >
         <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column}} </th>
-
-            <td mat-cell *matCellDef="let element"mat-sort-heade [ngClass]="{'text-align': IsNumber(element[column])}"> {{element[column]|formmatNumberX }} </td>
+            <td mat-cell *matCellDef="let element"mat-sort-heade  [ngClass]="IsNumber(element[column])" matRipple> 
+                <div *ngIf="options.a===column" >  <a     (click)="onClickButton(element,$event)" class="tag-a"   style="text-align: left;">{{element[column]}}</a></div> 
+                <div *ngIf="options.a!==column"   [innerHTML]="element[column]|formmatNumberX "> </div> 
+            </td>
         </ng-container>
         <ng-container matColumnDef="expand">
             <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button aria-label="expand row"
+                <button mat-icon-button aria-label="expand row" *ngIf="element['chitiets'].length>0"
                     (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
                     <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
                     <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
@@ -21,7 +23,7 @@
             <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
                 <div *ngIf="element.chitiets.length>0" class="example-element-detail"
                     [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                    <div class="example-element-diagram" style="height: auto;">
+                    <div class="example-element-diagram" style="height: auto;width:100%">
                         <div class="flex" style="flex-direction: column; justify-content: flex-end">
                             <table class="table-ngay ">
                                 <thead>
@@ -30,15 +32,15 @@
                                 </thead>
                                 <tbody>
                                     <tr *ngFor="let item of element.chitiets">
-                                        <td *ngFor="let th of columnsChild">{{item[th]}}</td>
+                                        <td *ngFor="let th of columnsChild" [ngClass]="IsNumber(item[th])" ><div [innerHTML]="item[th]|formmatNumberX"></div></td>
                                     </tr>
                                 </tbody>
                             </table>
                             <div class="flex" style="justify-content: flex-end;
                             margin-top: 8px;">
-                                <button mat-flat-button color="primary">Primary</button>
-                                <button mat-flat-button color="accent">Accent</button>
-                                <button mat-flat-button color="warn">Warn</button>
+                                <button mat-flat-button mat-dialog-close color="primary" (click)="OnEvent(element,'capnhat')"><span>Cập Nhật</span>&nbsp;<mat-icon>update</mat-icon></button>
+                                <button mat-flat-button mat-dialog-close color="warn" (click)="OnPrint(element,$event)"><span>In</span>&nbsp;<mat-icon>local_printshop</mat-icon></button>
+                                <button mat-flat-button  color="accent" (click)="OnEvent(element,'xoa')"><span>Xóa</span>&nbsp;<mat-icon>delete_outline</mat-icon></button>
                             </div>
                         </div>
                     </div>

@@ -23,8 +23,7 @@ let curWindow;
 
 function createWindow() {
   curWindow = new MainScreen();
-  //process.noAsar = true;
-  //localStorage.setItem('userData',app.getPath('userData'))
+  eventsAutoUpdate(app);
 }
 app.serve = require(pathServer);
 app.whenReady().then(async () => {
@@ -45,4 +44,3 @@ process.on("uncaughtException", function (err) {
 app.on("window-all-closed", function () {
   if (process.platform != "darwin") app.quit();
 });
-eventsAutoUpdate(app);

@@ -78,9 +78,11 @@ body {
     height: 100%;
     position: fixed;
     z-index: 100000000;
-    background: #4646471c;
+    background: #2c2c2c1f;
     align-items: center;
     justify-content: center;
+    top:0;
+    left: 0;
 }
 
 .spin-1.hide {
@@ -111,4 +113,14 @@ body {
 }
 .text-left{
     text-align: left;
+}
+a{
+   color: var(--mdc-filled-text-field-caret-color);
+   text-transform: capitalize;
+}
+.hide{
+    display: none;
+}
+.show{
+    display: block;
 }

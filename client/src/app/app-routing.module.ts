@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'bangmorong', loadChildren: () => import('./components/bangmorong/bangmorong.module').then(m => m.BangmorongModule) }];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes,{ useHash: true })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

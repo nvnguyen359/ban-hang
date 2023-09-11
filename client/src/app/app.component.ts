@@ -11,16 +11,17 @@ import {
   Router,
 } from "@angular/router";
 import { Observable, filter } from "rxjs";
-import { IsLoadingService } from "@service-work/is-loading";
+
 import { MatDialog } from "@angular/material/dialog";
 import { OrderComponent } from "./components/order/order.component";
+import { IsLoadingServiceX } from "./services/is-loading.service";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  isLoading!: Observable<boolean>;
+
   title = "client";
   showFiller = false;
   typesOfShoes: string[] = [
@@ -38,7 +39,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private readonly apiService: ApiService,
     private socket: SocketService,
     private router: Router,
-    private isLoadingService: IsLoadingService,
+    private isLoading:IsLoadingServiceX,
     private readonly dialog: MatDialog
   ) {
     this.getVersion();
@@ -60,7 +61,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
   loading() {
-    this.isLoading = this.isLoadingService.isLoading$();
+
     this.router.events
       .pipe(
         filter(
@@ -75,10 +76,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         // if it's the start of navigation, `add()` a loading indicator
         if (event instanceof NavigationStart) {
           console.log("loading");
-          this.isLoadingService.add();
+      this.isLoading.add();
           return;
         }
-        this.isLoadingService.remove();
+      this.isLoading.remove();
         // else navigation has ended, so `remove()` a loading indicator
         console.log("loaded");
       });

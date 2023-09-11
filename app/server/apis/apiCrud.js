@@ -70,7 +70,7 @@ const getId = (element, app, crud) => {
       res.send(await crud.filters(text));
       next();
     } else {
-      const id = urlOriginal.split("/")[urlOriginal.length - 1];
+      const id = req.params.id;
       res.send(await crud.getId(id));
       next();
     }

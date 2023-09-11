@@ -11,12 +11,14 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSort, MatSortModule } from "@angular/material/sort";
 import { FormmatNumberPipeX } from "src/app/pipes/formmat-number.pipe";
+import { NoSanitizePipe } from "src/app/pipes/no-sanitize.pipe";
+import { MatRippleModule } from "@angular/material/core";
 
 
 
 
 @NgModule({
-  declarations: [BangmorongComponent,FormmatNumberPipeX],
+  declarations: [BangmorongComponent,FormmatNumberPipeX,NoSanitizePipe],
   imports: [
     CommonModule,
     BangmorongRoutingModule,
@@ -29,6 +31,7 @@ import { FormmatNumberPipeX } from "src/app/pipes/formmat-number.pipe";
     MatFormFieldModule,
     MatInputModule,
     MatSortModule,
+    MatRippleModule
   ],
 
   exports: [BangmorongComponent],

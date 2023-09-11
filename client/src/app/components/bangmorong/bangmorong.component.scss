@@ -68,6 +68,7 @@ tr.example-element-row:not(.example-expanded-row):active {
   border-collapse: collapse;
   width: 100%;
 }
+
 mat-table,
 mat-table td,
 mat-table th {
@@ -80,7 +81,24 @@ mat-table {
   border-collapse: collapse;
   width: 100%;
 }
+
 .example-container {
   height: 400px;
   overflow: auto;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.tag-a {
+  text-align: left;
+  fill: currentColor;
+  text-transform: capitalize;
+  display: block;
+  padding: 4px;
 }

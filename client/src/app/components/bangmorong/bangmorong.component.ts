@@ -1,4 +1,10 @@
-import { Component, Input, ViewChild } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from "@angular/core";
 import {
   animate,
   state,
@@ -41,33 +47,55 @@ export class BangmorongComponent {
 
   @Input() data: any;
   @Input() columnsToDisplay: any;
-  @Input() hideColumns?:string;
+  @Input() hideColumns?: string;
+  @Input() options?: any;
+  @Output() eventClickButton = new EventEmitter();
+  @Output() onPrint = new EventEmitter();
+  @Output() eventDeleteOrUpdate = new EventEmitter();
   columnsToDisplayWithExpand: any;
   expandedElement?: any | null;
-  columnsChild?:any;
-  dataSource?:any;
+  columnsChild?: any;
+  dataSource?: any;
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   constructor() {}
   ngOnInit() {
-    this.dataSource =!this.data? new MatTableDataSource(ELEMENT_DATA):new MatTableDataSource(this.data);
-    this.columnsToDisplay = Object.keys(this.data[0]).filter(x=>x!='chitiets' &&!this.hideColumns?.includes(x));
+    this.dataSource = !this.data
+      ? new MatTableDataSource(ELEMENT_DATA)
+      : new MatTableDataSource(Array.from(this.data).reverse());
+    this.columnsToDisplay = Object.keys(this.data[0]).filter(
+      (x) =>
+        x != "chitiets" && !this.hideColumns?.replace("Id,", "")?.includes(x)
+    );
     this.columnsToDisplayWithExpand = [...this.columnsToDisplay, "expand"];
 
-    if(this.data){
-      this.columnsChild = Object.keys(this.data[0].chitiets[0]).filter(x=> !this.hideColumns?.includes(x));
-     
+    if (this.data) {
+      this.columnsChild = Object.keys(this.data[0].chitiets[0]).filter(
+        (x) => !this.hideColumns?.includes(x)
+      );
     }
     this.dataSource.paginator = this.paginator;
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
-  IsNumber(value:any):boolean{
-   try {
-    return Number.isInteger(parseInt(value))==true
-   } catch (error) {
-     return false
-   }
+  IsNumber(value: any): string {
+    value = `${value}`.replaceAll(".", "");
+    try {
+      return Number.isInteger(parseInt(value)) ? "text-right" : "text-left;";
+    } catch (error) {
+      return "";
+    }
+  }
+  onClickButton(item: any, event: Event) {
+    this.eventClickButton.emit(item);
+    event.stopPropagation();
+  }
+  OnPrint(el: any, event: Event) {
+    this.onPrint.emit(el);
+    event.stopPropagation();
+  }
+  OnEvent(item:any,ev:any){
+this.eventDeleteOrUpdate.emit({donhang:item,onUpdate:ev})
   }
 }
 

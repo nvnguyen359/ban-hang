@@ -1,10 +1,12 @@
 import { Component } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { Observable } from "rxjs";
-import { DonHang } from "src/app/Models/conHang";
+import { DonHang } from "src/app/Models/donHang";
 import { KhachHang } from "src/app/Models/khachHangs";
 import { SanPham } from "src/app/Models/sanPham";
 import { ApiService } from "src/app/services/api.service";
+import { IsLoadingServiceX } from "src/app/services/is-loading.service";
+import { ThermalPrinterServiceService } from "src/app/services/thermal-printer-service.service";
 declare var capitalizeFirstLetter: any;
 declare var removeAccents: any;
 @Component({
@@ -35,7 +37,12 @@ export class OrderComponent {
     label: "Khách Hàng",
     placeholder: "Tên Khách Hàng",
   };
-  constructor(private service: ApiService) {}
+  donhang?: DonHang;
+  constructor(
+    private service: ApiService,
+    private isLoading: IsLoadingServiceX,
+    private printer: ThermalPrinterServiceService
+  ) {}
   jsRun() {
     var btns = document.querySelectorAll(".btns-left  .btn-left");
     btns.forEach((btn, index) => {
@@ -54,9 +61,11 @@ export class OrderComponent {
     });
   }
   ngOnInit() {
+    this.isLoading.add();
     this.getProducts();
     this.getKhachHang();
     this.selectDv = 1000;
+    this.isLoading.remove();
   }
   onSelected(value: any) {
     console.log(value);
@@ -176,7 +185,7 @@ export class OrderComponent {
     this.onSave();
   }
   async onSave() {
-    const donhang: DonHang = {
+    let donhang: DonHang = {
       Id: "",
       "Khách Hàng": this.khach?.Id,
       "Tên Khách Hàng": this.khach?.["Tên Khách Hàng"],
@@ -185,22 +194,27 @@ export class OrderComponent {
       "Giảm Giá": this.sumEnd.giamgia,
       "Thanh Toán": this.sumEnd.thanhtoan,
       "Thành Tiền": this.sumEnd.tt,
+      "Số Lượng": this.sumEnd.sumCount,
       "Ngày Bán": this.ngay.value?.toLocaleDateString(),
     } as DonHang;
 
     const result = await this.service.post("donhang", donhang);
-    console.log(result);
 
     const chitiet = Array.from(this.orders).map((x: any) => {
       x["Đơn Hàng"] = (result as DonHang[])[0].Id;
+      x["Thành Tiền"] = parseInt(x["Số Lượng"]) * parseInt(x["Đơn giá"]);
+      x["Ngày"] = this.ngay.value?.toLocaleDateString("vi");
       return x;
     });
+    donhang.chitiets = chitiet;
     const resultChitiet = await this.service.post("chitietdonhang", chitiet);
-    console.log(result, resultChitiet);
+    this.donhang = donhang;
+    return this.donhang;
   }
- async onSavePrint() {
-  await this.onSave()
- }
+  async onSavePrint() {
+    await this.onSave();
+   await this.printer.print(this.donhang)
+  }
   onReset() {
     this.orders = new Array();
     this.onCal();

@@ -26,7 +26,15 @@ export class ApiService {
       });
     });
   }
-
+  async getId(url: string, id = "") {
+    const pathUrl = `${this.baseServer}/${url}/${id}`;
+    console.log(pathUrl)
+    return new Promise((res, rej) => {
+      this.http.get(pathUrl, this.httpOptions).subscribe((data) => {
+        return res(data);
+      });
+    });
+  }
   async put(url: string, data: any) {
     const pathUrl = `${this.baseServer}/${url}`;
     console.log(data);
@@ -41,7 +49,7 @@ export class ApiService {
   async post(url: string, data: any) {
     let req = !Array.isArray(data) ? [data] : data;
 
-    req = Array.from(data).map((x:any) => {
+    req = Array.from(data).map((x: any) => {
       x["Id"] = "";
       return x;
     });

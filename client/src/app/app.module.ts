@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 
+
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { IpcService } from "src/ipc.service";
@@ -10,7 +11,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatSidenavModule } from "@angular/material/sidenav";
-import { NgIf, NgFor } from "@angular/common";
+import { NgIf, NgFor, HashLocationStrategy, LocationStrategy } from "@angular/common";
 import { CdkMenu, CdkMenuItem } from "@angular/cdk/menu";
 import { MatListModule } from "@angular/material/list";
 import { MenuLeftComponent } from "./components/menu-left/menu-left.component";
@@ -37,10 +38,13 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { MatSelectModule } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
+import { PrintOrderComponent } from './components/print-order/print-order.component';
+import { DialogAlertComponent } from './components/dialog-alert/dialog-alert.component';
+
 
 const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };
 @NgModule({
-  declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent, DialogCustomerComponent, DialogConfirmComponent, OnNhapHangComponent, ProductComponent, OrderComponent, AutocompleteComponent, ShowTextPipe],
+  declarations: [AppComponent, MenuLeftComponent, MenuLeftComponent, DialogCustomerComponent, DialogConfirmComponent, OnNhapHangComponent, ProductComponent, OrderComponent, AutocompleteComponent, ShowTextPipe, PrintOrderComponent, DialogAlertComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

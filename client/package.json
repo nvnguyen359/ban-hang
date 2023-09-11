@@ -21,7 +21,6 @@
     "@angular/platform-browser": "^16.1.0",
     "@angular/platform-browser-dynamic": "^16.1.0",
     "@angular/router": "^16.1.0",
-    "@service-work/is-loading": "^6.2.3",
     "@types/electron": "^1.6.10",
     "dom-to-image": "^2.6.0",
     "html-to-pdfmake": "^2.4.25",
