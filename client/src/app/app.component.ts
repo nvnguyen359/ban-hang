@@ -4,6 +4,7 @@ import { ApiService } from "./services/api.service";
 import { PrinterModel } from "./Models/printer";
 import { SocketService } from "./services/socket.service";
 import {
+  ActivatedRoute,
   NavigationCancel,
   NavigationEnd,
   NavigationError,
@@ -21,9 +22,10 @@ import { IsLoadingServiceX } from "./services/is-loading.service";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit, AfterViewInit {
-
+  baseServer = "http://localhost:3177"
   title = "client";
   showFiller = false;
+  showBtDonHang = false;
   typesOfShoes: string[] = [
     "Boots",
     "Clogs",
@@ -35,12 +37,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   pageSizes: string[] = ["A4", "A5", "A6", "A7"];
   ver: string = JSON.stringify(localStorage.getItem("ver"));
   loadingService: any;
+  url: any;
   constructor(
     private readonly apiService: ApiService,
     private socket: SocketService,
     private router: Router,
-    private isLoading:IsLoadingServiceX,
-    private readonly dialog: MatDialog
+    private isLoading: IsLoadingServiceX,
+    private readonly dialog: MatDialog,
+    private route: ActivatedRoute
   ) {
     this.getVersion();
     setTimeout(() => {
@@ -61,6 +65,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
   loading() {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        if (
+          event.url == "/" ||
+          event.url == "/donhang"
+        ) {
+          this.showBtDonHang = true;
+        }else{
+          this.showBtDonHang = false
+        }
+       this.url = event.url;
+      });
 
     this.router.events
       .pipe(
@@ -76,20 +93,28 @@ export class AppComponent implements OnInit, AfterViewInit {
         // if it's the start of navigation, `add()` a loading indicator
         if (event instanceof NavigationStart) {
           console.log("loading");
-      this.isLoading.add();
+          this.isLoading.add();
+          if (event as NavigationStart){
+            this.showBtDonHang = false
+          }
+           
           return;
         }
-      this.isLoading.remove();
+        this.isLoading.remove();
         // else navigation has ended, so `remove()` a loading indicator
         console.log("loaded");
       });
   }
-  onOpenDialog(){
-    this.dialog.open(OrderComponent)
+  onOpenDialog() {
+    const dia = this.dialog.open(OrderComponent);
+    dia.afterClosed().subscribe((x: any) => {
+      // window.location.href = JSON.stringify(localStorage.getItem('url')).replaceAll('"','');
+      window.location.href = this.baseServer+this.url;
+    });
   }
   ngOnInit() {
     this.loading();
-   // this.onOpenDialog();
+    // this.onOpenDialog();
   }
 
   ngAfterViewInit() {}

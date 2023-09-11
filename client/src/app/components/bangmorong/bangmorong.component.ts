@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -14,6 +15,7 @@ import {
 } from "@angular/animations";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
+import { DataService } from "src/app/services/data.service";
 
 @Component({
   selector: "app-bangmorong",
@@ -57,8 +59,16 @@ export class BangmorongComponent {
   columnsChild?: any;
   dataSource?: any;
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
-  constructor() {}
-  ngOnInit() {
+  constructor(private dataService:DataService,private changeDetectorRefs: ChangeDetectorRef) {}
+   ngOnInit() {
+    this.onLoadData();
+     this.dataService.currentMessage.subscribe((result:any)=>{
+      if(result==true){
+        this.onLoadData();
+      }
+     })
+  }
+  onLoadData() {
     this.dataSource = !this.data
       ? new MatTableDataSource(ELEMENT_DATA)
       : new MatTableDataSource(Array.from(this.data).reverse());
@@ -74,6 +84,7 @@ export class BangmorongComponent {
       );
     }
     this.dataSource.paginator = this.paginator;
+    this.changeDetectorRefs.detectChanges();
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -94,8 +105,8 @@ export class BangmorongComponent {
     this.onPrint.emit(el);
     event.stopPropagation();
   }
-  OnEvent(item:any,ev:any){
-this.eventDeleteOrUpdate.emit({donhang:item,onUpdate:ev})
+  OnEvent(item: any, ev: any) {
+    this.eventDeleteOrUpdate.emit({ donhang: item, onUpdate: ev });
   }
 }
 

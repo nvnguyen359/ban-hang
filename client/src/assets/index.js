@@ -1,5 +1,9 @@
 setTimeout(() => {
   jsRun();
+  window.addEventListener( 'hashchange', event => {
+    console.log( `should render page: ${ window.location.hash }` )
+   
+  });
 }, 500);
 function jsRun() {
   var btns = document.querySelectorAll(".btns-left  .btn-left");
@@ -13,6 +17,7 @@ function jsRun() {
         btns.forEach((btn) => {
           btn.classList.remove("active");
         });
+        localStorage.setItem('url',btn.getAttribute('data-id'))
         btn.classList.add("active");
       });
     }

@@ -1,3 +1,4 @@
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -11,7 +12,8 @@ const routes: Routes = [
   { path: 'bangmorong', loadChildren: () => import('./components/bangmorong/bangmorong.module').then(m => m.BangmorongModule) }];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes,{ useHash: true })],
+  imports: [RouterModule.forRoot(routes,{ useHash: false })],
+  providers: [],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

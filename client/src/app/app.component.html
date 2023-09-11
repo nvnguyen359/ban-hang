@@ -24,7 +24,7 @@
   </mat-drawer-content>
 </mat-drawer-container>
 
-<div class="bt-sti">
+<div class="bt-sti1" [ngClass]="showBtDonHang?'show':'hide'">
   <button mat-fab (click)="onOpenDialog()">
       <mat-icon mat-icon-button>edit</mat-icon>
   </button>

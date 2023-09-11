@@ -1,3 +1,4 @@
+
 interface String {
   add(...strings: string[]): string;
   removeAccents(): string;

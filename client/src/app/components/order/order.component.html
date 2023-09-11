@@ -131,11 +131,11 @@
                             </table>
                         </div>
                         <div class="flex full-width" style="justify-content: flex-end;">
-                            <button mat-flat-button color="primary" type="submit" (click)="onSave()"
+                            <button mat-flat-button color="primary" mat-dialog-close="true" type="submit" (click)="onSave()"
                                 [disabled]="!checkDk">Lưu</button>
-                            <button mat-flat-button color="accent" (click)="onSavePrint()" [disabled]="!checkDk">Lưu &
+                            <button mat-flat-button color="accent" mat-dialog-close="true" (click)="onSavePrint()" [disabled]="!checkDk">Lưu &
                                 In</button>
-                            <button mat-flat-button color="warn" (click)="onReset()">Reset</button>
+                            <button mat-flat-button color="warn" mat-dialog-close (click)="onReset()">Reset</button>
                         </div>
 
                     </div>
