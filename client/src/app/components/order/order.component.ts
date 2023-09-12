@@ -40,13 +40,16 @@ export class OrderComponent {
     placeholder: "Tên Khách Hàng",
   };
   donhang?: DonHang;
-
+  flag = false;
+  codeSp: any;
   constructor(
     private service: ApiService,
     private isLoading: IsLoadingServiceX,
     private printer: ThermalPrinterServiceService,
     private dataService: DataService
-  ) {}
+  ) {
+    localStorage.setItem("sp", "");
+  }
   jsRun() {
     var btns = document.querySelectorAll(".btns-left  .btn-left");
     btns.forEach((btn, index) => {
@@ -173,13 +176,24 @@ export class OrderComponent {
       thanhtoan: parseInt(tt.toString()) + tiencong + phiship - giamgia,
     };
   }
+
   keyPress(event: KeyboardEvent, item: SanPham) {
     this.obj = item;
     const pattern = /[0-9]/;
-    const inputChar = String.fromCharCode(event.charCode);
-
     if (!this.obj) return;
-    this.obj["Số Lượng"] = parseInt(`${this.obj["Số Lượng"]}${inputChar}`);
+    const sp = localStorage.getItem("sp");
+    console.log("sp", sp, item["Id"]);
+    const inputChar = event.key;
+    console.log("inputChar ", inputChar);
+    if (sp == item["Id"]) {
+      this.codeSp += inputChar;
+  
+      this.obj["Số Lượng"] = parseInt(this.codeSp);
+    } else {
+      localStorage.setItem("sp", `${item["Id"]}`);
+      this.codeSp = inputChar;
+    }
+    this.onCal();
     if (!pattern.test(inputChar)) {
       // invalid character, prevent input
       event.preventDefault();
@@ -216,13 +230,12 @@ export class OrderComponent {
     result[0].chitiets = resultChitiet;
     donhang["chitiets"] = chitiet;
     this.donhang = donhang;
-    this.dataService.sendMessage({ newAdd: Status.Add,donhang: result[0] });
+    this.dataService.sendMessage({ newAdd: Status.Add, donhang: result[0] });
     return result[0];
   }
   async onSavePrint() {
-   await this.onSave();
+    await this.onSave();
     await this.printer.print(this.donhang);
-    
   }
   onReset() {
     this.orders = new Array();

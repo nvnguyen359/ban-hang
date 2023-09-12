@@ -134,7 +134,7 @@ export class BangmorongComponent {
     event.stopPropagation();
   }
   OnEvent(item: any, ev: any) {
-    this.refesh(item,ev)
+  //  this.refesh(item,ev)
     this.eventDeleteOrUpdate.emit({ donhang: item, onUpdate: ev });
 
   }

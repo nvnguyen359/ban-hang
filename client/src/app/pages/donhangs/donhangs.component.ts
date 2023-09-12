@@ -91,19 +91,21 @@ export class DonhangsComponent {
       });
       dialogDf.afterClosed().subscribe(async (result: any) => {
         if (result == true) {
+          this.isLoading.add();
           let dataIds: any[] = [];
           const ids = item.donhang["chitiets"].map(
             (x: ChiTietDonHang) => x["Id"]
           );
           for (let index = 0; index < ids.length; index++) {
             const id = `${ids[index]}`.trim();
-            await delay(2000) ;
-            console.log("delay ", id);
+            await delay(1000) ;
+        
              this.service.destroy("chitietdonhang", id);
             dataIds.push(id);
           }
-          console.log("dataIds", dataIds);
           await this.service.destroy("donhang", item.donhang["Id"]);
+        //  this.dataService.sendMessage(Status.LoadOrder)
+          this.isLoading.remove();
         }
       });
     }
