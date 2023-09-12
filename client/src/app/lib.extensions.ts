@@ -1,4 +1,3 @@
-
 interface String {
   add(...strings: string[]): string;
   removeAccents(): string;
@@ -16,9 +15,9 @@ String.prototype.DateFormatDDMMYYY = function () {
         ? `0${timestamp.getDate()}`
         : timestamp.getDate();
     const m =
-      timestamp.getMonth()+1 < 10
-        ? `0${timestamp.getMonth()+1}`
-        : (timestamp.getMonth()+1);
+      timestamp.getMonth() + 1 < 10
+        ? `0${timestamp.getMonth() + 1}`
+        : timestamp.getMonth() + 1;
     return day + "/" + m + "/" + timestamp.getFullYear();
   } else {
     return this.toString();
@@ -48,3 +47,4 @@ String.prototype.convertDateVNToISO = function () {
     return t.length == 3 ? date : new Date(this.toString());
   }
 };
+

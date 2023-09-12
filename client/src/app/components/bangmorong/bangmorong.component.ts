@@ -63,10 +63,38 @@ export class BangmorongComponent {
    ngOnInit() {
     this.onLoadData();
      this.dataService.currentMessage.subscribe((result:any)=>{
+      console.log('nhan tin ',result)
       if(result==true){
-        this.onLoadData();
+      //  this. refeshTable();
       }
      })
+  }
+  refesh(item:any,status:string){
+    switch (status) {
+      case 'capnhat':{
+        this.dataSource.data = Array.from( this.dataSource.data).map((x:any)=>{
+          return x['Id']==item['Id']?item:x;
+        })
+      }
+        break;
+    
+        case 'xoa':{
+          this.dataSource.data = Array.from( this.dataSource.data).filter((x:any)=>x['Id']!=item['Id'])
+        }
+        break;
+    }
+    this.changeDetectorRefs.detectChanges();
+  }
+  refeshTable() {
+    console.log('data',Array.from(this.data).length)
+    this.dataSource.data = Array.from(this.data).reverse();
+    if (this.data) {
+      this.columnsChild = Object.keys(this.data[0].chitiets[0]).filter(
+        (x) => !this.hideColumns?.includes(x)
+      );
+    }
+    this.dataSource.paginator = this.paginator;
+    this.changeDetectorRefs.detectChanges();
   }
   onLoadData() {
     this.dataSource = !this.data
@@ -106,7 +134,9 @@ export class BangmorongComponent {
     event.stopPropagation();
   }
   OnEvent(item: any, ev: any) {
+    this.refesh(item,ev)
     this.eventDeleteOrUpdate.emit({ donhang: item, onUpdate: ev });
+
   }
 }
 

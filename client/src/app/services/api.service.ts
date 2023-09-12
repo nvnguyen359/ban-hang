@@ -28,7 +28,7 @@ export class ApiService {
   }
   async getId(url: string, id = "") {
     const pathUrl = `${this.baseServer}/${url}/${id}`;
-    console.log(pathUrl)
+    console.log(pathUrl);
     return new Promise((res, rej) => {
       this.http.get(pathUrl, this.httpOptions).subscribe((data) => {
         return res(data);
@@ -64,6 +64,20 @@ export class ApiService {
   }
   async destroy(url: string, id: any) {
     const pathUrl = `${this.baseServer}/${url}/${id}`;
+    console.log(pathUrl);
+    return new Promise((res, rej) => {
+      this.http.delete(pathUrl, this.httpOptions).subscribe(
+        (e) => {
+          res(e);
+        },
+        (err: Error) => {
+          res(err.message);
+        }
+      );
+    });
+  }
+  async bulkDelete(url: string, ids: any) {
+    const pathUrl = `${this.baseServer}/${url}?ids=${ids}`;
     console.log(pathUrl);
     return new Promise((res, rej) => {
       this.http.delete(pathUrl, this.httpOptions).subscribe((e) => {

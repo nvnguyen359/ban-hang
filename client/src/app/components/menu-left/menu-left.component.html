@@ -1,5 +1,5 @@
 <div class="menu" cdkMenu>
-  <a *ngFor="let item of links" routerLink="{{item.link}}" data-id="{{item.link}}" class="menu-item" cdkMenuItem>
+  <a *ngFor="let item of links; let i= index" routerLink="{{item.link}}" data-id="{{item.link}}" [ngClass]="i==0?'active':''" class="menu-item" cdkMenuItem>
     <mat-icon>{{item.icon}}</mat-icon>&nbsp;<span>{{item.text}}</span></a>
 </div>
 <div class="docs-component-category-list-card">

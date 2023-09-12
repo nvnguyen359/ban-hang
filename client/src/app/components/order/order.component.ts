@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { Observable } from "rxjs";
 import { DonHang } from "src/app/Models/donHang";
@@ -9,6 +9,8 @@ import { IsLoadingServiceX } from "src/app/services/is-loading.service";
 import { ThermalPrinterServiceService } from "src/app/services/thermal-printer-service.service";
 declare var capitalizeFirstLetter: any;
 declare var removeAccents: any;
+import { Status } from "./../../general";
+import { DataService } from "src/app/services/data.service";
 @Component({
   selector: "app-order",
   templateUrl: "./order.component.html",
@@ -38,10 +40,12 @@ export class OrderComponent {
     placeholder: "Tên Khách Hàng",
   };
   donhang?: DonHang;
+
   constructor(
     private service: ApiService,
     private isLoading: IsLoadingServiceX,
-    private printer: ThermalPrinterServiceService
+    private printer: ThermalPrinterServiceService,
+    private dataService: DataService
   ) {}
   jsRun() {
     var btns = document.querySelectorAll(".btns-left  .btn-left");
@@ -198,22 +202,27 @@ export class OrderComponent {
       "Ngày Bán": this.ngay.value?.toLocaleDateString(),
     } as DonHang;
 
-    const result = await this.service.post("donhang", donhang);
+    const result = (await this.service.post("donhang", donhang)) as DonHang[];
 
-    const chitiet = Array.from(this.orders).map((x: any) => {
+    let chitiet = Array.from(this.orders).map((x: any) => {
       x["Đơn Hàng"] = (result as DonHang[])[0].Id;
       x["Thành Tiền"] = parseInt(x["Số Lượng"]) * parseInt(x["Đơn giá"]);
       x["Ngày"] = this.ngay.value?.toLocaleDateString("vi");
       return x;
     });
-    donhang.chitiets = chitiet;
+
     const resultChitiet = await this.service.post("chitietdonhang", chitiet);
+
+    result[0].chitiets = resultChitiet;
+    donhang["chitiets"] = chitiet;
     this.donhang = donhang;
-    return this.donhang;
+    this.dataService.sendMessage({ newAdd: Status.Add,donhang: result[0] });
+    return result[0];
   }
   async onSavePrint() {
-    await this.onSave();
-   await this.printer.print(this.donhang)
+   await this.onSave();
+    await this.printer.print(this.donhang);
+    
   }
   onReset() {
     this.orders = new Array();

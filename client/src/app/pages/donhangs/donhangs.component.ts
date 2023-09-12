@@ -3,14 +3,18 @@ import { MatDialog } from "@angular/material/dialog";
 import { DonHang } from "src/app/Models/donHang";
 import { OrderComponent } from "src/app/components/order/order.component";
 import { ApiService } from "src/app/services/api.service";
-import "../../lib.extensions";
+
 import { IsLoadingServiceX } from "src/app/services/is-loading.service";
 import { PrintOrderComponent } from "src/app/components/print-order/print-order.component";
 import { ThermalPrinterServiceService } from "src/app/services/thermal-printer-service.service";
 import { DialogAlertComponent } from "src/app/components/dialog-alert/dialog-alert.component";
-import { async } from "@angular/core/testing";
+
 import { DataService } from "src/app/services/data.service";
 import { Route, Router } from "@angular/router";
+import { Status, delay } from "./../../general";
+import "../../lib.extensions";
+
+import { ChiTietDonHang } from "src/app/Models/chiTietDonHang";
 @Component({
   selector: "app-donhangs",
   templateUrl: "./donhangs.component.html",
@@ -32,16 +36,24 @@ export class DonhangsComponent {
     private printer: ThermalPrinterServiceService,
     private changeDetectorRefs: ChangeDetectorRef,
     private dataService: DataService,
-    private route:Router
+    private route: Router
   ) {}
   async ngOnInit() {
     await this.onGetAll();
-    localStorage.setItem('url',this.route.url.replace('/','').trim())
+    this.dataService.currentMessage.subscribe((data: any) => {
+      if (data == Status.Refesh) {
+        setTimeout(async () => {
+          await this.onGetAll();
+          this.dataService.sendMessage(true);
+        }, 800);
+      }
+    });
   }
   ngAfterContentInit() {}
   onDialog() {
     this.dialog.open(OrderComponent);
   }
+
   async onGetAll() {
     this.isLoading.add();
     //this.isLoadingService.add({key: ['default', 'single']});
@@ -68,23 +80,30 @@ export class DonhangsComponent {
 
   onPrint(item: any) {
     const A5 = "148mm"; //80mm
-    console.log(localStorage.getItem("printer"));
     this.printer.PaperWidth = A5;
     this.printer.print(item);
   }
   eventDeleteOrUpdate(item: any) {
+    console.log(item);
     if (item.onUpdate == "xoa") {
       const dialogDf = this.dialog.open(DialogAlertComponent, {
         width: "250px",
       });
-      dialogDf.afterClosed().subscribe((result: any) => {
+      dialogDf.afterClosed().subscribe(async (result: any) => {
         if (result == true) {
-          this.service
-            .destroy("donhang", item.donhang["Id"])
-            .then((data: any) => {
-              console.log('gui tin nhan')
-              this.dataService.sendMessage(true);
-            });
+          let dataIds: any[] = [];
+          const ids = item.donhang["chitiets"].map(
+            (x: ChiTietDonHang) => x["Id"]
+          );
+          for (let index = 0; index < ids.length; index++) {
+            const id = `${ids[index]}`.trim();
+            await delay(2000) ;
+            console.log("delay ", id);
+             this.service.destroy("chitietdonhang", id);
+            dataIds.push(id);
+          }
+          console.log("dataIds", dataIds);
+          await this.service.destroy("donhang", item.donhang["Id"]);
         }
       });
     }

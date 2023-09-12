@@ -109,6 +109,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     const dia = this.dialog.open(OrderComponent);
     dia.afterClosed().subscribe((x: any) => {
       // window.location.href = JSON.stringify(localStorage.getItem('url')).replaceAll('"','');
+      if(!this.url.includes('/donhang'))
       window.location.href = this.baseServer+this.url;
     });
   }

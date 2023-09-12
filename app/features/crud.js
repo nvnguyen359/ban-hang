@@ -165,7 +165,7 @@ class CRUD {
     });
     if (row) {
       row.delete();
-      return "200";
+      return id;
     } else {
       return `${id} does not exist`;
     }
