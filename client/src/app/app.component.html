@@ -15,18 +15,22 @@
 
   </mat-drawer>
   <mat-drawer-content class="drawer-content-1">
-    <div class="spin-1" id="spin-1" >
-      <mat-spinner></mat-spinner>
-    </div>
+    <mat-card>
+      <mat-card-content style="height: 100%;">
+        <div class="spin-1" id="spin-1">
+          <mat-spinner></mat-spinner>
+        </div>
 
-    <!-- <app-order></app-order> -->
-    <router-outlet></router-outlet>
+        <!-- <app-order></app-order> -->
+        <router-outlet></router-outlet>
+      </mat-card-content>
+    </mat-card>
   </mat-drawer-content>
 </mat-drawer-container>
 
 <div class="bt-sti1" [ngClass]="showBtDonHang?'show':'hide'">
   <button mat-fab (click)="onOpenDialog()">
-      <mat-icon mat-icon-button>edit</mat-icon>
+    <mat-icon mat-icon-button>edit</mat-icon>
   </button>
 
 </div>

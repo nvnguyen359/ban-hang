@@ -187,7 +187,7 @@ export class OrderComponent {
     console.log("inputChar ", inputChar);
     if (sp == item["Id"]) {
       this.codeSp += inputChar;
-  
+
       this.obj["Số Lượng"] = parseInt(this.codeSp);
     } else {
       localStorage.setItem("sp", `${item["Id"]}`);
@@ -230,7 +230,7 @@ export class OrderComponent {
     result[0].chitiets = resultChitiet;
     donhang["chitiets"] = chitiet;
     this.donhang = donhang;
-    this.dataService.sendMessage({ newAdd: Status.Add, donhang: result[0] });
+    this.dataService.sendMessage({ add: Status.Add, donhang: result[0] });
     return result[0];
   }
   async onSavePrint() {

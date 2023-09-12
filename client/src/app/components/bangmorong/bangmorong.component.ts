@@ -16,6 +16,9 @@ import {
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
 import { DataService } from "src/app/services/data.service";
+import { Status } from "src/app/general";
+import { DonHang } from "src/app/Models/donHang";
+import { IsLoadingServiceX } from "src/app/services/is-loading.service";
 
 @Component({
   selector: "app-bangmorong",
@@ -58,43 +61,78 @@ export class BangmorongComponent {
   expandedElement?: any | null;
   columnsChild?: any;
   dataSource?: any;
+  addData?: any[];
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
-  constructor(private dataService:DataService,private changeDetectorRefs: ChangeDetectorRef) {}
-   ngOnInit() {
+  constructor(
+    private dataService: DataService,
+    private changeDetectorRefs: ChangeDetectorRef,
+    private isloading: IsLoadingServiceX
+  ) {}
+  ngOnInit() {
     this.onLoadData();
-     this.dataService.currentMessage.subscribe((result:any)=>{
-      console.log('nhan tin ',result)
-      if(result==true){
-      //  this. refeshTable();
+    this.dataService.currentMessage.subscribe((result: any) => {
+      console.log("nhan tin ", result);
+      if (result == true) {
+        //  this. refeshTable();
       }
-     })
+      console.log(result);
+      if (result["add"] == Status.Add) {
+        this.refeshTable(result["donhang"]);
+      }
+    });
   }
-  refesh(item:any,status:string){
+  refesh(item: any, status: string) {
     switch (status) {
-      case 'capnhat':{
-        this.dataSource.data = Array.from( this.dataSource.data).map((x:any)=>{
-          return x['Id']==item['Id']?item:x;
-        })
-      }
+      case "capnhat":
+        {
+          this.dataSource.data = Array.from(this.dataSource.data).map(
+            (x: any) => {
+              return x["Id"] == item["Id"] ? item : x;
+            }
+          );
+        }
         break;
-    
-        case 'xoa':{
-          this.dataSource.data = Array.from( this.dataSource.data).filter((x:any)=>x['Id']!=item['Id'])
+
+      case "xoa":
+        {
+          this.dataSource.data = Array.from(this.dataSource.data).filter(
+            (x: any) => x["Id"] != item["Id"]
+          );
         }
         break;
     }
     this.changeDetectorRefs.detectChanges();
   }
-  refeshTable() {
-    console.log('data',Array.from(this.data).length)
-    this.dataSource.data = Array.from(this.data).reverse();
-    if (this.data) {
+  refeshTable(item: DonHang) {
+    this.isloading.add();
+    let dta = [...this.data, item];
+
+    if (dta) {
       this.columnsChild = Object.keys(this.data[0].chitiets[0]).filter(
         (x) => !this.hideColumns?.includes(x)
       );
     }
-    this.dataSource.paginator = this.paginator;
+
+    this.dataSource.data = dta.reverse();
+
     this.changeDetectorRefs.detectChanges();
+    this.isloading.remove();
+  }
+  classToday(value: any) {
+    const today = new Date();
+    const t = value.split("/");
+    const current = new Date(
+      parseInt(t[2]),
+      parseInt(t[1]) - 1,
+      parseInt(t[0])
+    );
+    // console.log(current.toLocaleDateString(),today.toLocaleDateString(),current.toLocaleDateString()==today.toLocaleDateString())
+    const result =
+      current.toLocaleDateString() == today.toLocaleDateString()
+        ? "tr-today"
+        : "fal";
+        console.log(result)
+    return result;
   }
   onLoadData() {
     this.dataSource = !this.data
@@ -120,7 +158,7 @@ export class BangmorongComponent {
   IsNumber(value: any): string {
     value = `${value}`.replaceAll(".", "");
     try {
-      return Number.isInteger(parseInt(value)) ? "text-right" : "text-left;";
+      return Number.isInteger(parseInt(value)) ? "text-right" : "text-left";
     } catch (error) {
       return "";
     }
@@ -134,9 +172,8 @@ export class BangmorongComponent {
     event.stopPropagation();
   }
   OnEvent(item: any, ev: any) {
-  //  this.refesh(item,ev)
+    //  this.refesh(item,ev)
     this.eventDeleteOrUpdate.emit({ donhang: item, onUpdate: ev });
-
   }
 }
 

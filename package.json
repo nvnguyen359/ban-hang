@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "nodemon --exec electron .",
-    "client": "cd lient && npm run start ",
+    "client": "cd client && npm run start ",
     "client:build": "cd client && npm run build ",
     "server": "cd app && npm run start",
     "server:dist": "cd app && npm run start",

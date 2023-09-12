@@ -1,0 +1,26 @@
+<p>product-array works!</p>
+<button type="button" (click)="addSkill()">Add</button>
+<div *ngFor="let skill of skills.controls;let i = index">
+    <ng-container formControlName="skill" class="flex group">
+        <mat-form-field  >
+            <mat-label>Tên Sản Phẩm</mat-label>
+            <input matInput placeholder="Sản Phẩm" required formControlName="Sản Phẩm" >
+        </mat-form-field>
+        <mat-form-field >
+            <mat-label>Số Lượng</mat-label>
+            <input matInput placeholder="Số Lượng" type="number" required formControlName="Số Lượng">
+        </mat-form-field>
+        <mat-form-field >
+            <mat-label>Giá Nhập</mat-label>
+            <input matInput type="number" formControlName="Giá Nhập" required placeholder="Giá Nhập">
+        </mat-form-field>
+        <mat-form-field >
+            <mat-label>Giá Bán</mat-label>
+            <input matInput type="number" formControlName="Giá Bán" required placeholder="Giá Bán">
+        </mat-form-field>
+        <mat-form-field >
+            <mat-label>Nhóm</mat-label>
+            <input matInput type="text" formControlName="Thuộc Nhóm" placeholder="Thuộc Nhóm">
+        </mat-form-field>
+    </ng-container>
+  </div>

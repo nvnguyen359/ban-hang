@@ -40,6 +40,8 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatTableModule } from "@angular/material/table";
 import { PrintOrderComponent } from './components/print-order/print-order.component';
 import { DialogAlertComponent } from './components/dialog-alert/dialog-alert.component';
+import { ClassTodayPipe } from './pipes/class-today.pipe';
+import { ProductArrayComponent } from './components/product-array/product-array.component';
 
 
 const config: SocketIoConfig = { url: 'http://localhost:18092', options: {} };

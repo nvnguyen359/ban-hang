@@ -13,12 +13,13 @@ import { MatSort, MatSortModule } from "@angular/material/sort";
 import { FormmatNumberPipeX } from "src/app/pipes/formmat-number.pipe";
 import { NoSanitizePipe } from "src/app/pipes/no-sanitize.pipe";
 import { MatRippleModule } from "@angular/material/core";
+import { ClassTodayPipe } from "src/app/pipes/class-today.pipe";
 
 
 
 
 @NgModule({
-  declarations: [BangmorongComponent,FormmatNumberPipeX,NoSanitizePipe],
+  declarations: [BangmorongComponent,FormmatNumberPipeX,NoSanitizePipe,ClassTodayPipe],
   imports: [
     CommonModule,
     BangmorongRoutingModule,

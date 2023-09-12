@@ -9,11 +9,12 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { ProductArrayComponent } from 'src/app/components/product-array/product-array.component';
 
 
 @NgModule({
   declarations: [
-    SanphamsComponent
+    SanphamsComponent, ProductArrayComponent
   ],
   imports: [
     CommonModule,
@@ -23,7 +24,8 @@ import { MatInputModule } from '@angular/material/input';
     MatInputModule ,
     MatExpansionModule,
     MatChipsModule,
-    MatButtonModule
+    MatButtonModule,
+   
   ],schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ]
