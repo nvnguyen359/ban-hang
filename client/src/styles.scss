@@ -3,6 +3,7 @@
 html,
 body {
     height: 100%;
+   
 }
 
 body {
@@ -129,4 +130,8 @@ a{
 }
 .delete{
     cursor: pointer;
+}
+.mat-mdc-dialog-container .mdc-dialog__surface{
+    overflow: hidden;
+    padding: 16px;
 }

@@ -15,7 +15,7 @@ Tên Khách Hàng
 -->
 
 <!-- <app-autocomplete [data]="khachhangs" (options)="optionsKhs"  *ngIf="khachhangs"  (required)="true"></app-autocomplete> -->
-<h1 mat-dialog-title>{{title}}</h1>
+<h1 mat-dialog-title [innerHTML]="title"></h1>
 <form [formGroup]="formGroup" class="full-width" style=" margin-left: 8px;">
   <div class="flex">
     <mat-form-field appearance="outline">
@@ -64,14 +64,16 @@ Tên Khách Hàng
       <mat-icon matSuffix>money</mat-icon>
     </mat-form-field>
   </div>
-  <div class="details" *ngIf="isDonHang">
-    <div formArrayName="chitietsArray"
-      *ngFor="let chitiet of formGroup.controls.chitietsArray?.value; let i = index;trackBy: trackByFn">
+<div >
+  <div class="details" *ngIf="isDonHang" id="scrollTop">
+    <div formArrayName="chitiets"
+      *ngFor="let chitiet of formGroup.controls.chitiets?.value; let i = index;trackBy: trackByFn">
       <ng-container [formGroupName]="i">
         <input placeholder="Id" type="hidden" formControlName="Id" />
+        <input placeholder="Id" type="hidden" formControlName="Đơn Vị Tính" />
         <mat-form-field appearance="outline">
           <mat-label>Tên Sản Phẩm</mat-label>
-          <input matInput list="dsSps" placeholder="Tên Sản Phẩm" formControlName="Tên Sản Phẩm" (keyup)="onChangeValue()" (change)="onChangeValue()" />
+          <input matInput list="dsSps" placeholder="Tên Sản Phẩm" formControlName="Tên Sản Phẩm" (keyup)="onChangeValue($event.target)" (change)="onChangeValue($event.target)" />
           <datalist id="dsSps">
             <option *ngFor="let sanpham of sanphams" [value]="sanpham['Name']"></option>
           </datalist>
@@ -93,10 +95,11 @@ Tên Khách Hàng
     </div>
 
   </div>
+</div>
   <div class="flex full-width btns-bottom" style="justify-items: flex-end;margin-top:16px">
 
     <button mat-flat-button color="primary" (click)="onAdd()">Thêm &nbsp;<mat-icon>add</mat-icon></button>
-    <button mat-flat-button color="accent">Cập Nhật &nbsp;<mat-icon>update</mat-icon></button>
+    <button mat-flat-button color="accent" (click)="onEdit()">Cập Nhật &nbsp;<mat-icon>update</mat-icon></button>
     <button mat-flat-button color="warn" mat-dialog-close>Đóng &nbsp;<mat-icon>close</mat-icon></button>
   </div>
 </form>

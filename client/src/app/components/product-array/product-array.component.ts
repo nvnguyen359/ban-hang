@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, ElementRef, Inject } from "@angular/core";
 import {
   FormArray,
   FormBuilder,
@@ -29,20 +29,12 @@ import "../../lib.extensions";
   styleUrls: ["./product-array.component.scss"],
 })
 export class ProductArrayComponent {
+  danhsachTenSanPham: any = [];
   sanphams: any;
   initSanpham?: SanPham;
   donhang: any;
 
   khachhangs?: any;
-  options = {
-    showtext: "Name",
-  };
-  optionsKhs: any = {
-    showtext: "Tên Khách Hàng",
-    label: "Khách Hàng",
-    placeholder: "Tên Khách Hàng",
-  };
-
   formGroup?: any = this.fb.group({
     "Tên Khách Hàng": ["", Validators.required],
     "Tiền Công": [""],
@@ -50,10 +42,9 @@ export class ProductArrayComponent {
     "Trạng Thái": [""],
     "Thành Tiền": [""],
     "Ngày Bán": [new Date().toLocaleDateString(), Validators.required],
-    chitietsArray: this.fb.array([]),
+    chitiets: this.fb.array([]),
   });
 
-  chitietsArray?: FormArray;
   chitietsDonHangs?: any = [];
   keysChitiet: any = [];
   showKeys: any = [];
@@ -72,22 +63,28 @@ export class ProductArrayComponent {
       this.isDonHang = true;
       this.donhang = this.data["donhang"]["donhang"] as DonHang;
       this.chitietsDonHangs = this.donhang["chitiets"];
+      this.danhsachTenSanPham = this.chitietsDonHangs.map(
+        (x: any) => x["Tên Sản Phẩm"]
+      );
+
       this.keysChitiet = Object.keys(this.chitietsDonHangs[0]);
-      console.log(this.keysChitiet);
+
       this.showKeys = ["Id", "Tên Sản Phẩm", "Đơn giá", "Số Lượng"];
       if (this.data["isDonhang"] && this.donhang["chitiets"].length > 0)
-        this.title = `Cập Nhật Đơn Hàng ${this.donhang["Id"]}`;
+        this.title = `Cập Nhật Đơn Hàng <b>${this.donhang["Id"]}</b>`;
       await this.initDonHang();
     }
   }
   async getSanPhams() {
-    this.sanphams = await this.serviceApi.get("sanpham");
+    this.sanphams = (
+      (await this.serviceApi.get("sanpham")) as SanPham[]
+    ).filter((sp: any) => !this.danhsachTenSanPham.includes(sp["Name"]));
   }
+
   async initDonHang() {
     const dh = this.donhang;
-    console.log(dh);
     const formArray = this.fb.array([]) as FormArray;
-    const chitiets = dh["chitiets"] as ChiTiet[];
+    const chitiets = dh["chitiets"] as ChiTietDonHang[];
     for (let index = 0; index < chitiets?.length; index++) {
       const chitiet = chitiets[index] as any;
       const keys = Object.keys(chitiet);
@@ -113,17 +110,18 @@ export class ProductArrayComponent {
           : "" || new Date().toLocaleDateString(),
         Validators.required,
       ],
-      chitietsArray: formArray,
+      chitiets: formArray,
     });
   }
 
   async ngOnInit() {
-    console.log(this.data);
-    await this.checkEvent();
     await this.switchCase();
-    this.khachhangs = this.data["khachhangs"] as KhachHang[];
     await this.getSanPhams();
+    //await this.checkEvent();
+
+    this.khachhangs = this.data["khachhangs"] as KhachHang[];
   }
+
   async checkEvent() {
     if (this.data["isDonhang"]) {
       this.donhang = this.data["donhang"]["donhang"] as DonHang;
@@ -135,23 +133,61 @@ export class ProductArrayComponent {
     if (typeof str != "string") return false; // we only process strings!
     return !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
   }
-
-  onChangeValue() {
-    const values = this.formGroup.value;
+  onEdit() {
+    let values = this.formGroup.value;
     console.log(values);
   }
+  onChangeValue(event?: any) {
+    let values = this.formGroup.value;
+
+    let chitiets = Array.from(values["chitiets"]);
+    chitiets = chitiets.map((e: any) => {
+      e["Thành Tiền"] = parseInt(e["Đơn giá"]) * parseInt(e["Số Lượng"]);
+      return e;
+    });
+    try {
+      const tenSp = event.value;
+      console.log(tenSp,this.formGroup.value['chitiets'].map((x:any)=>x['Tên Sản Phẩm']))
+      const checkSps = this.formGroup.value['chitiets'].map((x:any)=>x['Tên Sản Phẩm']).filter((e:any)=>e['Tên Sản Phẩm']==tenSp);
+      console.log(checkSps)
+      if(checkSps.length>0){
+        alert('San Pham bij trubf')
+      }
+      const sp: SanPham = this.sanphams.find(
+        (x: SanPham) => x["Name"] == tenSp
+      );
+      if (sp) {
+        chitiets.forEach((e: any) => {
+          if (e["Tên Sản Phẩm"] == sp["Name"]) {
+            e["Tên Sản Phẩm"] = sp["Name"];
+            e["Đơn giá"] = sp["Giá Bán"];
+            e["Đơn Vị Tính"] = sp["Đơn Vị Tính"];
+            const dongia = sp["Giá Bán"] || 0;
+            e["Thành Tiền"] = dongia * e["Số Lượng"];
+          }
+        });
+      }
+    } catch (error) {}
+    values["chitiets"] = chitiets;
+    console.log(values);
+    this.formGroup.patchValue(values);
+  }
   onDelete(index: number) {
-    this.formGroup.controls["chitietsArray"].removeAt(index);
+    this.formGroup.controls["chitiets"].removeAt(index);
   }
   onAdd() {
-   const arr= this.formGroup.controls["chitietsArray"] as FormArray
-   arr.push(this.fb.group({
-    'Id':'',
-    'Tên Sản Phẩm':[''],
-    'Đơn giá':0,
-    'Số Lượng':0,
-    'Thành Tiền':[0]
-   }))
+    const arr = this.formGroup.controls["chitiets"] as FormArray;
+    arr.push(
+      this.fb.group({
+        Id: "",
+        "Tên Sản Phẩm": [""],
+        "Đơn giá": 0,
+        "Số Lượng": 0,
+        "Thành Tiền": [0],
+        "Đơn Vị Tính": "",
+      })
+    );
+    this.scrollTop();
   }
   trackByFn(index: any) {
     return index;
@@ -179,4 +215,13 @@ export class ProductArrayComponent {
       color: "#1A237E",
     },
   ];
+  scrollTop() {
+    setTimeout(() => {
+      var element = document.getElementById("scrollTop");
+      if (element) {
+        // window.scrollTo(0, 0);
+        element.scrollTo({ top: element.scrollHeight, behavior: "instant" });
+      }
+    }, 100);
+  }
 }

@@ -4,11 +4,12 @@
 .details{
     max-height: 550px;
     padding-top: 8px;
-    overflow-x: scroll;
+    overflow: auto;
     display: flex;
-    flex-direction: column-reverse;
-   
+    flex-direction: column;
+    scroll-behavior: auto;
 }
+
 mat-button-toggle{
     display: flex;
     align-items: center;
