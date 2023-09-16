@@ -150,6 +150,7 @@ export class OrderComponent {
     this.onCal();
   }
   onCal() {
+    if(!this.orders) return;
     this.checkDk = this.khach && this.orders.length > 0;
     if (this.orders.length < 1) return;
     const tiencong = this.tiencong * this.selectDv || 0;

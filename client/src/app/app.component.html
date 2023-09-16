@@ -10,18 +10,17 @@
   </mat-toolbar-row>
 </mat-toolbar>
 <mat-drawer-container class="drawer-container" style="height: 100%;padding-top:64px" autosize>
-  <mat-drawer #drawer style="padding-top:64px" mode="side" opened>
-    <app-menu-left></app-menu-left>
+  <mat-drawer #drawer  mode="side" opened >
+    <app-menu-left style="padding-top: 64px;"></app-menu-left>
 
   </mat-drawer>
   <mat-drawer-content class="drawer-content-1">
     <mat-card>
-      <mat-card-content style="height: 100%;">
-        <div class="spin-1" id="spin-1">
-          <mat-spinner></mat-spinner>
-        </div>
-
+      <mat-card-content >
+        <app-spinner></app-spinner>
         <!-- <app-order></app-order> -->
+        <!-- <app-exam-form-array></app-exam-form-array> -->
+        <app-custom-radio-button></app-custom-radio-button>
         <router-outlet></router-outlet>
       </mat-card-content>
     </mat-card>

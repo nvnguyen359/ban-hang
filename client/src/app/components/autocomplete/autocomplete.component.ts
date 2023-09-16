@@ -1,16 +1,17 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { FormControl, FormGroup } from "@angular/forms";
 import { Observable, map, startWith } from "rxjs";
 declare var removeAccents: any;
 @Component({
   selector: "app-autocomplete",
   templateUrl: "./autocomplete.component.html",
   styleUrls: ["./autocomplete.component.scss"],
+  standalone: false
 })
 export class AutocompleteComponent {
   filteredOptions?: Observable<any[]>;
   @Input() data: any;
-@Input()required:any= false
+  @Input() required: any = false;
   @Input() options: any = {
     name: "Name",
     showtext: "Name",
@@ -20,8 +21,12 @@ export class AutocompleteComponent {
   @Output() selectTed = new EventEmitter<string>();
   @Output() nameText = new EventEmitter<string>();
   myControl = new FormControl("");
-  constructor() {}
+
+  constructor() {
+   
+  }
   ngOnInit() {
+    console.log("AutocompleteComponent", this.data);
     console.log(this.options);
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(""),

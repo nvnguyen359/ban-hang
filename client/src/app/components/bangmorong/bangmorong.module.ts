@@ -32,7 +32,8 @@ import { ClassTodayPipe } from "src/app/pipes/class-today.pipe";
     MatFormFieldModule,
     MatInputModule,
     MatSortModule,
-    MatRippleModule
+    MatRippleModule,
+    
   ],
 
   exports: [BangmorongComponent],

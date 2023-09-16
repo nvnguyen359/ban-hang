@@ -9,7 +9,8 @@ const routes: Routes = [
   { path: 'nhaphang', loadChildren: () => import('./pages/nhaphang/nhaphang.module').then(m => m.NhaphangModule) },
   { path: 'sanpham', loadChildren: () => import('./pages/sanphams/sanphams.module').then(m => m.SanphamsModule) },
   { path: 'donhang', loadChildren: () => import('./pages/donhangs/donhangs.module').then(m => m.DonhangsModule) },
-  { path: 'bangmorong', loadChildren: () => import('./components/bangmorong/bangmorong.module').then(m => m.BangmorongModule) }];
+  { path: 'bangmorong', loadChildren: () => import('./components/bangmorong/bangmorong.module').then(m => m.BangmorongModule) },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes,{ useHash: false })],

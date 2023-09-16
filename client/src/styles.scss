@@ -23,7 +23,7 @@ body {
 }
 
 .flex button {
-    margin-left: 8px;
+    // margin-left: 8px;
 }
 
 .bt-sti {
@@ -126,4 +126,7 @@ a{
 }
 .flex.group > .mat-mdc-form-field{
     margin-right:4px ;
+}
+.delete{
+    cursor: pointer;
 }

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from "@angular/core";
+import { AfterViewInit, Component, Inject, OnInit } from "@angular/core";
 import { IpcService } from "src/ipc.service";
 import { ApiService } from "./services/api.service";
 import { PrinterModel } from "./Models/printer";
@@ -16,13 +16,15 @@ import { Observable, filter } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { OrderComponent } from "./components/order/order.component";
 import { IsLoadingServiceX } from "./services/is-loading.service";
+import { LoaderService } from "./services/loader.service";
+import { DateAdapter, MAT_DATE_LOCALE } from "@angular/material/core";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  baseServer = "http://localhost:3177"
+  baseServer = "http://localhost:3177";
   title = "client";
   showFiller = false;
   showBtDonHang = false;
@@ -39,12 +41,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   loadingService: any;
   url: any;
   constructor(
-    private readonly apiService: ApiService,
     private socket: SocketService,
-    private router: Router,
-    private isLoading: IsLoadingServiceX,
     private readonly dialog: MatDialog,
-    private route: ActivatedRoute
+    private _adapter: DateAdapter<any>,
+    @Inject(MAT_DATE_LOCALE) private _locale: string,
   ) {
     this.getVersion();
     setTimeout(() => {
@@ -64,59 +64,23 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  loading() {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event: any) => {
-        if (
-          event.url == "/" ||
-          event.url == "/donhang"
-        ) {
-          this.showBtDonHang = true;
-        }else{
-          this.showBtDonHang = false
-        }
-       this.url = event.url;
-      });
 
-    this.router.events
-      .pipe(
-        filter(
-          (event) =>
-            event instanceof NavigationStart ||
-            event instanceof NavigationEnd ||
-            event instanceof NavigationCancel ||
-            event instanceof NavigationError
-        )
-      )
-      .subscribe((event) => {
-        // if it's the start of navigation, `add()` a loading indicator
-        if (event instanceof NavigationStart) {
-          console.log("loading");
-          this.isLoading.add();
-          if (event as NavigationStart){
-            this.showBtDonHang = false
-          }
-           
-          return;
-        }
-        this.isLoading.remove();
-        // else navigation has ended, so `remove()` a loading indicator
-        console.log("loaded");
-      });
-  }
   onOpenDialog() {
     const dia = this.dialog.open(OrderComponent);
-    dia.afterClosed().subscribe((x: any) => {
+    dia.afterClosed().subscribe(() => {
       // window.location.href = JSON.stringify(localStorage.getItem('url')).replaceAll('"','');
-      if(!this.url.includes('/donhang'))
-      window.location.href = this.baseServer+this.url;
+      if (!this.url.includes("/donhang"))
+        window.location.href = this.baseServer + this.url;
     });
   }
-  ngOnInit() {
-    this.loading();
-    // this.onOpenDialog();
+  french() {
+    this._locale = 'vi';
+    this._adapter.setLocale(this._locale);
   }
-
-  ngAfterViewInit() {}
+  ngOnInit(): void {
+    this.french()
+  }
+  ngAfterViewInit() {
+  
+  }
 }

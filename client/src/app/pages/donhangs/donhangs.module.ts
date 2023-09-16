@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { DialogModule } from '@angular/cdk/dialog';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -18,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BangmorongModule } from 'src/app/components/bangmorong/bangmorong.module';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 
@@ -43,7 +44,9 @@ import { BangmorongModule } from 'src/app/components/bangmorong/bangmorong.modul
     MatSortModule,
     MatDialogModule,
     MatTooltipModule,
-    BangmorongModule
+    BangmorongModule,
+    FormsModule,
+    MatCheckboxModule
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

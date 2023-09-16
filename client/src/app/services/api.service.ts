@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-
+import{environment} from './../environment'
 @Injectable({
   providedIn: "root",
 })
@@ -13,8 +13,10 @@ export class ApiService {
     }),
   };
 
-  baseServer = "http://localhost:3176";
-  constructor(private http: HttpClient) {}
+  baseServer = "";
+  constructor(private http: HttpClient) {
+    this.baseServer= environment.baseUrl
+  }
   async get(url: string, name = "") {
     // const params = new HttpParams({fromString: name});
     const n = name ? name : "";

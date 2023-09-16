@@ -131,7 +131,6 @@ export class BangmorongComponent {
       current.toLocaleDateString() == today.toLocaleDateString()
         ? "tr-today"
         : "fal";
-        console.log(result)
     return result;
   }
   onLoadData() {

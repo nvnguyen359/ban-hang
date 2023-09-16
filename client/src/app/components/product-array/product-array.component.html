@@ -1,26 +1,102 @@
-<p>product-array works!</p>
-<button type="button" (click)="addSkill()">Add</button>
-<div *ngFor="let skill of skills.controls;let i = index">
-    <ng-container formControlName="skill" class="flex group">
-        <mat-form-field  >
-            <mat-label>Tên Sản Phẩm</mat-label>
-            <input matInput placeholder="Sản Phẩm" required formControlName="Sản Phẩm" >
-        </mat-form-field>
-        <mat-form-field >
-            <mat-label>Số Lượng</mat-label>
-            <input matInput placeholder="Số Lượng" type="number" required formControlName="Số Lượng">
-        </mat-form-field>
-        <mat-form-field >
-            <mat-label>Giá Nhập</mat-label>
-            <input matInput type="number" formControlName="Giá Nhập" required placeholder="Giá Nhập">
-        </mat-form-field>
-        <mat-form-field >
-            <mat-label>Giá Bán</mat-label>
-            <input matInput type="number" formControlName="Giá Bán" required placeholder="Giá Bán">
-        </mat-form-field>
-        <mat-form-field >
-            <mat-label>Nhóm</mat-label>
-            <input matInput type="text" formControlName="Thuộc Nhóm" placeholder="Thuộc Nhóm">
-        </mat-form-field>
-    </ng-container>
+<!--
+Ghi Chú
+Giảm Giá
+Id
+Khách Hàng
+Ngày Bán
+Phí Ship
+Số Lượng
+Thanh Toán
+Thành Tiền
+Tiền Công
+Trạng Thái
+Tên Khách Hàng
+
+-->
+
+<!-- <app-autocomplete [data]="khachhangs" (options)="optionsKhs"  *ngIf="khachhangs"  (required)="true"></app-autocomplete> -->
+<h1 mat-dialog-title>{{title}}</h1>
+<form [formGroup]="formGroup" class="full-width" style=" margin-left: 8px;">
+  <div class="flex">
+    <mat-form-field appearance="outline">
+      <mat-label>Danh Sách Khách Hàng</mat-label>
+      <input list="dsKhachHang" matInput placeholder="Placeholder" formControlName="Tên Khách Hàng">
+      <!-- <mat-icon matSuffix>search</mat-icon> -->
+      <datalist id="dsKhachHang">
+        <option *ngFor="let khach of khachhangs" [value]="khach['Tên Khách Hàng']"></option>
+      </datalist>
+    </mat-form-field>
+   
+    <mat-form-field>
+      <mat-label>Trạng Thái</mat-label>
+      <mat-select formControlName='Trạng Thái'>
+        <mat-option *ngFor="let status of status" [value]="status.text" [style.color]="status.color">
+          {{status.text}}&nbsp; <mat-icon>{{status.icon}}</mat-icon>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- <input type="text" formControlName="trangthai"> -->
+    <div class="flex">
+      <mat-button-toggle-group #group="matButtonToggleGroup">
+        <mat-button-toggle value="VND" checked="true" aria-label="Text align left">
+         VND
+        </mat-button-toggle>
+        <mat-button-toggle value="Per" aria-label="Text align center">
+        %
+        </mat-button-toggle>
+        
+      </mat-button-toggle-group>
+      <mat-form-field appearance="outline" style="max-width: 120px;">
+        <mat-label>Chiết Khấu</mat-label>
+        <input matInput placeholder="Placeholder" formControlName="Phí Ship">
+        <mat-icon matSuffix>money</mat-icon>
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="outline">
+      <mat-label>Ngày Bán</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="Ngày Bán">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Tiền Công</mat-label>
+      <input matInput placeholder="Placeholder" formControlName="Tiền Công">
+      <mat-icon matSuffix>money</mat-icon>
+    </mat-form-field>
   </div>
+  <div class="details" *ngIf="isDonHang">
+    <div formArrayName="chitietsArray"
+      *ngFor="let chitiet of formGroup.controls.chitietsArray?.value; let i = index;trackBy: trackByFn">
+      <ng-container [formGroupName]="i">
+        <input placeholder="Id" type="hidden" formControlName="Id" />
+        <mat-form-field appearance="outline">
+          <mat-label>Tên Sản Phẩm</mat-label>
+          <input matInput list="dsSps" placeholder="Tên Sản Phẩm" formControlName="Tên Sản Phẩm" (keyup)="onChangeValue()" (change)="onChangeValue()" />
+          <datalist id="dsSps">
+            <option *ngFor="let sanpham of sanphams" [value]="sanpham['Name']"></option>
+          </datalist>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Đơn Giá</mat-label>
+          <input matInput placeholder="Đơn Giá" type="number" step="1000" formControlName="Đơn giá" (keyup)="onChangeValue()" (change)="onChangeValue()"/>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Số Lượng</mat-label>
+          <input matInput placeholder="Số Lượng" type="number" formControlName="Số Lượng" (keyup)="onChangeValue()" (change)="onChangeValue()"/>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Thành Tiền</mat-label>
+          <input matInput placeholder="Thành Tiền" type="number" formControlName="Thành Tiền"  readonly/>
+        </mat-form-field>
+        <mat-icon color="warn" class="delete" (click)="onDelete(i)">delete</mat-icon>
+      </ng-container>
+    </div>
+
+  </div>
+  <div class="flex full-width btns-bottom" style="justify-items: flex-end;margin-top:16px">
+
+    <button mat-flat-button color="primary" (click)="onAdd()">Thêm &nbsp;<mat-icon>add</mat-icon></button>
+    <button mat-flat-button color="accent">Cập Nhật &nbsp;<mat-icon>update</mat-icon></button>
+    <button mat-flat-button color="warn" mat-dialog-close>Đóng &nbsp;<mat-icon>close</mat-icon></button>
+  </div>
+</form>

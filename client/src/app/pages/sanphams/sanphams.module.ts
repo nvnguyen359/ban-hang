@@ -14,7 +14,7 @@ import { ProductArrayComponent } from 'src/app/components/product-array/product-
 
 @NgModule({
   declarations: [
-    SanphamsComponent, ProductArrayComponent
+    SanphamsComponent,
   ],
   imports: [
     CommonModule,

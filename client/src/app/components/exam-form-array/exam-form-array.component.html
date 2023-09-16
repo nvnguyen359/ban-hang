@@ -1,0 +1,29 @@
+<p>exam-form-array works!</p>
+<div>
+    <button (click)="addItem()">Add</button>
+
+    <form [formGroup]="form">
+
+      <div>
+        <div formArrayName="offers" *ngFor="let ctrl of form.controls['offers'].value; let i = index;trackBy: trackByFn">
+        <ng-container [formGroupName]="i">
+          <mat-form-field>
+            <input matInput placeholder="Name" formControlName="name">
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput placeholder="Name" formControlName="text">
+          </mat-form-field>
+        </ng-container>
+      </div>
+      </div>
+
+    </form>
+
+    <span *ngIf="form.dirty">DIRTY</span>
+
+    <mat-form-field>
+      <input matInput placeholder="Name">
+    </mat-form-field>
+
+  </div>
+
