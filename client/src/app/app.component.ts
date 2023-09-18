@@ -35,6 +35,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     "Moccasins",
     "Sneakers",
   ];
+  infor = "";
   printers!: any;
   pageSizes: string[] = ["A4", "A5", "A6", "A7"];
   ver: string = JSON.stringify(localStorage.getItem("ver"));
@@ -44,12 +45,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     private socket: SocketService,
     private readonly dialog: MatDialog,
     private _adapter: DateAdapter<any>,
-    @Inject(MAT_DATE_LOCALE) private _locale: string,
+    @Inject(MAT_DATE_LOCALE) private _locale: string
   ) {
     this.getVersion();
-    setTimeout(() => {
-      this.getVersion();
-    }, 10000);
   }
 
   getVersion() {
@@ -61,6 +59,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           this.ver = x.ver;
         }
         console.log(this.ver);
+        this.infor = x.mes;
       }
     });
   }
@@ -74,13 +73,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
   }
   french() {
-    this._locale = 'vi';
+    this._locale = "vi";
     this._adapter.setLocale(this._locale);
   }
   ngOnInit(): void {
-    this.french()
+    this.french();
   }
-  ngAfterViewInit() {
-  
-  }
+  ngAfterViewInit() {}
 }

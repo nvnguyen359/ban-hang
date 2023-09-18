@@ -21,7 +21,7 @@ class SocketIo {
     });
   }
   getMessage(key) {
-    if(!key)key=this.keyMeg
+    if (!key) key = this.keyMeg;
     io.on("connection", (socket) => {
       socket.on(key, (msg) => {
         console.log("nhan: ", msg);
@@ -29,23 +29,14 @@ class SocketIo {
       });
     });
   }
-  sendMessage(meg,key) {
-    if(!key)key=this.keyMeg
-    io.on('connection', (socket) => {
-      console.log('gui:',new Date().toLocaleTimeString(),meg)
+  sendMessage(meg, key) {
+    if (!key) key = this.keyMeg;
+    io.on("connection", (socket) => {
+      console.log("gui:", new Date().toLocaleTimeString());
       //socket.broadcast.emit(key, meg);
       io.emit(key, meg);
     });
   }
 }
-const socketrunning = () => {
-  io.on("connection", (socket) => {
-    socket.broadcast.emit("xx", "hello friends!");
-    socket.broadcast.emit("message", "hi");
-  });
-  http.listen(port, () => {
-    console.log(`Socket.IO server running at http://localhost:${port}/`);
-  });
-};
 
 module.exports = { SocketIo };

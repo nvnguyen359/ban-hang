@@ -6,8 +6,10 @@ const lib = require("./shares/lib");
 const { testPrint } = require("./shares/posPrinter");
 const { eventsAutoUpdate } = require("./shares/autoUpdaterJs");
 const { getPrinters } = require("./shares/lib");
-
+const { autoUpdater, AppUpdater } = require("electron-updater");
+const { SocketIo } = require("./socket");
 const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
+let mes = "";
 
 app.serve = require(pathServer);
 //require(pathServer);
@@ -20,10 +22,12 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
 const SHEET_ID = process.env.SHEET_ID;
 let curWindow;
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
 
+const socket = new SocketIo();
 function createWindow() {
   curWindow = new MainScreen();
-  eventsAutoUpdate(app);
 }
 app.serve = require(pathServer);
 app.whenReady().then(async () => {
@@ -31,9 +35,55 @@ app.whenReady().then(async () => {
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length == 0) createWindow();
   });
-  //exec(`node server/server.js`)
+  checkUpdat();
+});
+setInterval(() => {
+  checkUpdat();
+}, 60000);
+function checkUpdat() {
+  mes = `Đang kiểm tra các bản cập nhật. Phiên bản hiện tại ${app.getVersion()}`;
+  console.log("dang kiem tra ban cap nhat");
+  socket.sendMessage({ mes, ver: app.getVersion() });
+  autoUpdater.checkForUpdates();
+}
+/*New Update Available*/
+autoUpdater.on("update-available", async (info) => {
+  mes = `Cập nhật có sẵn. Phiên bản hiện tại ${app.getVersion()}`;
+  socket.sendMessage({ mes, ver: app.getVersion() });
+  let pth = await autoUpdater.downloadUpdate();
+  mes = pth;
+  console.log("dang tai ban cap nhat");
+  socket.sendMessage({ mes, ver: app.getVersion() });
+});
 
-  //await server.initServer(app1);
+autoUpdater.on("update-not-available", (info) => {
+  mes = `Cập nhật có sẵn. Phiên bản hiện tại ${app.getVersion()}`;
+  console.log("cap nhat co san");
+  socket.sendMessage({ mes, ver: app.getVersion() });
+});
+
+/*Download Completion Message*/
+
+autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
+  mes = `Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.`;
+  socket.sendMessage({ mes, ver: app.getVersion() });
+  console.log("da tai ban cap nhat");
+  const dialogOpts = {
+    type: "info",
+    buttons: ["Restart", "Later"],
+    title: "Application Update",
+    message: process.platform === "win32" ? releaseNotes : releaseName,
+    detail:
+      "Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.",
+  };
+
+  dialog.showMessageBox(dialogOpts).then((returnValue) => {
+    if (returnValue.response === 0) autoUpdater.quitAndInstall();
+  });
+});
+autoUpdater.on("error", (info) => {
+  mes = info;
+  socket.sendMessage({ mes, ver: app.getVersion() });
 });
 
 //Global exception handler

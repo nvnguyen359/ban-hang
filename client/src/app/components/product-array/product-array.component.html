@@ -14,10 +14,11 @@ Tên Khách Hàng
 
 -->
 
-<!-- <app-autocomplete [data]="khachhangs" (options)="optionsKhs"  *ngIf="khachhangs"  (required)="true"></app-autocomplete> -->
+
 <h1 mat-dialog-title [innerHTML]="title"></h1>
-<form [formGroup]="formGroup" class="full-width" style=" margin-left: 8px;">
+<form [formGroup]="formGroup" class="full-width" style=" margin-left: 8px;" (ngSubmit)="onSubmit()">
   <div class="flex">
+    
     <mat-form-field appearance="outline">
       <mat-label>Danh Sách Khách Hàng</mat-label>
       <input list="dsKhachHang" matInput placeholder="Placeholder" formControlName="Tên Khách Hàng">
@@ -37,11 +38,11 @@ Tên Khách Hàng
     </mat-form-field>
     <!-- <input type="text" formControlName="trangthai"> -->
     <div class="flex">
-      <mat-button-toggle-group #group="matButtonToggleGroup">
+      <mat-button-toggle-group #group="matButtonToggleGroup" (click)="onChecked($event.target)" >
         <mat-button-toggle value="VND" checked="true" aria-label="Text align left">
          VND
         </mat-button-toggle>
-        <mat-button-toggle value="Per" aria-label="Text align center">
+        <mat-button-toggle value="Per" aria-label="Text align center"  >
         %
         </mat-button-toggle>
         
@@ -58,7 +59,19 @@ Tên Khách Hàng
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
-    <mat-form-field appearance="outline">
+   
+   
+  </div>
+  <div class="flex">
+    <app-autocomplete [data]=" sanphams"  (selectTed)="onSelectedSanPham($event)"  style="flex-grow: 1;" ></app-autocomplete>
+    <mat-form-field appearance="outline" style="max-width: 150px;margin-left:8px">
+      <mat-label>Đơn Vị</mat-label>
+      <select matNativeControl required value="1000">
+        <option value="1000">x1000đ</option>
+        <option value="100">x100đ</option>
+      </select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" style="max-width: 150px;">
       <mat-label>Tiền Công</mat-label>
       <input matInput placeholder="Placeholder" formControlName="Tiền Công">
       <mat-icon matSuffix>money</mat-icon>
@@ -73,18 +86,18 @@ Tên Khách Hàng
         <input placeholder="Id" type="hidden" formControlName="Đơn Vị Tính" />
         <mat-form-field appearance="outline">
           <mat-label>Tên Sản Phẩm</mat-label>
-          <input matInput list="dsSps" placeholder="Tên Sản Phẩm" formControlName="Tên Sản Phẩm" (keyup)="onChangeValue($event.target)" (change)="onChangeValue($event.target)" />
+          <input matInput list="dsSps" placeholder="Tên Sản Phẩm" required formControlName="Tên Sản Phẩm"  (change)="onChangeValue($event.target)" />
           <datalist id="dsSps">
             <option *ngFor="let sanpham of sanphams" [value]="sanpham['Name']"></option>
           </datalist>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Đơn Giá</mat-label>
-          <input matInput placeholder="Đơn Giá" type="number" step="1000" formControlName="Đơn giá" (keyup)="onChangeValue()" (change)="onChangeValue()"/>
+          <input matInput placeholder="Đơn Giá" type="number" required step="1000" formControlName="Đơn giá"  (change)="onChangeValue()"/>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Số Lượng</mat-label>
-          <input matInput placeholder="Số Lượng" type="number" formControlName="Số Lượng" (keyup)="onChangeValue()" (change)="onChangeValue()"/>
+          <input matInput placeholder="Số Lượng" type="number" required formControlName="Số Lượng"  (change)="onChangeValue()"/>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Thành Tiền</mat-label>
@@ -98,8 +111,8 @@ Tên Khách Hàng
 </div>
   <div class="flex full-width btns-bottom" style="justify-items: flex-end;margin-top:16px">
 
-    <button mat-flat-button color="primary" (click)="onAdd()">Thêm &nbsp;<mat-icon>add</mat-icon></button>
-    <button mat-flat-button color="accent" (click)="onEdit()">Cập Nhật &nbsp;<mat-icon>update</mat-icon></button>
+    <button mat-flat-button color="primary" type="button" (click)="onAdd()">Thêm &nbsp;<mat-icon>add</mat-icon></button>
+    <button mat-flat-button color="accent" type="submit" >Cập Nhật &nbsp;<mat-icon>update</mat-icon></button>
     <button mat-flat-button color="warn" mat-dialog-close>Đóng &nbsp;<mat-icon>close</mat-icon></button>
   </div>
 </form>

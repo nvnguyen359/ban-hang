@@ -16,7 +16,7 @@ class MainScreen {
     this.window = new BrowserWindow({
       width: this.position.width,
       height: this.position.height,
-      title: "?ng d?ng qu?n l? b�n h�ng",
+      title: "Ứng Dụng Quản Lý Bán Hàng",
       show: true,
       removeMenu: true,
       acceptFirstMouse: true,

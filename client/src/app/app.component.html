@@ -16,14 +16,17 @@
   </mat-drawer>
   <mat-drawer-content class="drawer-content-1">
     <mat-card>
-      <mat-card-content >
+      <mat-card-content style="height: 100%;">
+       <div class="flex" style="flex-direction: column;height: 100%;">
+       <div class="flex" style="flex-grow: 1;">
         <app-spinner></app-spinner>
-        <!-- <app-order></app-order> -->
-        <!-- <app-exam-form-array></app-exam-form-array> -->
-        <app-custom-radio-button></app-custom-radio-button>
         <router-outlet></router-outlet>
+       </div>
+        <div class="flex" color="primary"><i style="opacity: 0.85;">{{infor}}</i></div>
+       </div>
       </mat-card-content>
     </mat-card>
+    
   </mat-drawer-content>
 </mat-drawer-container>
 

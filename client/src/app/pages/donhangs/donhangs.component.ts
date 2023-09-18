@@ -17,6 +17,7 @@ import "../../lib.extensions";
 import { ChiTietDonHang } from "src/app/Models/chiTietDonHang";
 import { ProductArrayComponent } from "src/app/components/product-array/product-array.component";
 import { KhachHang } from "src/app/Models/khachHangs";
+import { SanPham } from "src/app/Models/sanPham";
 @Component({
   selector: "app-donhangs",
   templateUrl: "./donhangs.component.html",
@@ -27,6 +28,7 @@ export class DonhangsComponent {
   displayedColumns: string[] = ["Index", "Tên Khách Hàng", "Phone", "Địa Chỉ"];
   donhangs: any;
   khachhangs: any;
+  sanphams: any;
   hideColumns: any = "Id,Khách Hàng,Nhân Viên,Sản Phẩm";
   options = {
     a: "Tên Khách Hàng",
@@ -43,10 +45,11 @@ export class DonhangsComponent {
   async ngOnInit() {
     await this.onGetAll();
     this.getKhachHangs();
+    this.getSanPhams();
     this.dataService.currentMessage.subscribe((data: any) => {
       if (data == Status.Refesh) {
         setTimeout(async () => {
-          await this.onGetAll();
+          //  await this.onGetAll();
           this.dataService.sendMessage(true);
         }, 800);
       }
@@ -59,6 +62,11 @@ export class DonhangsComponent {
   getKhachHangs() {
     this.service.get("khachhang").then((data: any) => {
       this.khachhangs = data as KhachHang[];
+    });
+  }
+  getSanPhams() {
+    this.service.get("sanpham").then((data: any) => {
+      this.sanphams = data as SanPham[];
     });
   }
   async onGetAll() {
@@ -101,7 +109,7 @@ export class DonhangsComponent {
         }
       );
       this.dialog.open(ProductArrayComponent, {
-        data: { donhang: item, isDonhang: true, khachhangs: this.khachhangs },
+        data: { donhang: item, isDonhang: true, khachhangs: this.khachhangs ,sanphams:this.sanphams},
       });
     }
   }

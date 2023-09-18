@@ -56,6 +56,13 @@ body {
 .delete {
     color: var(--mat-stepper-header-error-state-label-text-color);
     cursor: pointer;
+    transition: 0.2s all;
+    
+}
+.delete:hover{
+    opacity: 0.85;
+    color: #3f51b5;
+    transform: scale(1.5);
 }
 
 .flex {
@@ -128,9 +135,8 @@ a{
 .flex.group > .mat-mdc-form-field{
     margin-right:4px ;
 }
-.delete{
-    cursor: pointer;
-}
+
+
 .mat-mdc-dialog-container .mdc-dialog__surface{
     overflow: hidden;
     padding: 16px;

@@ -7,7 +7,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { DateAdapter, MAT_DATE_LOCALE } from "@angular/material/core";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialog } from "@angular/material/dialog";
 import { async } from "rxjs";
 import { ChiTiet, ChiTietDonHang } from "src/app/Models/chiTietDonHang";
 import { DonHang } from "src/app/Models/donHang";
@@ -17,6 +17,8 @@ import { delay } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 import { DataService } from "src/app/services/data.service";
 import "../../lib.extensions";
+import { DialogConfirmComponent } from "../dialog-confirm/dialog-confirm.component";
+import {CheckProduct} from './CheckProduct'
 /**
  *
  *
@@ -27,8 +29,10 @@ import "../../lib.extensions";
   selector: "app-product-array",
   templateUrl: "./product-array.component.html",
   styleUrls: ["./product-array.component.scss"],
+  providers:[CheckProduct]
 })
 export class ProductArrayComponent {
+  chekProduct:any ;
   danhsachTenSanPham: any = [];
   sanphams: any;
   initSanpham?: SanPham;
@@ -50,11 +54,18 @@ export class ProductArrayComponent {
   showKeys: any = [];
   isDonHang: boolean = false;
   title: string = "";
+  chietkhau=0;
   constructor(
     private fb: FormBuilder,
     private serviceApi: ApiService,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+    private dialog: MatDialog,
+    private checkProduct:CheckProduct,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+   
+  ) {
+   // this.getSanPhams();
+   this.sanphams= data['sanphams'].filter((sp: any) => !this.danhsachTenSanPham.includes(sp["Name"]));;
+  }
 
   async switchCase() {
     // ['donhang', 'isDonhang', 'khachhangs']
@@ -75,11 +86,14 @@ export class ProductArrayComponent {
       await this.initDonHang();
     }
   }
-  async getSanPhams() {
-    this.sanphams = (
-      (await this.serviceApi.get("sanpham")) as SanPham[]
-    ).filter((sp: any) => !this.danhsachTenSanPham.includes(sp["Name"]));
-  }
+  //  getSanPhams() {
+  //   this.serviceApi.get("sanpham").then((sanphams:any)=>{
+  //     this.sanphams = (
+  //       (sanphams ) as SanPham[]
+  //     ).filter((sp: any) => !this.danhsachTenSanPham.includes(sp["Name"]));
+  //   })
+   
+  // }
 
   async initDonHang() {
     const dh = this.donhang;
@@ -116,7 +130,7 @@ export class ProductArrayComponent {
 
   async ngOnInit() {
     await this.switchCase();
-    await this.getSanPhams();
+    //await this.getSanPhams();
     //await this.checkEvent();
 
     this.khachhangs = this.data["khachhangs"] as KhachHang[];
@@ -133,10 +147,7 @@ export class ProductArrayComponent {
     if (typeof str != "string") return false; // we only process strings!
     return !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
   }
-  onEdit() {
-    let values = this.formGroup.value;
-    console.log(values);
-  }
+
   onChangeValue(event?: any) {
     let values = this.formGroup.value;
 
@@ -147,11 +158,24 @@ export class ProductArrayComponent {
     });
     try {
       const tenSp = event.value;
-      console.log(tenSp,this.formGroup.value['chitiets'].map((x:any)=>x['Tên Sản Phẩm']))
-      const checkSps = this.formGroup.value['chitiets'].map((x:any)=>x['Tên Sản Phẩm']).filter((e:any)=>e['Tên Sản Phẩm']==tenSp);
-      console.log(checkSps)
-      if(checkSps.length>0){
-        alert('San Pham bij trubf')
+      console.log(
+        JSON.stringify(
+          this.formGroup.value["chitiets"].map((x: any) => x["Tên Sản Phẩm"])
+        )
+      );
+      const checkSps = Array.from(
+        this.formGroup.value["chitiets"].map((x: any) => x["Tên Sản Phẩm"])
+      ).filter((x: any) => x == tenSp);
+      console.log(checkSps); //Vỏ Hitachi 14v
+      if (checkSps.length > 1) {
+        this.dialog.open(DialogConfirmComponent, {
+          data: {
+            title: `${tenSp} đã có trong danh sách`,
+            header: "Cảnh Báo!",
+          },
+        });
+        event.value = "";
+        return;
       }
       const sp: SanPham = this.sanphams.find(
         (x: SanPham) => x["Name"] == tenSp
@@ -169,26 +193,57 @@ export class ProductArrayComponent {
       }
     } catch (error) {}
     values["chitiets"] = chitiets;
-    console.log(values);
+
+   // console.log(values);
     this.formGroup.patchValue(values);
   }
+  onCal(donhang: DonHang) {
+    const chitiets = donhang["chitiets"];
+
+    const sumSoLuong = chitiets
+      .map((a: any) => a["Số Lượng"])
+      .reduce((a: number, b: number) => a + b, 0);
+    const sumThanhTien = chitiets
+      .map((a: any) => a["Thành Tiền"])
+      .reduce((a: number, b: number) => a + b, 0);
+  }
+
   onDelete(index: number) {
     this.formGroup.controls["chitiets"].removeAt(index);
   }
-  onAdd() {
+  onAdd(item?:any) {
     const arr = this.formGroup.controls["chitiets"] as FormArray;
     arr.push(
       this.fb.group({
         Id: "",
-        "Tên Sản Phẩm": [""],
-        "Đơn giá": 0,
-        "Số Lượng": 0,
+        "Tên Sản Phẩm": [item?item['Name'] :"", Validators.required],
+        "Đơn giá": [item?item['Giá Bán'] :0, Validators.required],
+        "Số Lượng": [0, Validators.required],
         "Thành Tiền": [0],
         "Đơn Vị Tính": "",
       })
     );
     this.scrollTop();
   }
+  onSelectedSanPham(event:any){
+    this.onAdd(event)
+  }
+  onChecked(target:any) {
+    console.log('checked',target.innerText)
+  }
+  onSubmit() {
+    let values = this.formGroup.value;
+    console.log(values);
+    //1. kiem tra co san pham moi hay khong
+
+    this.checkProduct.setSProducts =this.sanphams;
+    this.checkProduct.isNewProduct(this.sanphams,values['chitiets'])
+    //2. kiem tra cap nhat san pham hay khong
+    // cap nhap don hang
+    // cap nhat chi tiet don hang
+
+  }
+
   trackByFn(index: any) {
     return index;
   }
@@ -222,6 +277,6 @@ export class ProductArrayComponent {
         // window.scrollTo(0, 0);
         element.scrollTo({ top: element.scrollHeight, behavior: "instant" });
       }
-    }, 100);
+    }, 200);
   }
 }

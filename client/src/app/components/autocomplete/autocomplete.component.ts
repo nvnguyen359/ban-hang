@@ -26,8 +26,8 @@ export class AutocompleteComponent {
    
   }
   ngOnInit() {
-    console.log("AutocompleteComponent", this.data);
-    console.log(this.options);
+    
+    //console.log(this.options);
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(""),
       map((value: any) => this._filter(value || ""))
