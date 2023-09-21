@@ -7,7 +7,7 @@
                         [checked]="selection.hasValue() && isAllSelected()"
                         [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
                     </mat-checkbox>
-                    <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
+                    <button mat-icon-button aria-label="Example icon button with a vertical three dot icon" (click)="onPrints($event)">
                         <mat-icon>local_printshop</mat-icon>
                     </button>
 

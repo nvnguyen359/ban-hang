@@ -88,12 +88,16 @@ export class BangmorongComponent {
     private dataService: DataService,
     private changeDetectorRefs: ChangeDetectorRef,
     private service: ApiService,
-    private snackbar:MatSnackBar
+    private snackbar: MatSnackBar
   ) {}
   ngOnInit() {
+    this.loadingService();
     this.onLoadData();
+   
+  }
+  loadingService() {
     this.dataService.currentMessage.subscribe((result: any) => {
-      console.log(result.status, Status.Refesh, result.status == Status.Refesh);
+   
       if (result.status == Status.Refesh) {
         const donhang = result.donhang;
         const donhangs = this.dataSource.data.map((x: DonHang) => {
@@ -195,6 +199,16 @@ export class BangmorongComponent {
     this.onPrint.emit(el);
     event.stopPropagation();
   }
+  async onPrints(event: Event) {
+    //console.log(this.selection.selected);
+    const array = this.selection.selected;
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      this.onPrint.emit(element);
+      await delay(2000);
+    }
+    event.stopPropagation();
+  }
   OnEvent(item: any, ev: any) {
     console.log({ donhang: item, onUpdate: ev });
     //  this.refesh(item,ev)
@@ -209,7 +223,7 @@ export class BangmorongComponent {
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length; console.log(this.selection.selected)
+    const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
 
@@ -237,8 +251,7 @@ export class BangmorongComponent {
     element["Trạng Thái"] = event.value;
     console.log(element);
     await this.service.put("donhang", element);
-    this.snackbar.open('Cập Nhật Thành Công');
-    
+    this.snackbar.open("Cập Nhật Thành Công");
   }
   onStop(event: any) {
     event?.stopPropagation();

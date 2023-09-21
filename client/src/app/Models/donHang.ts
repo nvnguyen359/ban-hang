@@ -10,7 +10,7 @@ export interface DonHang{
     'Giá Bán':number,
     'Giảm Giá':number,
     'Ghi chú':string,
-    'Ngày Bán':string,
+    'Ngày Bán':Date,
     'Số Lượng':number,
     'Thành Tiền':number,
     'Thanh Toán':number,

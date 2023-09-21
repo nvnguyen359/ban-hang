@@ -15,16 +15,18 @@ Tên Khách Hàng
 -->
 
 
-<h1 mat-dialog-title innerHTML="{{title}}"></h1>
+<center><h1 mat-dialog-title innerHTML="{{title}}" class="orders-title"></h1></center>
 <form [formGroup]="formGroup" class="full-width" style=" margin-left: 8px;" (ngSubmit)="onSubmit()">
   <input type="hidden" name="Id" formControlName="Id">
+  <input formControlName='Khách Hàng'  type="hidden" >
+  <input formControlName='Trạng Thái'  type="hidden" >
   <div class="flex">
     <div class="customer">
-      <mat-form-field appearance="outline">
-        <mat-label>Danh Sách Khách Hàng</mat-label>
+      <mat-form-field appearance="outline" >
+        <mat-label>Danh Sách KH</mat-label>
         <input list="dsKhachHang" matInput placeholder="Chọn Khách Hàng" formControlName="Tên Khách Hàng"
           (change)="onKeyUpCustomer($event.target)">
-        <!-- <mat-icon matSuffix>search</mat-icon> -->
+       
         <datalist id="dsKhachHang">
           <option *ngFor="let khach of khachhangs" [value]="khach['Tên Khách Hàng']">{{khach['Phone']}}</option>
         </datalist>
@@ -33,15 +35,16 @@ Tên Khách Hàng
         <mat-icon>add</mat-icon>
       </button>
     </div>
+<app-status-order  [required]="true" formControlName='Trạng Thái' (eventChange)="eventChangeStatus($event)"></app-status-order>
 
-    <mat-form-field>
+    <!-- <mat-form-field>
       <mat-label>Trạng Thái</mat-label>
       <mat-select formControlName='Trạng Thái' required>
         <mat-option *ngFor="let status of status" [value]="status.text" [style.color]="status.color">
           {{status.text}}&nbsp; <mat-icon>{{status.icon}}</mat-icon>
         </mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> -->
     <div class="flex">
       <mat-button-toggle-group #group="matButtonToggleGroup" (click)="onChecked($event.target)">
         <mat-button-toggle value="VND" checked="true" aria-label="Text align left">
@@ -54,7 +57,7 @@ Tên Khách Hàng
       </mat-button-toggle-group>
       <mat-form-field appearance="outline" style="max-width: 140px;">
         <mat-label>Chiết Khấu</mat-label>
-        <input matInput placeholder="Chiết Khấu" formControlName="Chiết Khấu">
+        <input matInput placeholder="Chiết Khấu" formControlName="Chiết Khấu" (keyup)="onCal()">
         <mat-icon matSuffix>money</mat-icon>
       </mat-form-field>
     </div>
@@ -84,7 +87,7 @@ Tên Khách Hàng
     </mat-form-field>
   </div>
   <div>
-    <div class="details" *ngIf="isDonHang" id="scrollTop">
+    <div class="details"  id="scrollTop">
       <div formArrayName="chitiets"
         *ngFor="let chitiet of formGroup.controls.chitiets?.value; index as i;trackBy: trackByFn">
         <ng-container [formGroupName]="i">
@@ -123,7 +126,7 @@ Tên Khách Hàng
   </div>
   <div class="flex full-width btns-bottom" style="justify-items: flex-end;margin-top:16px">
     <button mat-flat-button color="primary" type="button" (click)="onAdd()">Thêm &nbsp;<mat-icon>add</mat-icon></button>
-    <button mat-flat-button color="accent" type="submit" [mat-dialog-close]="true" [disabled]="!formGroup.valid">Cập Nhật &nbsp;<mat-icon>update</mat-icon></button>
+    <button mat-flat-button color="accent" type="submit" [mat-dialog-close]="true" [disabled]="!formGroup.valid">{{optionButtonUpdate?'Cập Nhật':'Thêm'}} &nbsp;<mat-icon>{{optionButtonUpdate?'update':'save'}}</mat-icon></button>
     <button mat-flat-button color="warn" [mat-dialog-close]="true">Đóng &nbsp;<mat-icon>close</mat-icon></button>
   </div>
 </form>

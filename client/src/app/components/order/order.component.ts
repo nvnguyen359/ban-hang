@@ -24,6 +24,7 @@ export class OrderComponent {
   giamgia!: number;
   selectDv = 1000;
   sumEnd: any;
+  status = "Đặt Hàng";
   groupGiamgia: any = "vnd";
   products: SanPham[] = [];
   filterProducts: SanPham[] = [];
@@ -41,13 +42,17 @@ export class OrderComponent {
   donhang?: DonHang;
   flag = false;
   codeSp: any;
+
+  isViewMmodule = false;
   constructor(
     private service: ApiService,
     private printer: ThermalPrinterServiceService,
     private dataService: DataService
   ) {
     localStorage.setItem("sp", "");
+    this.getAllDataService()
   }
+
   jsRun() {
     var btns = document.querySelectorAll(".btns-left  .btn-left");
     btns.forEach((btn, index) => {
@@ -66,9 +71,24 @@ export class OrderComponent {
     });
   }
   ngOnInit() {
-    this.getProducts();
-    this.getKhachHang();
+    this.getAllDataService();
+    // this.getProducts();
+    // this.getKhachHang();
     this.selectDv = 1000;
+    console.log(this.status);
+    console.log(this.khachhangs,this.products)
+  }
+
+  getAllDataService() {
+    this.dataService.currentMessage.subscribe((data: any) => {
+      if (data.all) {
+        console.log('vao day')
+       // this.products = data.all["Sản Phẩm"];
+        this.khachhangs = data.all["khachhangs"];
+        this.getProducts(data.all["sanphams"]);
+        console.log(data);
+      }
+    });
   }
   onSelected(value: any) {
     console.log(value);
@@ -91,32 +111,36 @@ export class OrderComponent {
     this.onCal();
     //console.log(value);
   }
-  getProducts() {
-    this.service.get("sanpham").then((e: any) => {
-      if (!e) return;
-      const products = (Array.from(e) as SanPham[]).map((x: any) => {
-        x["Số Lượng"] = 0;
-        x["Giá Bán"] = parseInt(`${x["Giá Bán"]}`.replace(".", ""));
-        x["Giá Nhập"] = parseInt(`${x["Giá Nhập"]}`.replace(".", ""));
-        x["Đơn giá"] = x["Giá Bán"];
-        (x["Tên Sản Phẩm"] = x["Name"]), (x["Sản Phẩm"] = x["Id"]);
-        return x;
-      });
-      this.products = products;
-      this.filterProducts = products;
-console.log(products)
-      const groups = [
-        ...new Set(
-          products.map((x) => {if(x['Name']){ return capitalizeFirstLetter(x["Name"]?.split(" ")[0])}})
-        ),
-      ];
-      this.groups = ["Tất Cả", ...groups.sort()];
-      if (groups.length > 1) {
-        setTimeout(() => {
-          this.jsRun();
-        }, 100);
-      }
+  getProducts(sanphams:any) {
+    console.log(sanphams)
+    const products = (Array.from(sanphams) as SanPham[]).map((x: any) => {
+      x["Số Lượng"] = 0;
+      x["Giá Bán"] = parseInt(`${x["Giá Bán"]}`.replace(".", ""));
+      x["Giá Nhập"] = parseInt(`${x["Giá Nhập"]}`.replace(".", ""));
+      x["Đơn giá"] = x["Giá Bán"];
+      (x["Tên Sản Phẩm"] = x["Name"]), (x["Sản Phẩm"] = x["Id"]);
+      return x;
     });
+    this.products = products;
+    this.filterProducts = products;
+    const groups = [
+      ...new Set(
+        products.map((x) => {
+          if (x["Name"]) {
+            return capitalizeFirstLetter(x["Name"]?.split(" ")[0]);
+          }
+        })
+      ),
+    ];
+    this.groups = ["Tất Cả", ...groups.sort()];
+    if (groups.length > 1) {
+      setTimeout(() => {
+        this.jsRun();
+      }, 100);
+    }
+    // this.service.get("sanpham").then((e: any) => {
+
+    // });
   }
   getKhachHang() {
     this.service.get("khachhang").then((khs: any) => {
@@ -145,8 +169,13 @@ console.log(products)
     this.orders = this.products.filter((x) => x["Số Lượng"] > 0);
     this.onCal();
   }
+  eventChangeStatus(event: any) {
+    if (event) {
+      this.status = event;
+    }
+  }
   onCal() {
-    if(!this.orders) return;
+    if (!this.orders) return;
     this.checkDk = this.khach && this.orders.length > 0;
     if (this.orders.length < 1) return;
     const tiencong = this.tiencong * this.selectDv || 0;
@@ -171,6 +200,7 @@ console.log(products)
       sumCount,
       giamgia,
       thanhtoan: parseInt(tt.toString()) + tiencong + phiship - giamgia,
+      status: this.status,
     };
   }
 
@@ -200,31 +230,33 @@ console.log(products)
     this.onSave();
   }
   async onSave() {
+    const date = this.ngay.value;
     let donhang: DonHang = {
       Id: "",
       "Khách Hàng": this.khach?.Id,
       "Tên Khách Hàng": this.khach?.["Tên Khách Hàng"],
       "Phí Ship": this.sumEnd.phiship,
       "Tiền Công": this.sumEnd.tiencong,
-      "Giảm Giá": this.sumEnd.giamgia,
+      // "Giảm Giá": this.sumEnd.giamgia,
+      "Chiết Khấu": this.sumEnd.giamgia,
       "Thanh Toán": this.sumEnd.thanhtoan,
       "Thành Tiền": this.sumEnd.tt,
       "Số Lượng": this.sumEnd.sumCount,
-      "Ngày Bán": this.ngay.value?.toLocaleDateString(),
+      "Trạng Thái": this.sumEnd.status,
+      "Ngày Bán": date,
     } as DonHang;
 
-    const result = (await this.service.post("donhang", donhang)) as DonHang[];
-
+    const result = (await this.service.post("donhang", donhang)) as any;
     let chitiet = Array.from(this.orders).map((x: any) => {
-      x["Đơn Hàng"] = (result as DonHang[])[0].Id;
+      x["Đơn Hàng"] = result.data[0].Id;
       x["Thành Tiền"] = parseInt(x["Số Lượng"]) * parseInt(x["Đơn giá"]);
-      x["Ngày"] = this.ngay.value?.toLocaleDateString("vi");
+      x["Ngày"] = date;
       return x;
     });
 
     const resultChitiet = await this.service.post("chitietdonhang", chitiet);
 
-    result[0].chitiets = resultChitiet;
+    result.data[0].chitiets = resultChitiet;
     donhang["chitiets"] = chitiet;
     this.donhang = donhang;
     this.dataService.sendMessage({ add: Status.Add, donhang: result[0] });

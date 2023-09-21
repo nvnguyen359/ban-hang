@@ -1,10 +1,11 @@
 interface String {
   add(...strings: string[]): string;
   removeAccents(): string;
-  convertDateVNToISO(isVn?:boolean): Date;
+  convertDateVNToISO(isVn?: boolean): Date;
   isValidDate(): boolean;
   DateFormatDDMMYYY(): string;
-  convertDatefromVN():Date
+  convertDatefromVN(): Date;
+  capitalizeFirstLetter(): string;
 }
 interface Date {}
 
@@ -39,16 +40,15 @@ String.prototype.isValidDate = function () {
   return new Date(this.toString()).toString() !== "Invalid Date";
 };
 String.prototype.convertDateVNToISO = function (isVn) {
-  
   var timestamp = Date.parse(this.toString());
   // console.log(this,isNaN(timestamp) == false)
   if (isNaN(timestamp) == false) {
     const t = this.split("/");
-    const date = new Date(parseInt(t[2]), parseInt(t[1])-1, parseInt(t[0]));
-    return !isVn? new Date(timestamp):date;
+    const date = new Date(parseInt(t[2]), parseInt(t[1]) - 1, parseInt(t[0]));
+    return !isVn ? new Date(timestamp) : date;
   } else {
     const t = this.split("/");
-    const date = new Date(parseInt(t[2]), parseInt(t[1])-1, parseInt(t[0]));
+    const date = new Date(parseInt(t[2]), parseInt(t[1]) - 1, parseInt(t[0]));
     return t.length == 3 ? date : new Date(this.toString());
   }
 };
@@ -62,4 +62,8 @@ String.prototype.convertDatefromVN = function () {
     return t.length == 3 ? date : new Date(this.toString());
   }
 };
+String.prototype.capitalizeFirstLetter = function () {
+  return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
 

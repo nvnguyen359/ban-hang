@@ -18,6 +18,7 @@ import { ProductArrayComponent } from "src/app/components/product-array/product-
 import { KhachHang } from "src/app/Models/khachHangs";
 import { SanPham } from "src/app/Models/sanPham";
 import { async } from "rxjs";
+import { OrdersComponent } from "src/app/components/orders/orders.component";
 @Component({
   selector: "app-donhangs",
   templateUrl: "./donhangs.component.html",
@@ -60,6 +61,7 @@ export class DonhangsComponent {
         }, 800);
       }
     });
+    //this.onDialog()
   }
   ngAfterContentInit() {}
   async getAllData() {
@@ -73,7 +75,7 @@ export class DonhangsComponent {
     });
   }
   onDialog() {
-    this.dialog.open(OrderComponent);
+    this.dialog.open(OrdersComponent);
   }
   getKhachHangs() {
     this.service.get("khachhang").then((data: any) => {

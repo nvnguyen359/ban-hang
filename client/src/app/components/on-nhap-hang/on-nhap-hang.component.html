@@ -1,5 +1,59 @@
-<div id="test">
-   
+<div  >
+    <center><h2 mat-dialog-title>{{title}}</h2></center>
+    <!--/Id	Tên sản phẩm	Sản Phẩm	Số Lượng	Đơn Vị Tính	Giá Nhập	Giá Bán-->
+    <div mat-dialog-content style="margin-top: -44px;">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <mat-form-field appearance="outline">
+                <mat-label>Ngày Nhập</mat-label>
+                <input matInput [matDatepicker]="picker" tabIndex="10" required formControlName="Ngày Nhập">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            <div class="nhap-hang">
+                <div formArrayName="nhaphangs" 
+                *ngFor="let nhaphang of form.controls.nhaphangs?.value; index as i;trackBy: trackByFn">
+                <ng-container [formGroupName]="i">
+                    <input type="hidden" name="" formControlName="Id">
+                    <input type="hidden" name="" formControlName="Sản Phẩm">
+                   
+                    <mat-form-field appearance="outline" style="flex-grow: 1;">
+                        <mat-label>Chọn Sản Phẩm</mat-label>
+                        <input matInput placeholder="Sản Phẩm" tabindex="0" required list="dssp" formControlName="Tên sản phẩm" (change)="onChangeSanPham($event,i)">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Số Lượng</mat-label>
+                        <input matInput placeholder="SL" formControlName="Số Lượng" type="number" required >
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>DVT</mat-label>
+                        <input matInput placeholder="Đơn Vị" list="dvts" formControlName="Đơn Vị Tính">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Giá Nhập</mat-label>
+                        <input matInput placeholder="Giá Nhập" type="number" formControlName="Giá Nhập">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Giá Bán</mat-label>
+                        <input matInput placeholder="Giá Bán"  type="number"  formControlName="Giá Bán">
+                    </mat-form-field>
+                    <mat-icon color="warn" class="delete" (click)="onDelete(i)">delete</mat-icon>
+                </ng-container>
+            </div>
+            </div>
+           
+            <div mat-dialog-actions style="    justify-content: flex-end;">
+                <button mat-flat-button color="primary" type="button" (click)="addRow()" >Thêm &nbsp;<mat-icon>add</mat-icon></button>
+                <button mat-flat-button color="accent" type="submit" [mat-dialog-close]="true" [disabled]="!form.valid">{{optionButtonUpdate?'Cập Nhật':'Thêm'}} &nbsp;<mat-icon>{{optionButtonUpdate?'update':'save'}}</mat-icon></button>
+                <button mat-flat-button color="warn" [mat-dialog-close]="true">Đóng &nbsp;<mat-icon>close</mat-icon></button>
+              </div>
+        </form>
+    </div>
+
 </div>
 
-<button (click)="addRow()">Add</button>
+<datalist id="dssp">
+    <option *ngFor="let sanpham of sanphams" [value]="sanpham['Name']">{{sanpham['Name']}}</option>
+</datalist>
+<datalist id="dvts">
+    <option *ngFor="let dv of dvts" [value]="dv">{{dv}}</option>
+</datalist>

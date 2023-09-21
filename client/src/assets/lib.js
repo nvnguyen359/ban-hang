@@ -8,6 +8,10 @@ function removeAccents(str) {
     .replace(/đ/g, "d")
     .replace(/Đ/g, "D");
 }
+
+function delay(ms = 1000) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 function createDiv(classList = ["form-floating"]) {
   let div = document.createElement("div");
   classList.forEach((x) => {

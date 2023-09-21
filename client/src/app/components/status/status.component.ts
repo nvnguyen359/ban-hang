@@ -20,21 +20,23 @@ import { MatSelectModule } from "@angular/material/select";
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class StatusComponent {
-  @Input() statusText = "";
+  @Input() statusText = "Đặt Hàng";
   @Output() eventChange = new EventEmitter();
+  @Input() label ='Trạng Thái ĐH';
+  @Input() required=false;
   color: any = "";
   constructor() {
-    this.color = this.status.find((x) => x.text == this.statusText)?.color;
+   
   }
   ngOnInit(){
-    this.color = this.status.find((x) => x.text == this.statusText)?.color;
+   this.setColor();
   }
-  setColor(){
-    return  this.status.find((x) => x.text == this.statusText)?.color;
+  setColor(event?:any){
+    const text =event?.value?event.value: this.statusText
+    this.color = this.status.find((x) => x.text == text)?.color;
   }
   onChange(event: any) {
-  
-    this.color = this.status.find((x) => x.text == event.value)?.color;
+   this.setColor(event)
     this.eventChange.emit(event);
   }
   status = [

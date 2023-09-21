@@ -29,6 +29,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ver: string = JSON.stringify(localStorage.getItem("ver"));
   loadingService: any;
   url: any;
+  flagOffline = false;
   constructor(
     private socket: SocketService,
     private readonly dialog: MatDialog,
@@ -40,11 +41,23 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.getVersion();
     //this.getAllData();
   }
- 
+
   getAllData() {
+    const all = localStorage.getItem("all");
+
+    if (this.flagOffline) {
+      this.dataService.sendMessage(JSON.parse(all + ""));
+      return;
+    }
     this.service.get("all").then((data: any) => {
-      this.dataService.sendMessage({all:data})
+      if (!localStorage.getItem("all")) {
+        localStorage.setItem("all", JSON.stringify({ all: data }));
+      }
+      this.dataService.sendMessage({ all: data });
     });
+  }
+  getAll(){
+
   }
   getVersion() {
     this.socket.getMessage().subscribe((x: any) => {
@@ -54,7 +67,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         } else {
           this.ver = x.ver;
         }
-        console.log(this.ver);
         this.infor = x.mes;
       }
     });

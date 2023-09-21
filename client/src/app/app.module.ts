@@ -63,6 +63,8 @@ import { ExamFormArrayComponent } from './components/exam-form-array/exam-form-a
 import { StatusOrderComponent } from './components/status-order/status-order.component';
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { SanphamComponent } from './components/sanpham/sanpham.component';
+import { OrdersComponent } from './components/orders/orders.component';
+
 
 
 
@@ -97,7 +99,8 @@ const config: SocketIoConfig = { url: "http://localhost:18092", options: {} };
     ExamFormArrayComponent,
     StatusOrderComponent,
     SanphamComponent,
-    OrderComponent
+    OrderComponent,
+    OrdersComponent
   ],
   imports: [
     BrowserModule,

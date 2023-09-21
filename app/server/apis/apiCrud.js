@@ -65,11 +65,14 @@ const getAlldata = (app, crud) => {
     const nhaphangs = await crud.getAll();
     crud.nameSheetTitle = "Chi Tiết Đơn Hàng";
     const chitiets = await crud.getAll();
+    crud.nameSheetTitle = "Khách Hàng";
+    const khachhangs = await crud.getAll();
     const data = {
       sanphams,
       nhaphangs,
       donhangs,
       chitiets,
+      khachhangs
     };
     res.status(200).json(data);
     next();
@@ -114,7 +117,7 @@ const put = (element, app, crud) => {
   app.put(`/${element.value.trim()}`, async (req, res, next) => {
     const row = req.body ? req.body : null;
     //console.log(row)
-    res.send(await crud.put(row));
+    res.send({data:await crud.put(row),mes:'success'});
     next();
   });
 };
@@ -134,16 +137,14 @@ const deleteId = async (element, app, crud) => {
 const bulkDelete = async (element, app, crud) => {
   app.delete(`/${element.value.trim()}`, async (req, res, next) => {
     try {
-      let data = [];
+
       const ids = `${req.query.ids}`.split(",");
       console.log("bulkDelete ", ids);
-      ids.forEach(async (id, index) => {
-        setTimeout(async () => {
-          const result = await crud.deleteId(id);
-          data.push(result);
-        }, 200 * index);
-      });
-      res.send(data);
+      for(let index =0; index<ids.length;index++){
+        await crud.deleteId(id);
+        await delay(200);
+      }
+      res.send({data: await crud.getAll()});
       next();
     } catch (error) {
       next();

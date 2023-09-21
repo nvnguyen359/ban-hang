@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { isEmpty } from "rxjs";
 import { GroupDate, NhapHang } from "src/app/Models/nhapHang";
 import { ApiService } from "src/app/services/api.service";
@@ -12,21 +12,101 @@ import { DialogConfirmComponent } from "src/app/components/dialog-confirm/dialog
 import { SanPham } from "src/app/Models/sanPham";
 import { OnNhapHangComponent } from "src/app/components/on-nhap-hang/on-nhap-hang.component";
 import { DomSanitizer } from "@angular/platform-browser";
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from "@angular/animations";
+import { DataService } from "src/app/services/data.service";
+import { Status } from "src/app/general";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatTableDataSource } from "@angular/material/table";
+
 @Component({
   selector: "app-nhaphang",
   templateUrl: "./nhaphang.component.html",
   styleUrls: ["./nhaphang.component.scss"],
+  animations: [
+    trigger("detailExpand", [
+      state("collapsed", style({ height: "0px", minHeight: "0" })),
+      state("expanded", style({ height: "*" })),
+      transition(
+        "expanded <=> collapsed",
+        animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")
+      ),
+    ]),
+  ],
 })
 export class NhaphangComponent {
   nhaphangs?: NhapHang[];
   nhaphangsGroupNgay: any;
-  groupsDate?: GroupDate[];
+  groupsDate?: any;
   sanphams?: SanPham[] | undefined;
-  innerHTML:any
-  constructor(private apiService: ApiService, public dialog: MatDialog,private sanitizer:DomSanitizer) {
-    this.getAll("nhaphang");
-    this.getProduct();
+
+  columnsToDisplay = ["date", "count", "quantity", "tong"];
+  columnsToDisplayWithExpand = [...this.columnsToDisplay, "expand"];
+  expandedElement: any | null;
+  dataSource?: any;
+
+  innerHTML: any;
+  constructor(
+    private apiService: ApiService,
+    public dialog: MatDialog,
+    private sanitizer: DomSanitizer,
+    private dataService: DataService,
+    private changeDetectorRefs: ChangeDetectorRef,
+    private snackBar: MatSnackBar
+  ) {
+    // this.getAll("nhaphang");
+    // this.getProduct();
   }
+  ngOnInit() {
+    this.loadData();
+    //console.log(this.groupsDate)
+    this.dataService.currentMessage.subscribe((e: any) => {
+      if (e.status == Status.Refesh) {
+        if (e.nhaphang) {
+          const dh = e.nhaphang;
+          this.groupsDate = this.groups(dh);
+        }
+        if (e.dataUpdate) {
+          (this.nhaphangs as NhapHang[]).forEach((x: any) => {
+            const nhapUp = Array.from(e.dataUpdate).find(
+              (a: any) => {
+                return x["Id"] == a["Id"]
+              }
+            );
+            if (nhapUp) {
+              x = nhapUp;
+            }
+          });
+          this.groupsDate = this.groups(this.nhaphangs);
+        }
+        this.dataSource.data = this.groupsDate;
+        this.changeDetectorRefs.detectChanges();
+        this.snackBar.open("Cập Nhật Thành Công!");
+      }
+    });
+  }
+  loadData() {
+    this.dataService.currentMessage.subscribe((data: any) => {
+      if (data.all) {
+        try {
+          this.nhaphangs = (data.all["nhaphangs"] as NhapHang[]).filter(
+            (x: any) => {
+              if (x["Ngày Nhập"] != undefined) return x;
+            }
+          );
+          this.groupsDate = this.groups(this.nhaphangs.map((x:any)=>{x['Ngày Nhập']=`${x['Ngày Nhập']}`.DateFormatDDMMYYY(); return x;}));
+          this.dataSource=new MatTableDataSource( this.groupsDate);
+          this.sanphams = data.all["sanphams"];
+        } catch (error) {}
+      }
+    });
+  }
+
   getAll(nameSheet: string, item?: any) {
     this.apiService.get(nameSheet).then((e) => {
       this.nhaphangs = (e as NhapHang[]).filter((x: any) => {
@@ -51,26 +131,28 @@ export class NhaphangComponent {
       const array: NhapHang[] = nhaphangs.filter(
         (x: NhapHang) => `${x["Ngày Nhập"]}` == el
       );
+      const  tong= Array.from(array)
+      .map(
+        (x: NhapHang) =>
+          parseInt(x["Số Lượng"].toString()) *
+          parseInt(x["Giá Bán"].toString())
+      )
+      .reduce((a, b) => a + b, 0)
+    const  quantity= array
+      .map((x: NhapHang) => parseInt(x["Số Lượng"].toString()))
+      .reduce((a, b) => a + b, 0)
       const item: GroupDate = {
-        date: `${el}`.convertDateVNToISO(),
-        nhaphang: array.map((x, index) => {
+        date: `${el}`,
+        nhaphang: array.map((x:any, index) => {
           x.index = index + 1;
-          x["Số Lượng"] = parseInt(x["Số Lượng"].toString());
-          x["Giá Nhập"] = parseInt(x["Giá Nhập"].toString());
-          x["Giá Bán"] = parseInt(x["Giá Bán"].toString());
+          x["Số Lượng"] = parseInt(x["Số Lượng"]);
+          x["Giá Nhập"] = parseInt(x["Giá Nhập"]);
+          x["Giá Bán"] = parseInt(x["Giá Bán"]);
           x["Thành tiền"] = x["Số Lượng"] * x["Giá Bán"];
           return x;
         }),
-        quantity: array
-          .map((x: NhapHang) => parseInt(x["Số Lượng"].toString()))
-          .reduce((a, b) => a + b, 0),
-        tong: Array.from(array)
-          .map(
-            (x: NhapHang) =>
-              parseInt(x["Số Lượng"].toString()) *
-              parseInt(x["Giá Bán"].toString())
-          )
-          .reduce((a, b) => a + b, 0),
+        quantity: quantity.toLocaleString('vi'),
+        tong:tong.toLocaleString('vi'),
         count: array.length,
       };
       data.push(item);
@@ -88,15 +170,23 @@ export class NhaphangComponent {
       header: "Xóa Ngày Nhập Hàng",
     };
     const dt = this.dialog.open(DialogConfirmComponent, { data: info });
-    dt.afterClosed().subscribe((x) => console.log(x));
+    dt.afterClosed().subscribe((x) => {
+      if (x) {
+        this.apiService.bulkDelete("nhaphang", ids).then((result: any) => {
+          this.groupsDate.data = this.groups(result.data);
+          this.changeDetectorRefs.detectChanges();
+          this.snackBar.open("Xóa Thành Công!");
+        });
+      }
+    });
   }
-  onUpdate(element?: GroupDate) {
+  onUpdate(element: any = null) {
+    // if(!element){
+    //   this.dialog.open(OnNhapHangComponent);
+    // }
     const nhs = element?.nhaphang ? element?.nhaphang : [];
-    // console.log(nhs);
-    // console.log(this.sanphams)
-   
     this.dialog.open(OnNhapHangComponent, {
-      data: { nhs, sanphams: this.sanphams },
+      data: nhs,
     });
   }
 }

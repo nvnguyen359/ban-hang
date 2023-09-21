@@ -89,10 +89,10 @@ class CRUD {
         return rows[index].get("Id") == id;
       });
       return new Promise(async (res, rej) => {
-        res(await this.convertObject(row));
+        res({data:await this.convertObject(row),mes:'success'});
       });
     } catch (error) {
-      return error;
+      return {mes:error};
     }
   }
   async post(values) {
@@ -120,9 +120,9 @@ class CRUD {
         return x;
       });
       sheet.addRows(newRows);
-      return newRows;
+      return {data:newRows,mes:'success'};
     } catch (error) {
-      return error;
+      return {mes:error};
     }
   }
   async put(value) {
@@ -133,7 +133,7 @@ class CRUD {
       const array = await sheet.getRows();
       const keys = Object.keys(values[0]);
       const keyId = "Id" || "id";
-      console.log("put ", keyId);
+   
       return new Promise(async (res, rej) => {
         array.forEach(async (row) => {
           const rowExist = values.find((v, index) => {
@@ -149,10 +149,10 @@ class CRUD {
             await row.save();
           }
         });
-        res("200");
+        res({data:value,mes:'success'});
       });
     } catch (error) {
-      return error;
+      return {mes:error};
     }
   }
   async deleteId(id) {
@@ -163,11 +163,13 @@ class CRUD {
     const row = rows.find((x, index) => {
       return rows[index].get(_headerValues[0]) == id;
     });
+   
     if (row) {
+      console.log('Delete ',id)
       row.delete();
-      return id;
+      return {mes:'success',data:await this.getAll()};
     } else {
-      return `${id} does not exist`;
+      return {mes:`${id} does not exist`};
     }
   }
   async filters(text) {

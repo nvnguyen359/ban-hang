@@ -57,13 +57,13 @@ body {
     color: var(--mat-stepper-header-error-state-label-text-color);
     cursor: pointer;
     transition: 0.2s all;
-
+    transform: scale(1.1);
 }
 
 .delete:hover {
     opacity: 0.85;
     color: #3f51b5;
-    transform: scale(1.5);
+
 }
 
 .flex {
@@ -164,7 +164,11 @@ a {
     }
 
 }
-.margin-right-8{
+
+.margin-right-8 {
     margin-right: 8px;
 }
-.mat-mdc-form-field-subscript-wrapper{height: 4px!important;}
+
+.mat-mdc-form-field-subscript-wrapper {
+    height: 8px;
+}

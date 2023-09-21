@@ -21,7 +21,6 @@ export class MenuLeftComponent {
         } else {
           this.ver = x.ver;
         }
-        console.log(this.ver);
       }
     });
   }

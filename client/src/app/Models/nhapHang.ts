@@ -13,9 +13,9 @@ export interface NhapHang{
     index:number
 }
 export interface GroupDate{
-    date:Date,
-    nhaphang: NhapHang[],
-    quantity:number,
-    tong:number,
-    count:number
+    date:any,
+    nhaphang: any[],
+    quantity:any,
+    tong:any,
+    count:any
 }

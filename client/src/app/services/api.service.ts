@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from "@angular/common/http";
 import{environment} from './../environment'
+import { catchError, retry, throwError } from "rxjs";
 @Injectable({
   providedIn: "root",
 })
@@ -12,7 +13,19 @@ export class ApiService {
       responseType: "blob",
     }),
   };
-
+  private handleError(error: HttpErrorResponse) {
+    if (error.status === 0) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong.
+      console.error(
+        `Backend returned code ${error.status}, body was: `, error.error);
+    }
+    // Return an observable with a user-facing error message.
+    return throwError(() => new Error('Something bad happened; please try again later.'));
+  }
   baseServer = "";
   constructor(private http: HttpClient) {
     this.baseServer= environment.baseUrl
@@ -23,26 +36,34 @@ export class ApiService {
     this.httpOptions.headers.set("printerName", n);
     const pathUrl = `${this.baseServer}/${url}`;
     return new Promise((res, rej) => {
-      this.http.get(pathUrl, this.httpOptions).subscribe((data) => {
+      this.http.get(pathUrl, this.httpOptions).pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError)
+      ).subscribe((data) => {
         return res(data);
-      });
+      });;
     });
   }
   async getId(url: string, id = "") {
     const pathUrl = `${this.baseServer}/${url}/${id}`;
-    console.log(pathUrl);
+
     return new Promise((res, rej) => {
-      this.http.get(pathUrl, this.httpOptions).subscribe((data) => {
+      this.http.get(pathUrl, this.httpOptions).pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError)
+      ).subscribe((data) => {
         return res(data);
       });
     });
   }
   async put(url: string, data: any) {
     const pathUrl = `${this.baseServer}/${url}`;
-    console.log(data);
-    console.log(pathUrl);
+    
     return new Promise((res, rej) => {
-      this.http.put(pathUrl, data, this.httpOptions).subscribe((data) => {
+      this.http.put(pathUrl, data, this.httpOptions).pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError)
+      ).subscribe((data) => {
         return res(data);
       });
     });
@@ -55,25 +76,25 @@ export class ApiService {
       x["Id"] = "";
       return x;
     });
-    console.log("data", data);
+    //console.log("data", data);
     const pathUrl = `${this.baseServer}/${url}`;
-    console.log(pathUrl);
+    //onsole.log(pathUrl);
     return new Promise((res, rej) => {
-      this.http.post(pathUrl, data, this.httpOptions).subscribe((e) => {
+      this.http.post(pathUrl, data, this.httpOptions).pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError)
+      ).subscribe((e) => {
         res(e);
       });
     });
   }
   async destroy(url: string, id: any) {
     const pathUrl = `${this.baseServer}/${url}/${id}`;
-    console.log(pathUrl);
     return new Promise((res, rej) => {
-      this.http.delete(pathUrl, this.httpOptions).subscribe(
+      this.http.delete(pathUrl, this.httpOptions).pipe( retry(3), // retry a failed request up to 3 times
+      catchError(this.handleError)).subscribe(
         (e) => {
           res(e);
-        },
-        (err: Error) => {
-          res(err.message);
         }
       );
     });

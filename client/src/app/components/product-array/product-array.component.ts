@@ -46,12 +46,13 @@ export class ProductArrayComponent {
   formGroup?: any = this.fb.group({
     Id: "",
     "Tên Khách Hàng": ["", Validators.required],
+    "Khách hàng": "",
     "Tiền Công": [""],
     "Phí Ship": [""],
     "Trạng Thái": [""],
     "Thành Tiền": [""],
     "Đơn Hàng": ["", Validators.required],
-    "Ngày Bán": [new Date().toLocaleDateString(), Validators.required],
+    "Ngày Bán": [new Date(), Validators.required],
     chitiets: this.fb.array([]),
   });
 
@@ -62,6 +63,9 @@ export class ProductArrayComponent {
   title: string = "";
   chietkhau = 0;
   donvi = 1000;
+  statusText = "Đặt Hàng";
+
+  optionButtonUpdate = true;
   constructor(
     private fb: FormBuilder,
     private serviceApi: ApiService,
@@ -69,26 +73,82 @@ export class ProductArrayComponent {
     private checkProduct: CheckProduct,
     private dataService: DataService,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
+  ) {}
+  async ngOnInit() {
+    this.statusText = "Đặt Hàng";
+    this.showKeys = ["Id", "Tên Sản Phẩm", "Đơn giá", "Số Lượng"];
+
+    if (!this.data) {
+      this.title = `Tạo Mới Đơn Hàng`;
+      this.initNoInputData();
+    } else {
+      await this.switchCase();
+    }
     this.getDataService();
   }
-  async ngOnInit() {
-    // this.getDataService();
-    await this.switchCase();
-    //await this.getSanPhams();
-    //await this.checkEvent();
+  initNoInputData() {
+    this.optionButtonUpdate = false;
+    this.formGroup = this.fb.group({
+      Id: [""],
+      "Tên Khách Hàng": ["", Validators.required],
+      "Khách Hàng": ["", Validators.required],
+      "Tiền Công": [""],
+      "Chiết Khấu": [""],
+      "Trạng Thái": ["Đặt Hàng", Validators.required],
+      "Thành Tiền": [""],
+      "Ngày Bán": [new Date(), Validators.required],
+      chitiets: this.fb.array([]),
+    });
+    if (this.khachhangs == undefined) {
+      const setTime = setInterval(async () => {
+        this.getDataService();
+        const data = await this.getDataService();
+        this.sanphams = data?.sanphams;
+        this.khachhangs = data?.khachhangs;
+        if (data?.khachhangs.length > 0) {
+          clearInterval(setTime);
+          console.log("clear");
+        }
+      }, 200);
+      this.onAdd();
+      this.onAdd();
+      this.onAdd();
+    }
+    // this.statusText=this.formGroup.value['Trạng Thái']
+    console.log("khoi tao ");
   }
-  getDataService() {
-    this.dataService.currentMessage.subscribe((data: any) => {
-      if (data?.all) {
-        this.sanphams = data.all["sanphams"].filter(
-          (sp: any) => !this.danhsachTenSanPham.includes(sp["Name"])
-        );
-        this.khachhangs = data.all["khachhangs"] as KhachHang[];
+  getDataService(): any {
+    return new Promise((res, rej) => {
+      try {
+        this.dataService.currentMessage.subscribe((data: any) => {
+          if (data?.all) {
+            if (data.all["sanphams"])
+              this.sanphams = Array.from(data.all["sanphams"]).filter(
+                (sp: any) => !this.danhsachTenSanPham.includes(sp["Name"])
+              );
+            if (data.all["khachhangs"])
+              this.khachhangs = Array.from(
+                data.all["khachhangs"]
+              ) as KhachHang[];
+          }
+          res(data.all);
+        });
+      } catch (error) {
+        res(null);
       }
     });
   }
+  eventChangeStatus(event: any) {
+    const values = this.formGroup.value;
+    values["Trạng Thái"] = event;
+    this.formGroup.patchValue(values);
+    console.log(event);
+  }
   async switchCase() {
+    if (!this.data) {
+      console.log("khong cos data");
+      return;
+    }
     // ['donhang', 'isDonhang', 'khachhangs']
     const keys = Object.keys(this.data);
     if (keys.includes("donhang")) {
@@ -98,10 +158,8 @@ export class ProductArrayComponent {
       this.danhsachTenSanPham = this.chitietsDonHangs.map(
         (x: any) => x["Tên Sản Phẩm"]
       );
-
       this.keysChitiet = Object.keys(this.chitietsDonHangs[0]);
 
-      this.showKeys = ["Id", "Tên Sản Phẩm", "Đơn giá", "Số Lượng"];
       if (this.data["isDonhang"] && this.donhang["chitiets"].length > 0)
         this.title = `Cập Nhật Đơn Hàng <b>${this.donhang["Id"]}</b>`;
       await this.initDonHang();
@@ -227,21 +285,49 @@ export class ProductArrayComponent {
     const sumThanhTien = chitiets
       .map((a: any) => parseInt(a["Thành Tiền"]))
       .reduce((a: number, b: number) => a + b, 0);
+
     const chietkhau =
       this.chietKhauChecked == "%"
-        ? parseInt(donhang["Chiết Khấu"]) || (0 * sumThanhTien) / 100
+        ? ((parseInt(donhang["Chiết Khấu"]) || 0) * sumThanhTien) / 100
         : parseInt(donhang["Chiết Khấu"] || 0) * this.donvi;
+
     const tiencong = parseInt(donhang["Tiền Công"]) * this.donvi || 0;
     const thanhtoan = sumThanhTien - chietkhau + tiencong;
     this.formGroup.value["Thanh Toán"] = thanhtoan;
     this.formGroup.value["Số Lượng"] = sumSoLuong;
-    this.formGroup.value["Chiết Khấu"] = chietkhau;
     this.formGroup.value["Tiền Công"] = tiencong;
     this.formGroup.value["Thành Tiền"] = sumThanhTien;
-    const date = `${this.formGroup.value["Ngày Bán"]}`.DateFormatDDMMYYY();
+    const date =this.formGroup.value["Ngày Bán"]
+    ;
     this.formGroup.value["Ngày Bán"] = date;
   }
-
+  onUpdateForm() {
+    // console.log("chietKhauChecked", this.chietKhauChecked);
+    const donhang = this.formGroup.value;
+    let chietkhau =
+      this.chietKhauChecked == "%"
+        ? ((parseInt(donhang["Chiết Khấu"]) || 0) *
+            this.formGroup.value["Thành Tiền"]) /
+          100
+        : parseInt(donhang["Chiết Khấu"] || 0) * this.donvi;
+    if (this.chietKhauChecked == undefined) {
+      chietkhau = parseInt(donhang["Chiết Khấu"] || 0);
+    }
+    const chitiets = donhang["chitiets"];
+    const sumSoLuong = chitiets
+      .map((a: any) => parseInt(a["Số Lượng"]))
+      .reduce((a: number, b: number) => a + b, 0);
+    const sumThanhTien = chitiets
+      .map((a: any) => parseInt(a["Thành Tiền"]))
+      .reduce((a: number, b: number) => a + b, 0);
+    const tiencong = parseInt(donhang["Tiền Công"]) * this.donvi || 0;
+    const thanhtoan = sumThanhTien - chietkhau + tiencong;
+    this.formGroup.value["Thanh Toán"] = thanhtoan;
+    this.formGroup.value["Số Lượng"] = sumSoLuong;
+    this.formGroup.value["Tiền Công"] = tiencong;
+    this.formGroup.value["Thành Tiền"] = sumThanhTien;
+    this.formGroup.value["Chiết Khấu"] = chietkhau;
+  }
   onDelete(index: number) {
     const chitiet = this.formGroup.controls["chitiets"].at(index).value;
     const dialogRef = this.dialog.open(DialogAlertComponent, {
@@ -261,7 +347,7 @@ export class ProductArrayComponent {
     //console.log(chitiet)
   }
   onAdd(item?: any) {
-    console.log(item);
+    // console.log(item);
     const arr = this.formGroup.controls["chitiets"] as FormArray;
     arr.push(
       this.fb.group({
@@ -276,6 +362,7 @@ export class ProductArrayComponent {
         "Giá Nhập": [item ? item["Giá Nhập"] : 0, Validators.required],
       })
     );
+
     this.scrollTop();
   }
   onSelectedSanPham(event: any) {
@@ -283,6 +370,11 @@ export class ProductArrayComponent {
   }
   async onChecked(target: any) {
     this.chietKhauChecked = target.innerText;
+    // const chietkhau = this.formGroup.value["Chiết Khấu"];//Chiết Khấu
+    // if (target.innerText == "VND") {
+    //   this.formGroup.value["Chiết Khấu"] = chietkhau / this.donvi;
+    // }
+    // this.formGroup.patchValue( this.formGroup.value);
     await this.onCal();
   }
   async onSubmit() {
@@ -315,44 +407,86 @@ export class ProductArrayComponent {
       this.formGroup.patchValue(values);
     }
     await this.onCal();
-    const date = `${this.formGroup.value["Ngày Bán"]}`.DateFormatDDMMYYY();
-    this.serviceApi
-      .put("donhang", [this.formGroup.value])
-      .then((data: any) => console.log(data));
-    this.formGroup.value["chitiets"] = this.formGroup.value["chitiets"].map(
-      (x: any) => {
-        x["Ngày"] = date;
-        return x;
-      }
-    );
-    const chitietsDH = this.formGroup.value["chitiets"];
-    const url = "chitietdonhang";
-    for (let i = 0; i < chitietsDH.length; i++) {
-      console.log("id", chitietsDH[i]);
-      if (chitietsDH[i]["Id"]) {
-        console.log("cap nhat");
-        this.serviceApi.put(url, chitietsDH[i]);
-      } else {
-        console.log("them moi");
-        this.serviceApi.post(url, chitietsDH[i]);
-      }
-      await delay(1000);
+    this.onUpdateForm();
+    const date = this.formGroup.value["Ngày Bán"];
+    if (this.optionButtonUpdate) {
+      this.serviceApi
+        .put("donhang", [this.formGroup.value])
+        .then(async(data: any) => {
+          this.formGroup.value["chitiets"] = this.formGroup.value[
+            "chitiets"
+          ].map((x: any) => {
+            x["Ngày"] = date;
+            x["Đơn Hàng"] = data.data["Id"];
+            return x;
+          });
+          this.formGroup.patchValue(this.formGroup.value);
+          await this.addOrUpdateChitiets(date);
+        });
+        this.dataService.sendMessage({
+          status: Status.Refesh,
+          donhang: this.formGroup.value,
+        });
+    } else {
+      this.serviceApi
+        .post("donhang", [this.formGroup.value])
+        .then(async(data: any) => {
+      
+          this.formGroup.value["chitiets"] = this.formGroup.value[
+            "chitiets"
+          ].map((x: any) => {
+            x["Ngày"] = date;
+            x["Đơn Hàng"] = data.data[0]["Id"];
+            return x;
+          });
+          this.formGroup.patchValue(this.formGroup.value);
+         await this.addOrUpdateChitiets(date);
+         this.dataService.sendMessage({
+          status: Status.Refesh,
+          donhang: this.formGroup.value,
+        });
+        });
     }
+
     // cap nhap don hang
     console.log("cap nhat don hang");
     // cap nhat chi tiet don hang
-    this.dataService.sendMessage({status:Status.Refesh, donhang: this.formGroup.value});
+    this.dataService.sendMessage({
+      status: Status.Refesh,
+      donhang: this.formGroup.value,
+    });
+  }
+  async addOrUpdateChitiets(date:Date) {
+    const chitietsDH = this.formGroup.value["chitiets"];
+    const url = "chitietdonhang";
+    for (let i = 0; i < chitietsDH.length; i++) {
+      chitietsDH[i]['Ngày']=date;
+      //console.log("id", chitietsDH[i]);
+      if (chitietsDH[i]["Id"]) {
+        // console.log("cap nhat");
+        this.serviceApi.put(url, chitietsDH[i]);
+      } else {
+        //console.log("them moi");
+        this.serviceApi.post(url, chitietsDH[i]);
+      }
+      await delay(200);
+    }
   }
   onKeyUpCustomer(event: any) {
+    let values = this.formGroup.value as DonHang;
     const khachHangs = this.khachhangs.find(
       (x: any) => x["Tên Khách Hàng"] == event.value
     );
+    if (khachHangs) {
+      values["Tên Khách Hàng"] = khachHangs["Tên Khách Hàng"];
+      values["Khách Hàng"] = khachHangs["Id"];
+      this.formGroup.patchValue(values);
+    }
     if (!khachHangs) {
       const dialogRef = this.dialog.open(DialogCustomerComponent, {
         data: { "Tên Khách Hàng": event.value, Id: "" },
       });
       dialogRef.afterClosed().subscribe((khachhang: any) => {
-        let values = this.formGroup.value as DonHang;
         values["Tên Khách Hàng"] = khachhang["Tên Khách Hàng"];
         values["Khách Hàng"] = khachhang["Id"];
         this.formGroup.patchValue(values);

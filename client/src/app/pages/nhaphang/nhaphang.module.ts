@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { NhaphangRoutingModule } from './nhaphang-routing.module';
@@ -9,9 +9,12 @@ import { MatInputModule } from '@angular/material/input';
 import {MatAccordion, MatExpansionModule} from '@angular/material/expansion';
 import {MatChipsModule} from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { DisplayHeaderNhaphangPipe } from 'src/app/pipes/display-header-nhaphang.pipe';
+
 @NgModule({
   declarations: [
-    NhaphangComponent
+    NhaphangComponent, DisplayHeaderNhaphangPipe
   ],
   imports: [
     CommonModule,
@@ -21,9 +24,12 @@ import { MatButtonModule } from '@angular/material/button';
     MatInputModule ,
     MatExpansionModule,
     MatChipsModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTableModule,
+    MatIconModule
   ],schemas: [
-    CUSTOM_ELEMENTS_SCHEMA
+    CUSTOM_ELEMENTS_SCHEMA,
+    NO_ERRORS_SCHEMA
   ],
 })
 export class NhaphangModule { }
