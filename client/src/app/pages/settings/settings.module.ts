@@ -11,11 +11,11 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatIconModule } from "@angular/material/icon";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatButtonModule } from "@angular/material/button";
-import { ExportHtmlToPdfComponent } from "src/app/components/export-html-to-pdf/export-html-to-pdf.component";
+
 
 
 @NgModule({
-  declarations: [SettingsComponent,ExportHtmlToPdfComponent],
+  declarations: [SettingsComponent],
   imports: [
     CommonModule,
     SettingsRoutingModule,

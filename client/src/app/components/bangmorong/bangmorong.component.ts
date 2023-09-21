@@ -16,9 +16,12 @@ import {
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
 import { DataService } from "src/app/services/data.service";
-import { Status } from "src/app/general";
+import { Status, delay } from "src/app/general";
 import { DonHang } from "src/app/Models/donHang";
-import { IsLoadingServiceX } from "src/app/services/is-loading.service";
+import { SelectionModel } from "@angular/cdk/collections";
+import { ChiTietDonHang } from "src/app/Models/chiTietDonHang";
+import { ApiService } from "src/app/services/api.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-bangmorong",
@@ -51,7 +54,17 @@ export class BangmorongComponent {
   ];
 
   @Input() data: any;
-  @Input() columnsToDisplay: any;
+  @Input() columnsToDisplay: any = [
+    "Id",
+    "Tên Khách Hàng",
+    "Trạng Thái",
+    "Số Lượng",
+    "Thành Tiền",
+    "Chiết Khấu",
+    "Tiền Công",
+    "Thanh Toán",
+    "Ngày Bán",
+  ];
   @Input() hideColumns?: string;
   @Input() options?: any;
   @Output() eventClickButton = new EventEmitter();
@@ -59,21 +72,35 @@ export class BangmorongComponent {
   @Output() eventDeleteOrUpdate = new EventEmitter();
   columnsToDisplayWithExpand: any;
   expandedElement?: any | null;
-  columnsChild?: any;
+  columnsChild?: any = [
+    "Tên Sản Phẩm",
+    "Số Lượng",
+    "Đơn Vị Tính",
+    "Đơn giá",
+    "Thành Tiền",
+    "Ngày",
+    "Đơn Hàng",
+  ];
   dataSource?: any;
   addData?: any[];
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   constructor(
     private dataService: DataService,
     private changeDetectorRefs: ChangeDetectorRef,
-    private isloading: IsLoadingServiceX
+    private service: ApiService,
+    private snackbar:MatSnackBar
   ) {}
   ngOnInit() {
     this.onLoadData();
     this.dataService.currentMessage.subscribe((result: any) => {
-      console.log("nhan tin ", result);
-      if (result == true) {
-        //  this. refeshTable();
+      console.log(result.status, Status.Refesh, result.status == Status.Refesh);
+      if (result.status == Status.Refesh) {
+        const donhang = result.donhang;
+        const donhangs = this.dataSource.data.map((x: DonHang) => {
+          return x["Id"] == donhang["Id"] ? donhang : x;
+        });
+        this.dataSource.data = donhangs;
+        this.changeDetectorRefs.detectChanges();
       }
       console.log(result);
       if (result["add"] == Status.Add) {
@@ -104,19 +131,17 @@ export class BangmorongComponent {
     this.changeDetectorRefs.detectChanges();
   }
   refeshTable(item: DonHang) {
-    this.isloading.add();
     let dta = [...this.data, item];
 
-    if (dta) {
-      this.columnsChild = Object.keys(this.data[0].chitiets[0]).filter(
-        (x) => !this.hideColumns?.includes(x)
-      );
-    }
+    // if (dta) {
+    //   this.columnsChild = Object.keys(this.data[0].chitiets[0]).filter(
+    //     (x) => !this.hideColumns?.includes(x)
+    //   );
+    // }
 
     this.dataSource.data = dta.reverse();
 
     this.changeDetectorRefs.detectChanges();
-    this.isloading.remove();
   }
   classToday(value: any) {
     const today = new Date();
@@ -137,19 +162,19 @@ export class BangmorongComponent {
     this.dataSource = !this.data
       ? new MatTableDataSource(ELEMENT_DATA)
       : new MatTableDataSource(Array.from(this.data).reverse());
-    this.columnsToDisplay = Object.keys(this.data[0]).filter(
-      (x) =>
-        x != "chitiets" && !this.hideColumns?.replace("Id,", "")?.includes(x)
-    );
+    // this.columnsToDisplay = Object.keys(this.data[0]).filter(
+    //   (x) =>
+    //     x != "chitiets" && !this.hideColumns?.replace("Id,", "")?.includes(x)
+    // );
     this.columnsToDisplayWithExpand = [...this.columnsToDisplay, "expand"];
 
-    if (this.data) {
-      this.columnsChild = Object.keys(this.data[0].chitiets[0]).filter(
-        (x) => !this.hideColumns?.includes(x)
-      );
-    }
+    // if (this.data) {
+    //   this.columnsChild = Object.keys(this.data[0].chitiets[0]).filter(
+    //     (x) => !this.hideColumns?.includes(x)
+    //   );
+    // }
     this.dataSource.paginator = this.paginator;
-    this.changeDetectorRefs.detectChanges();
+    // this.changeDetectorRefs.detectChanges();
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -171,8 +196,52 @@ export class BangmorongComponent {
     event.stopPropagation();
   }
   OnEvent(item: any, ev: any) {
+    console.log({ donhang: item, onUpdate: ev });
     //  this.refesh(item,ev)
     this.eventDeleteOrUpdate.emit({ donhang: item, onUpdate: ev });
+  }
+  onCapNhat(item: any, ev: any) {
+    this.eventDeleteOrUpdate.emit({ donhang: item, onUpdate: ev });
+  }
+
+  selection = new SelectionModel<any>(true, []);
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length; console.log(this.selection.selected)
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: PeriodicElement): string {
+    if (!row) {
+      return `${this.isAllSelected() ? "deselect" : "select"} all`;
+    }
+    return `${this.selection.isSelected(row) ? "deselect" : "select"} row ${
+      row.position + 1
+    }`;
+  }
+
+  async onSelectStatus(event: any, element: any) {
+    element["Trạng Thái"] = event.value;
+    console.log(element);
+    await this.service.put("donhang", element);
+    this.snackbar.open('Cập Nhật Thành Công');
+    
+  }
+  onStop(event: any) {
+    event?.stopPropagation();
   }
 }
 

@@ -51,10 +51,12 @@ export class DialogCustomerComponent {
       
       this.api.post(url,result).then((e)=>{
         this.reultCode = e;
+        this.dialogRef.close(e);
       })
     }else{
       this.api.put(url,result).then((e)=>{
         this.reultCode = e;
+        this.dialogRef.close(e);
       })
     }
   }

@@ -1,0 +1,8 @@
+<mat-form-field>
+    <mat-label>Trạng Thái ĐH</mat-label>
+    <mat-select  (selectionChange)="onChange($event)" [value]="statusText" [style.color]="color">
+        <mat-option *ngFor="let status of status" [value]="status.text" [style.color]="status.color">
+            {{status.text}}&nbsp; <mat-icon>{{status.icon}}</mat-icon>
+        </mat-option>
+    </mat-select>
+</mat-form-field>

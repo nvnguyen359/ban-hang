@@ -1,0 +1,41 @@
+<div>
+    <div>
+      <center><h1>Thông Tin Sản Phẩm</h1></center>
+        <form [formGroup]="formSubmit" (ngSubmit)="onSubmit()">
+            <div formArrayName="sanphams" id="scrollTop-sanpham" class="full-width"
+            *ngFor="let chitiet of formSubmit.controls['sanphams']?.value; index as i;trackBy: trackByFn">
+            <ng-container [formGroupName]="i" >
+              <input placeholder="Id" type="hidden" formControlName="Id" />
+              <mat-form-field appearance="outline" class="margin-right-8">
+                <mat-label>Tên Sản Phẩm</mat-label>
+                <input matInput list="dsSps" placeholder="Tên Sản Phẩm" required formControlName="Name"   />
+                <datalist id="dsSps">
+                  <option *ngFor="let sanpham of sanphams" [value]="sanpham['Name']"></option>
+                </datalist>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="margin-right-8">
+                <mat-label>Giá Nhập</mat-label>
+                <input matInput placeholder="Đơn Giá" type="number" required step="1000" formControlName="Giá Nhập"  />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="margin-right-8">
+                <mat-label>Giá Bán</mat-label>
+                <input matInput placeholder="Giá Bán" type="number" required formControlName="Giá Bán"  />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="margin-right-8">
+                <mat-label>Đơn Vị Tính</mat-label>
+                <input matInput list="dvt" placeholder="Đơn Vị Tính" required formControlName="Đơn Vị Tính"   />
+                <datalist id="dvt">
+                  <option *ngFor="let dvt of dvts" [value]="dvt">{{dvt}}</option>
+                </datalist>
+              </mat-form-field>
+              <mat-icon color="warn" class="delete" (click)="onDelete(i)">delete</mat-icon>
+            </ng-container>
+          </div>
+          <div class="flex full-width btns-bottom" style="justify-items: flex-end;margin-top:16px">
+            <button mat-flat-button color="primary" type="button" (click)="onAdd()" mat-dialog-close type="button">Thêm &nbsp;<mat-icon>add</mat-icon></button>
+            <button mat-flat-button color="accent" type="submit" mat-dialog-close [disabled]="!formSubmit.valid">Lưu &nbsp;<mat-icon>save</mat-icon></button>
+            <button mat-flat-button color="warn" mat-dialog-close type="button">Đóng &nbsp;<mat-icon>close</mat-icon></button>
+          </div>
+        </form>
+    </div>
+</div>

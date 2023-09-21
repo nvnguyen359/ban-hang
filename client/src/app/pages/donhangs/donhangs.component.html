@@ -1,6 +1,6 @@
 
 
-<app-bangmorong [data]="donhangs" *ngIf="donhangs"
+<app-bangmorong [data]="donhangs" *ngIf="donhangs.length>0"
  [hideColumns]="hideColumns"
  [options]="options" 
 (eventClickButton)="eventClickButton($event)"

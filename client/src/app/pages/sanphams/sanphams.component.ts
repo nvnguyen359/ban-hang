@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { ApiService } from "src/app/services/api.service";
-import { IsLoadingServiceX } from "src/app/services/is-loading.service";
 
 @Component({
   selector: "app-sanphams",
@@ -10,7 +9,6 @@ import { IsLoadingServiceX } from "src/app/services/is-loading.service";
 export class SanphamsComponent {
   constructor(
     private service: ApiService,
-    private isLoading: IsLoadingServiceX
   ) {}
   sanphams: any;
   async ngOnInit() {

@@ -1,6 +1,7 @@
 <h2 mat-dialog-title style="margin-bottom: 15px;">Khách hàng Mới</h2>
 <mat-dialog-content class="mat-typography">
     <form [formGroup]="formKhachHang" #formKh (ngSubmit)="onSubmit()" cdkTrapFocus>
+        <input  type="hidden"   formControlName="Id" >
         <mat-form-field appearance="outline" class="full-width" style="margin-top: 8px;" >
             <mat-label>Tên Khách Hàng</mat-label>
             <input matInput type="text"  required formControlName="Tên Khách Hàng" >

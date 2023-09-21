@@ -2,7 +2,7 @@ const lib = require("./../../shares/lib");
 const apis = require("./apiExcute");
 const callApis = (app) => {
   const { CRUD } = require("../../features/crud");
-//#region  array api
+  //#region  array api
   const array = [
     {
       nameSheet: "Sản Phẩm",
@@ -44,7 +44,6 @@ const callApis = (app) => {
   //#endregion
   array.forEach((element) => {
     let crud = new CRUD(element.nameSheet.trim());
-
     getAll(element, app, crud);
     getId(element, app, crud);
     post(element, app, crud);
@@ -52,7 +51,29 @@ const callApis = (app) => {
     put(element, app, crud);
     bulkDelete(element, app, crud);
   });
+  getAlldata(app, new CRUD());
   apis.apis(app);
+};
+const getAlldata = (app, crud) => {
+  // let crud = new CRUD('sanpham');
+  app.get(`/all`, async (req, res, next) => {
+    crud.nameSheetTitle = "Sản Phẩm";
+    const sanphams = await crud.getAll();
+    crud.nameSheetTitle = "Đơn Hàng";
+    const donhangs = await crud.getAll();
+    crud.nameSheetTitle = "Nhập Hàng";
+    const nhaphangs = await crud.getAll();
+    crud.nameSheetTitle = "Chi Tiết Đơn Hàng";
+    const chitiets = await crud.getAll();
+    const data = {
+      sanphams,
+      nhaphangs,
+      donhangs,
+      chitiets,
+    };
+    res.status(200).json(data);
+    next();
+  });
 };
 const getAll = (element, app, crud) => {
   app.get(`/${element.value.trim()}`, async (req, res, next) => {
@@ -103,20 +124,19 @@ const deleteId = async (element, app, crud) => {
     try {
       const id = req.params.id;
       res.send(await crud.deleteId(id));
-    //  next();
+      //  next();
     } catch (error) {
-      res.send(error.message)
-     // next();
+      res.send(error.message);
+      // next();
     }
   });
 };
 const bulkDelete = async (element, app, crud) => {
   app.delete(`/${element.value.trim()}`, async (req, res, next) => {
     try {
-
       let data = [];
-      const ids = `${req.query.ids}`.split(',');
-      console.log('bulkDelete ',ids)
+      const ids = `${req.query.ids}`.split(",");
+      console.log("bulkDelete ", ids);
       ids.forEach(async (id, index) => {
         setTimeout(async () => {
           const result = await crud.deleteId(id);
@@ -131,4 +151,5 @@ const bulkDelete = async (element, app, crud) => {
     }
   });
 };
+
 module.exports = { callApis };

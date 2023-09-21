@@ -1,19 +1,19 @@
 export interface ChiTietDonHang{
     //Id	Sản Phẩm	Tên Sản Phẩm	Đơn giá	Số Lượng	Đơn Vị Tính	Thành Tiền	Ngày	Giá Nhập	Đơn Hàng
     Id?:string,
-    'Sản Phẩm':string,
-    'Tên sản phẩm':string,
-    'Đơn giá':number,
+    'Sản Phẩm'?:string,
+    'Tên sản phẩm'?:string,
+    'Đơn giá'?:number,
     'Số Lượng':number,
     'Đơn Vị Tính':string,
     'Thành Tiền':number,
     'Ngày':Date,
-    'Giá Nhập':number,
-    'Đơn Hàng':Date,
+    'Giá Nhập'?:number,
+    'Đơn Hàng':string,
     'STT':number,
     'Name'?:string,
     'Giá Bán'?:number,
-    'Tên Sản Phẩm':string,
+    'Tên Sản Phẩm'?:string,
 
 }
 export class ChiTiet{

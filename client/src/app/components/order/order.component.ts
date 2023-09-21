@@ -5,7 +5,6 @@ import { DonHang } from "src/app/Models/donHang";
 import { KhachHang } from "src/app/Models/khachHangs";
 import { SanPham } from "src/app/Models/sanPham";
 import { ApiService } from "src/app/services/api.service";
-import { IsLoadingServiceX } from "src/app/services/is-loading.service";
 import { ThermalPrinterServiceService } from "src/app/services/thermal-printer-service.service";
 declare var capitalizeFirstLetter: any;
 declare var removeAccents: any;
@@ -44,7 +43,6 @@ export class OrderComponent {
   codeSp: any;
   constructor(
     private service: ApiService,
-    private isLoading: IsLoadingServiceX,
     private printer: ThermalPrinterServiceService,
     private dataService: DataService
   ) {
@@ -68,11 +66,9 @@ export class OrderComponent {
     });
   }
   ngOnInit() {
-    this.isLoading.add();
     this.getProducts();
     this.getKhachHang();
     this.selectDv = 1000;
-    this.isLoading.remove();
   }
   onSelected(value: any) {
     console.log(value);
@@ -108,10 +104,10 @@ export class OrderComponent {
       });
       this.products = products;
       this.filterProducts = products;
-
+console.log(products)
       const groups = [
         ...new Set(
-          products.map((x) => capitalizeFirstLetter(x["Name"]?.split(" ")[0]))
+          products.map((x) => {if(x['Name']){ return capitalizeFirstLetter(x["Name"]?.split(" ")[0])}})
         ),
       ];
       this.groups = ["Tất Cả", ...groups.sort()];

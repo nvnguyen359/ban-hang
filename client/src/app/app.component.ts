@@ -1,23 +1,11 @@
 import { AfterViewInit, Component, Inject, OnInit } from "@angular/core";
-import { IpcService } from "src/ipc.service";
 import { ApiService } from "./services/api.service";
-import { PrinterModel } from "./Models/printer";
 import { SocketService } from "./services/socket.service";
-import {
-  ActivatedRoute,
-  NavigationCancel,
-  NavigationEnd,
-  NavigationError,
-  NavigationStart,
-  Router,
-} from "@angular/router";
-import { Observable, filter } from "rxjs";
 
 import { MatDialog } from "@angular/material/dialog";
 import { OrderComponent } from "./components/order/order.component";
-import { IsLoadingServiceX } from "./services/is-loading.service";
-import { LoaderService } from "./services/loader.service";
 import { DateAdapter, MAT_DATE_LOCALE } from "@angular/material/core";
+import { DataService } from "./services/data.service";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -45,11 +33,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     private socket: SocketService,
     private readonly dialog: MatDialog,
     private _adapter: DateAdapter<any>,
+    private service: ApiService,
+    private dataService: DataService,
     @Inject(MAT_DATE_LOCALE) private _locale: string
   ) {
     this.getVersion();
+    //this.getAllData();
   }
-
+ 
+  getAllData() {
+    this.service.get("all").then((data: any) => {
+      this.dataService.sendMessage({all:data})
+    });
+  }
   getVersion() {
     this.socket.getMessage().subscribe((x: any) => {
       if (x?.ver) {
@@ -78,6 +74,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
   ngOnInit(): void {
     this.french();
+    this.getAllData();
   }
   ngAfterViewInit() {}
 }

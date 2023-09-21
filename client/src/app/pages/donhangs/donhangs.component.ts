@@ -4,7 +4,6 @@ import { DonHang } from "src/app/Models/donHang";
 import { OrderComponent } from "src/app/components/order/order.component";
 import { ApiService } from "src/app/services/api.service";
 
-import { IsLoadingServiceX } from "src/app/services/is-loading.service";
 import { PrintOrderComponent } from "src/app/components/print-order/print-order.component";
 import { ThermalPrinterServiceService } from "src/app/services/thermal-printer-service.service";
 import { DialogAlertComponent } from "src/app/components/dialog-alert/dialog-alert.component";
@@ -18,6 +17,7 @@ import { ChiTietDonHang } from "src/app/Models/chiTietDonHang";
 import { ProductArrayComponent } from "src/app/components/product-array/product-array.component";
 import { KhachHang } from "src/app/Models/khachHangs";
 import { SanPham } from "src/app/Models/sanPham";
+import { async } from "rxjs";
 @Component({
   selector: "app-donhangs",
   templateUrl: "./donhangs.component.html",
@@ -26,13 +26,15 @@ import { SanPham } from "src/app/Models/sanPham";
 export class DonhangsComponent {
   dataSource: any;
   displayedColumns: string[] = ["Index", "Tên Khách Hàng", "Phone", "Địa Chỉ"];
-  donhangs: any;
-  khachhangs: any;
-  sanphams: any;
+  donhangs: any[] = [];
+  khachhangs: any[]=[];
+  sanphams: any[]=[];
+  chitiets:any[]=[];
   hideColumns: any = "Id,Khách Hàng,Nhân Viên,Sản Phẩm";
   options = {
     a: "Tên Khách Hàng",
   };
+
   @ViewChild(PrintOrderComponent) dirToPrint?: PrintOrderComponent;
   constructor(
     private service: ApiService,
@@ -41,21 +43,35 @@ export class DonhangsComponent {
     private changeDetectorRefs: ChangeDetectorRef,
     private dataService: DataService,
     private route: Router
-  ) {}
+  ) {
+   // this.getAllData();
+  }
   async ngOnInit() {
-    await this.onGetAll();
-    this.getKhachHangs();
-    this.getSanPhams();
+   await this.getAllData();
+    
+    // this.getKhachHangs();
+    // this.getSanPhams();
+
     this.dataService.currentMessage.subscribe((data: any) => {
       if (data == Status.Refesh) {
         setTimeout(async () => {
-          //  await this.onGetAll();
+          await this.onGetAll();
           this.dataService.sendMessage(true);
         }, 800);
       }
     });
   }
   ngAfterContentInit() {}
+  async getAllData() {
+    this.dataService.currentMessage.subscribe(async(data: any) => {
+      if (data.all) {
+        this.khachhangs = data.all["khachhangs"];
+        this.sanphams = data.all["sanphams"];
+        this.chitiets= data.all['chitiets'];
+        await this.onGetAll();
+      }
+    });
+  }
   onDialog() {
     this.dialog.open(OrderComponent);
   }
@@ -70,21 +86,21 @@ export class DonhangsComponent {
     });
   }
   async onGetAll() {
-    //this.isLoadingService.add({key: ['default', 'single']});
-    let donhangx = (await this.service.get("donhang")) as any[];
-    donhangx = donhangx.map((x) => {
-      x["Ngày Bán"] = `${x["Ngày Bán"]}`.DateFormatDDMMYYY();
-      return x;
-    });
+    this.donhangs = await this.service.get('donhang') as DonHang[];
+    let donhangx = Array.from((this.donhangs) as any[]).map(
+      (x: any) => {
+        x["Ngày Bán"] = `${x["Ngày Bán"]}`.DateFormatDDMMYYY();
+        return x;
+      }
+    );
+    const chitiets = this.chitiets as any[];
 
-    const chitiets = (await this.service.get("chitietdonhang")) as any[];
-
-    this.donhangs = donhangx.map((x: DonHang) => {
+    this.donhangs = Array.from(donhangx).map((x: any) => {
       x["chitiets"] = chitiets.filter((a: any) => a["Đơn Hàng"] == x["Id"]);
       // x['Tên Khách Hàng'] =` <button mat-button color="primary">${x['Tên Khách Hàng']}</button>`;
       return x;
     });
-    this.changeDetectorRefs.detectChanges();
+   // this.changeDetectorRefs.detectChanges();
   }
   eventClickButton(item: any) {
     console.log(item);
@@ -99,7 +115,6 @@ export class DonhangsComponent {
     if (item.onUpdate == "xoa") {
       this.eventDelete(item);
     } else {
-      console.log(item);
       item["donhang"]["chitiets"] = Array.from(item["donhang"]["chitiets"]).map(
         (e: any) => {
           e[`Tên sản phẩm`] = e[`Tên Sản Phẩm`];
@@ -108,8 +123,9 @@ export class DonhangsComponent {
           return e;
         }
       );
+
       this.dialog.open(ProductArrayComponent, {
-        data: { donhang: item, isDonhang: true, khachhangs: this.khachhangs ,sanphams:this.sanphams},
+        data: { donhang: item, isDonhang: true },
       });
     }
   }

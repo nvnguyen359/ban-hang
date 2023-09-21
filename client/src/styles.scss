@@ -3,7 +3,7 @@
 html,
 body {
     height: 100%;
-   
+
 }
 
 body {
@@ -57,9 +57,10 @@ body {
     color: var(--mat-stepper-header-error-state-label-text-color);
     cursor: pointer;
     transition: 0.2s all;
-    
+
 }
-.delete:hover{
+
+.delete:hover {
     opacity: 0.85;
     color: #3f51b5;
     transform: scale(1.5);
@@ -89,7 +90,7 @@ body {
     background: #2c2c2c1f;
     align-items: center;
     justify-content: center;
-    top:0;
+    top: 0;
     left: 0;
 }
 
@@ -102,42 +103,68 @@ body {
 .drawer-content-1 {
     position: absolute;
 }
-.active{
+
+.active {
     background: #3f51b5;
     color: whitesmoke;
 }
-.center{
+
+.center {
     padding-left: 8px;
 }
-.cdk-overlay-pane{
+
+.cdk-overlay-pane {
     margin-top: 20px;
 }
-.max-height{
+
+.max-height {
     max-height: 650px;
-   overflow: auto;
+    overflow: auto;
 }
-.text-align{
+
+.text-align {
     text-align: right;
 }
-.text-left{
+
+.text-left {
     text-align: left;
 }
-a{
-   color: var(--mdc-filled-text-field-caret-color);
-   text-transform: capitalize;
+
+a {
+    color: var(--mdc-filled-text-field-caret-color);
+    text-transform: capitalize;
 }
-.hide{
+
+.hide {
     display: none;
 }
-.show{
+
+.show {
     display: block;
 }
-.flex.group > .mat-mdc-form-field{
-    margin-right:4px ;
+
+.flex.group>.mat-mdc-form-field {
+    margin-right: 4px;
 }
 
 
-.mat-mdc-dialog-container .mdc-dialog__surface{
+.mat-mdc-dialog-container .mdc-dialog__surface {
     overflow: hidden;
     padding: 16px;
 }
+
+.btns-bottom {
+    justify-items: flex-end;
+    margin-top: 16px;
+    justify-content: flex-end;
+    margin-right: 16px;
+
+    button {
+        margin-left: 8px;
+    }
+
+}
+.margin-right-8{
+    margin-right: 8px;
+}
+.mat-mdc-form-field-subscript-wrapper{height: 4px!important;}

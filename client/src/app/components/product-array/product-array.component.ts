@@ -13,12 +13,15 @@ import { ChiTiet, ChiTietDonHang } from "src/app/Models/chiTietDonHang";
 import { DonHang } from "src/app/Models/donHang";
 import { KhachHang } from "src/app/Models/khachHangs";
 import { SanPham } from "src/app/Models/sanPham";
-import { delay } from "src/app/general";
+import { Status, delay } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 import { DataService } from "src/app/services/data.service";
 import "../../lib.extensions";
 import { DialogConfirmComponent } from "../dialog-confirm/dialog-confirm.component";
-import {CheckProduct} from './CheckProduct'
+import { CheckProduct } from "./CheckProduct";
+import { DialogCustomerComponent } from "../dialog-customer/dialog-customer.component";
+import { DialogAlertComponent } from "../dialog-alert/dialog-alert.component";
+
 /**
  *
  *
@@ -29,22 +32,25 @@ import {CheckProduct} from './CheckProduct'
   selector: "app-product-array",
   templateUrl: "./product-array.component.html",
   styleUrls: ["./product-array.component.scss"],
-  providers:[CheckProduct]
+  providers: [CheckProduct],
 })
 export class ProductArrayComponent {
-  chekProduct:any ;
+  chekProduct: any;
+  chietKhauChecked: any;
   danhsachTenSanPham: any = [];
-  sanphams: any;
+  sanphams: any[] = [];
   initSanpham?: SanPham;
   donhang: any;
 
   khachhangs?: any;
   formGroup?: any = this.fb.group({
+    Id: "",
     "Tên Khách Hàng": ["", Validators.required],
     "Tiền Công": [""],
     "Phí Ship": [""],
     "Trạng Thái": [""],
     "Thành Tiền": [""],
+    "Đơn Hàng": ["", Validators.required],
     "Ngày Bán": [new Date().toLocaleDateString(), Validators.required],
     chitiets: this.fb.array([]),
   });
@@ -54,19 +60,34 @@ export class ProductArrayComponent {
   showKeys: any = [];
   isDonHang: boolean = false;
   title: string = "";
-  chietkhau=0;
+  chietkhau = 0;
+  donvi = 1000;
   constructor(
     private fb: FormBuilder,
     private serviceApi: ApiService,
     private dialog: MatDialog,
-    private checkProduct:CheckProduct,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-   
+    private checkProduct: CheckProduct,
+    private dataService: DataService,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-   // this.getSanPhams();
-   this.sanphams= data['sanphams'].filter((sp: any) => !this.danhsachTenSanPham.includes(sp["Name"]));;
+    this.getDataService();
   }
-
+  async ngOnInit() {
+    // this.getDataService();
+    await this.switchCase();
+    //await this.getSanPhams();
+    //await this.checkEvent();
+  }
+  getDataService() {
+    this.dataService.currentMessage.subscribe((data: any) => {
+      if (data?.all) {
+        this.sanphams = data.all["sanphams"].filter(
+          (sp: any) => !this.danhsachTenSanPham.includes(sp["Name"])
+        );
+        this.khachhangs = data.all["khachhangs"] as KhachHang[];
+      }
+    });
+  }
   async switchCase() {
     // ['donhang', 'isDonhang', 'khachhangs']
     const keys = Object.keys(this.data);
@@ -86,14 +107,6 @@ export class ProductArrayComponent {
       await this.initDonHang();
     }
   }
-  //  getSanPhams() {
-  //   this.serviceApi.get("sanpham").then((sanphams:any)=>{
-  //     this.sanphams = (
-  //       (sanphams ) as SanPham[]
-  //     ).filter((sp: any) => !this.danhsachTenSanPham.includes(sp["Name"]));
-  //   })
-   
-  // }
 
   async initDonHang() {
     const dh = this.donhang;
@@ -110,13 +123,14 @@ export class ProductArrayComponent {
     }
 
     this.formGroup = this.fb.group({
+      Id: [dh["Id"]],
       "Tên Khách Hàng": [
         dh ? dh["Tên Khách Hàng"] : "" || "",
         Validators.required,
       ],
       "Tiền Công": [dh ? dh["Tiền Công"] : "" || ""],
-      "Phí Ship": [dh ? dh["Phí Ship"] : "" || ""],
-      "Trạng Thái": [dh ? dh["Trạng Thái"] : "" || ""],
+      "Chiết Khấu": [dh ? dh["Chiết Khấu"] : "" || ""],
+      "Trạng Thái": [dh ? dh["Trạng Thái"] : "" || "", Validators.required],
       "Thành Tiền": [dh ? dh["Thành Tiền"] : "" || ""],
       "Ngày Bán": [
         dh
@@ -128,18 +142,10 @@ export class ProductArrayComponent {
     });
   }
 
-  async ngOnInit() {
-    await this.switchCase();
-    //await this.getSanPhams();
-    //await this.checkEvent();
-
-    this.khachhangs = this.data["khachhangs"] as KhachHang[];
-  }
-
   async checkEvent() {
     if (this.data["isDonhang"]) {
       this.donhang = this.data["donhang"]["donhang"] as DonHang;
-      console.log(this.donhang);
+      // console.log(this.donhang);
     }
   }
 
@@ -147,26 +153,38 @@ export class ProductArrayComponent {
     if (typeof str != "string") return false; // we only process strings!
     return !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
   }
-
-  onChangeValue(event?: any) {
+  updateArray() {
     let values = this.formGroup.value;
-
+    let chitiets = Array.from(values["chitiets"]);
+    chitiets.forEach((e: any) => {
+      e["Thành Tiền"] = e["Đơn giá"] * e["Số Lượng"];
+    });
+    values["chitiets"] = chitiets;
+    this.formGroup.patchValue(values);
+  }
+  onChangeValue(event?: any) {
+    if (!event) {
+      this.updateArray();
+      return;
+    }
+    const tenSp = event.value;
+    const sps = this.sanphams;
+    let values = this.formGroup.value;
     let chitiets = Array.from(values["chitiets"]);
     chitiets = chitiets.map((e: any) => {
+      const sp = sps.find((x: any) => x["Name"] == tenSp);
       e["Thành Tiền"] = parseInt(e["Đơn giá"]) * parseInt(e["Số Lượng"]);
+      if (sp) {
+        e["Sản Phẩm"] = sp["Id"];
+      }
+      e["Đơn Vị Tính"] = sp["Đơn Vị Tính"];
+      e["Đơn Hàng"] = values["Id"];
       return e;
     });
     try {
-      const tenSp = event.value;
-      console.log(
-        JSON.stringify(
-          this.formGroup.value["chitiets"].map((x: any) => x["Tên Sản Phẩm"])
-        )
-      );
       const checkSps = Array.from(
         this.formGroup.value["chitiets"].map((x: any) => x["Tên Sản Phẩm"])
       ).filter((x: any) => x == tenSp);
-      console.log(checkSps); //Vỏ Hitachi 14v
       if (checkSps.length > 1) {
         this.dialog.open(DialogConfirmComponent, {
           data: {
@@ -188,60 +206,158 @@ export class ProductArrayComponent {
             e["Đơn Vị Tính"] = sp["Đơn Vị Tính"];
             const dongia = sp["Giá Bán"] || 0;
             e["Thành Tiền"] = dongia * e["Số Lượng"];
+            e["Đơn Hàng"] = values["Id"];
+            e["Sản Phẩm"] = sp["Id"];
+            e["Giá Nhập"] = sp["Giá Nhập"];
           }
         });
       }
     } catch (error) {}
     values["chitiets"] = chitiets;
 
-   // console.log(values);
+    // console.log(values);
     this.formGroup.patchValue(values);
   }
-  onCal(donhang: DonHang) {
+  async onCal() {
+    const donhang = this.formGroup.value;
     const chitiets = donhang["chitiets"];
-
     const sumSoLuong = chitiets
-      .map((a: any) => a["Số Lượng"])
+      .map((a: any) => parseInt(a["Số Lượng"]))
       .reduce((a: number, b: number) => a + b, 0);
     const sumThanhTien = chitiets
-      .map((a: any) => a["Thành Tiền"])
+      .map((a: any) => parseInt(a["Thành Tiền"]))
       .reduce((a: number, b: number) => a + b, 0);
+    const chietkhau =
+      this.chietKhauChecked == "%"
+        ? parseInt(donhang["Chiết Khấu"]) || (0 * sumThanhTien) / 100
+        : parseInt(donhang["Chiết Khấu"] || 0) * this.donvi;
+    const tiencong = parseInt(donhang["Tiền Công"]) * this.donvi || 0;
+    const thanhtoan = sumThanhTien - chietkhau + tiencong;
+    this.formGroup.value["Thanh Toán"] = thanhtoan;
+    this.formGroup.value["Số Lượng"] = sumSoLuong;
+    this.formGroup.value["Chiết Khấu"] = chietkhau;
+    this.formGroup.value["Tiền Công"] = tiencong;
+    this.formGroup.value["Thành Tiền"] = sumThanhTien;
+    const date = `${this.formGroup.value["Ngày Bán"]}`.DateFormatDDMMYYY();
+    this.formGroup.value["Ngày Bán"] = date;
   }
 
   onDelete(index: number) {
-    this.formGroup.controls["chitiets"].removeAt(index);
+    const chitiet = this.formGroup.controls["chitiets"].at(index).value;
+    const dialogRef = this.dialog.open(DialogAlertComponent, {
+      data: `Bạn Chắc Chắn Xóa [${chitiet["Tên Sản Phẩm"]}] ra khỏi đơn hàng ?`,
+    });
+    dialogRef.afterClosed().subscribe((data: boolean) => {
+      if (data) {
+        this.serviceApi
+          .destroy("chitietdonhang", chitiet["Id"])
+          .then((result: any) => {
+            console.log(result);
+            this.formGroup.controls["chitiets"].removeAt(index);
+            //  this.onCal();
+          });
+      }
+    });
+    //console.log(chitiet)
   }
-  onAdd(item?:any) {
+  onAdd(item?: any) {
+    console.log(item);
     const arr = this.formGroup.controls["chitiets"] as FormArray;
     arr.push(
       this.fb.group({
         Id: "",
-        "Tên Sản Phẩm": [item?item['Name'] :"", Validators.required],
-        "Đơn giá": [item?item['Giá Bán'] :0, Validators.required],
-        "Số Lượng": [0, Validators.required],
-        "Thành Tiền": [0],
-        "Đơn Vị Tính": "",
+        "Tên Sản Phẩm": [item ? item["Name"] : "", Validators.required],
+        "Đơn giá": [item ? item["Giá Bán"] : 0, Validators.required],
+        "Số Lượng": [1, Validators.required],
+        "Thành Tiền": [item ? item["Giá Bán"] : 0],
+        "Đơn Vị Tính": [item ? item["Đơn Vị Tính"] : ""],
+        "Sản Phẩm": [item ? item["Id"] : ""],
+        "Đơn Hàng": this.formGroup.value["Id"],
+        "Giá Nhập": [item ? item["Giá Nhập"] : 0, Validators.required],
       })
     );
     this.scrollTop();
   }
-  onSelectedSanPham(event:any){
-    this.onAdd(event)
+  onSelectedSanPham(event: any) {
+    this.onAdd(event);
   }
-  onChecked(target:any) {
-    console.log('checked',target.innerText)
+  async onChecked(target: any) {
+    this.chietKhauChecked = target.innerText;
+    await this.onCal();
   }
-  onSubmit() {
-    let values = this.formGroup.value;
-    console.log(values);
+  async onSubmit() {
+    console.log("submit");
+    let values = this.formGroup.value as DonHang;
+
     //1. kiem tra co san pham moi hay khong
-
-    this.checkProduct.setSProducts =this.sanphams;
-    this.checkProduct.isNewProduct(this.sanphams,values['chitiets'])
     //2. kiem tra cap nhat san pham hay khong
-    // cap nhap don hang
-    // cap nhat chi tiet don hang
+    const updateOrCreateSanPhams = await this.checkProduct.isNewProduct(
+      this.sanphams,
+      values["chitiets"]
+    );
 
+    if (updateOrCreateSanPhams.length > 0) {
+      let chitiets = values["chitiets"] as ChiTietDonHang[];
+
+      for (let index = 0; index < chitiets.length; index++) {
+        const sanpham = (updateOrCreateSanPhams as SanPham[]).find(
+          (x: SanPham) => x["Id"] == chitiets[index]["Id"]
+        );
+        if (sanpham) {
+          const chitiet = chitiets[index] as ChiTietDonHang;
+          chitiet["Đơn giá"] = sanpham["Giá Bán"];
+          chitiet["Tên Sản Phẩm"] = sanpham["Name"];
+          chitiet["Giá Nhập"] = sanpham["Giá Nhập"];
+        }
+      }
+      await this.onCal();
+      values["chitiets"] = chitiets;
+      this.formGroup.patchValue(values);
+    }
+    await this.onCal();
+    const date = `${this.formGroup.value["Ngày Bán"]}`.DateFormatDDMMYYY();
+    this.serviceApi
+      .put("donhang", [this.formGroup.value])
+      .then((data: any) => console.log(data));
+    this.formGroup.value["chitiets"] = this.formGroup.value["chitiets"].map(
+      (x: any) => {
+        x["Ngày"] = date;
+        return x;
+      }
+    );
+    const chitietsDH = this.formGroup.value["chitiets"];
+    const url = "chitietdonhang";
+    for (let i = 0; i < chitietsDH.length; i++) {
+      console.log("id", chitietsDH[i]);
+      if (chitietsDH[i]["Id"]) {
+        console.log("cap nhat");
+        this.serviceApi.put(url, chitietsDH[i]);
+      } else {
+        console.log("them moi");
+        this.serviceApi.post(url, chitietsDH[i]);
+      }
+      await delay(1000);
+    }
+    // cap nhap don hang
+    console.log("cap nhat don hang");
+    // cap nhat chi tiet don hang
+    this.dataService.sendMessage({status:Status.Refesh, donhang: this.formGroup.value});
+  }
+  onKeyUpCustomer(event: any) {
+    const khachHangs = this.khachhangs.find(
+      (x: any) => x["Tên Khách Hàng"] == event.value
+    );
+    if (!khachHangs) {
+      const dialogRef = this.dialog.open(DialogCustomerComponent, {
+        data: { "Tên Khách Hàng": event.value, Id: "" },
+      });
+      dialogRef.afterClosed().subscribe((khachhang: any) => {
+        let values = this.formGroup.value as DonHang;
+        values["Tên Khách Hàng"] = khachhang["Tên Khách Hàng"];
+        values["Khách Hàng"] = khachhang["Id"];
+        this.formGroup.patchValue(values);
+      });
+    }
   }
 
   trackByFn(index: any) {

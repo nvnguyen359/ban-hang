@@ -32,3 +32,25 @@ mat-button-toggle-group {
     }
 
 }
+.customer{
+     position: relative;
+     top: 0;
+     left: 0;
+     display: flex;
+     justify-items: center;
+}
+.add-button{
+    transition: 0.3s all;
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    cursor: none;
+}
+.add-button.show{
+    display: block;
+    width: auto;
+    height: auto;
+    opacity: 1;
+    cursor: pointer;
+}

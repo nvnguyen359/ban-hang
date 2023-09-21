@@ -1,6 +1,6 @@
-<h1 mat-dialog-title color="warn">{{data.header}}</h1>
+<h1 mat-dialog-title color="warn"><div [innerHTML]="data.header"></div></h1>
 <div mat-dialog-content style="color: brown;">
-    {{data.title}}
+    <div [innerHTML]="data.title"></div>
 </div>
 <div mat-dialog-actions style="display: flex;justify-content: flex-end;">
     <button mat-button mat-dialog-close>No</button>

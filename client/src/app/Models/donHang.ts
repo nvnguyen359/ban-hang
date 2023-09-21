@@ -6,6 +6,7 @@ export interface DonHang{
     'Trạng Thái':string,
     'Tiền Công':number,
     'Phí Ship':number,
+    'Chiết Khấu':number,
     'Giá Bán':number,
     'Giảm Giá':number,
     'Ghi chú':string,

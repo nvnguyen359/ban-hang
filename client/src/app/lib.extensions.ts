@@ -39,15 +39,16 @@ String.prototype.isValidDate = function () {
   return new Date(this.toString()).toString() !== "Invalid Date";
 };
 String.prototype.convertDateVNToISO = function (isVn) {
- 
+  
   var timestamp = Date.parse(this.toString());
+  // console.log(this,isNaN(timestamp) == false)
   if (isNaN(timestamp) == false) {
     const t = this.split("/");
     const date = new Date(parseInt(t[2]), parseInt(t[1])-1, parseInt(t[0]));
     return !isVn? new Date(timestamp):date;
   } else {
     const t = this.split("/");
-    const date = new Date(parseInt(t[2]), parseInt(t[1]), parseInt(t[0]));
+    const date = new Date(parseInt(t[2]), parseInt(t[1])-1, parseInt(t[0]));
     return t.length == 3 ? date : new Date(this.toString());
   }
 };

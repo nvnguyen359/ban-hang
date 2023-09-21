@@ -24,7 +24,6 @@ class SocketIo {
     if (!key) key = this.keyMeg;
     io.on("connection", (socket) => {
       socket.on(key, (msg) => {
-        console.log("nhan: ", msg);
         io.emit(key, msg);
       });
     });
@@ -32,7 +31,6 @@ class SocketIo {
   sendMessage(meg, key) {
     if (!key) key = this.keyMeg;
     io.on("connection", (socket) => {
-      console.log("gui:", new Date().toLocaleTimeString());
       //socket.broadcast.emit(key, meg);
       io.emit(key, meg);
     });

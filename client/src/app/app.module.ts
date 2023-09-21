@@ -40,6 +40,7 @@ import { OrderComponent } from "./components/order/order.component";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AutocompleteComponent } from "./components/autocomplete/autocomplete.component";
 import { ShowTextPipe } from "./pipes/show-text.pipe";
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
@@ -61,6 +62,8 @@ import { LoadingInterceptor } from "./interceptor/loading.interceptor";
 import { ExamFormArrayComponent } from './components/exam-form-array/exam-form-array.component';
 import { StatusOrderComponent } from './components/status-order/status-order.component';
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { SanphamComponent } from './components/sanpham/sanpham.component';
+
 
 
 const MY_DATE_FORMATS = {
@@ -85,7 +88,6 @@ const config: SocketIoConfig = { url: "http://localhost:18092", options: {} };
     DialogConfirmComponent,
     OnNhapHangComponent,
     ProductComponent,
-    OrderComponent,
     AutocompleteComponent,
     ShowTextPipe,
     PrintOrderComponent,
@@ -94,6 +96,8 @@ const config: SocketIoConfig = { url: "http://localhost:18092", options: {} };
     SpinnerComponent,
     ExamFormArrayComponent,
     StatusOrderComponent,
+    SanphamComponent,
+    OrderComponent
   ],
   imports: [
     BrowserModule,
@@ -128,7 +132,8 @@ const config: SocketIoConfig = { url: "http://localhost:18092", options: {} };
     MatButtonModule,
     NgIf,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatSnackBarModule,
   ],
   providers: [
     // { provide: MAT_DATE_LOCALE, useValue: 'vi-VN' },

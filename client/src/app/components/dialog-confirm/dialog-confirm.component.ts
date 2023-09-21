@@ -10,7 +10,7 @@ export class DialogConfirmComponent {
   constructor(
     public dialogRef: MatDialogRef<DialogConfirmComponent>,
     @Inject(MAT_DIALOG_DATA) public data:any) {
-      console.log(data)
+      //console.log(data)
     }
 
   
