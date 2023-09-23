@@ -71,7 +71,7 @@ Tên Khách Hàng
 
   </div>
   <div class="flex">
-    <app-autocomplete [data]="sanphams" (selectTed)="onSelectedSanPham($event)"
+    <app-autocomplete [data]="sanphams" *ngIf="sanphams.length>0" (selectTed)="onSelectedSanPham($event)"
       style="flex-grow: 1;"></app-autocomplete>
     <mat-form-field appearance="outline" style="max-width: 150px;margin-left:8px">
       <mat-label>Đơn Vị</mat-label>
@@ -87,7 +87,7 @@ Tên Khách Hàng
     </mat-form-field>
   </div>
   <div>
-    <div class="details"  id="scrollTop">
+    <div class="details"  id="scrollTop" style="display: flex;">
       <div formArrayName="chitiets"
         *ngFor="let chitiet of formGroup.controls.chitiets?.value; index as i;trackBy: trackByFn">
         <ng-container [formGroupName]="i">
@@ -96,13 +96,13 @@ Tên Khách Hàng
           <input placeholder="Sản Phẩm" type="hidden" formControlName="Sản Phẩm" />
           <input placeholder="Sản Phẩm" type="hidden" formControlName="Đơn Hàng" />
           <input placeholder="Sản Phẩm" type="hidden" formControlName="Giá Nhập" />
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" style="flex-grow: 1;">
             <mat-label>Tên Sản Phẩm</mat-label>
             <input matInput list="dsSps" placeholder="Tên Sản Phẩm" required formControlName="Tên Sản Phẩm"
               (change)="onChangeValue($event.target)" />
-            <datalist id="dsSps">
-              <option *ngFor="let sanpham of sanphams" value="{{sanpham['Name']}}"></option>
-            </datalist>
+              <datalist id="dsSps">
+                <option *ngFor="let sanpham of sanphams" value="{{sanpham['Name']}}"></option>
+              </datalist>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Đơn Giá</mat-label>

@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FormControl } from "@angular/forms";
-import { Observable } from "rxjs";
+import { Observable, async } from "rxjs";
 import { DonHang } from "src/app/Models/donHang";
 import { KhachHang } from "src/app/Models/khachHangs";
 import { SanPham } from "src/app/Models/sanPham";
@@ -8,7 +8,7 @@ import { ApiService } from "src/app/services/api.service";
 import { ThermalPrinterServiceService } from "src/app/services/thermal-printer-service.service";
 declare var capitalizeFirstLetter: any;
 declare var removeAccents: any;
-import { Status } from "./../../general";
+import { BaseApiUrl, Status } from "./../../general";
 import { DataService } from "src/app/services/data.service";
 @Component({
   selector: "app-order",
@@ -16,13 +16,14 @@ import { DataService } from "src/app/services/data.service";
   styleUrls: ["./order.component.scss"],
 })
 export class OrderComponent {
+ 
   ngay = new FormControl(new Date());
   serializedDate = new FormControl(new Date().toISOString());
   checkDk: any = false;
   tiencong!: number;
   phiship!: number;
   giamgia!: number;
-  selectDv = 1000;
+  selectDv:any = '1000';
   sumEnd: any;
   status = "Đặt Hàng";
   groupGiamgia: any = "vnd";
@@ -44,13 +45,16 @@ export class OrderComponent {
   codeSp: any;
 
   isViewMmodule = false;
+  @Input() dataAll:any;
   constructor(
     private service: ApiService,
     private printer: ThermalPrinterServiceService,
     private dataService: DataService
   ) {
     localStorage.setItem("sp", "");
-    this.getAllDataService()
+    //this.getAllDataService();
+    this.selectDv='1000';
+    console.log(this.dataAll)
   }
 
   jsRun() {
@@ -70,23 +74,32 @@ export class OrderComponent {
       }
     });
   }
-  ngOnInit() {
-    this.getAllDataService();
+  async ngOnInit() {
+    await this.getAllDataService();
     // this.getProducts();
     // this.getKhachHang();
     this.selectDv = 1000;
     console.log(this.status);
-    console.log(this.khachhangs,this.products)
+    //console.log(this.khachhangs,this.products)
   }
 
-  getAllDataService() {
-    this.dataService.currentMessage.subscribe((data: any) => {
+  async getAllDataService() {
+    this.dataService.currentMessage.subscribe(async (data: any) => {
       if (data.all) {
-        console.log('vao day')
-       // this.products = data.all["Sản Phẩm"];
+        console.log("data.all");
+        // this.products = data.all["Sản Phẩm"];
         this.khachhangs = data.all["khachhangs"];
         this.getProducts(data.all["sanphams"]);
         console.log(data);
+      } else {
+        this.service.get(BaseApiUrl.SanpPhams).then((sanphams: any) => {
+          console.log(sanphams);
+          this.getProducts(sanphams);
+        });
+        this.khachhangs = (await this.service.get(
+          BaseApiUrl.KhachHangs
+        )) as KhachHang[];
+        console.log(this.khachhangs);
       }
     });
   }
@@ -111,8 +124,8 @@ export class OrderComponent {
     this.onCal();
     //console.log(value);
   }
-  getProducts(sanphams:any) {
-    console.log(sanphams)
+  getProducts(sanphams: any) {
+    //console.log(sanphams)
     const products = (Array.from(sanphams) as SanPham[]).map((x: any) => {
       x["Số Lượng"] = 0;
       x["Giá Bán"] = parseInt(`${x["Giá Bán"]}`.replace(".", ""));
@@ -248,7 +261,7 @@ export class OrderComponent {
 
     const result = (await this.service.post("donhang", donhang)) as any;
     let chitiet = Array.from(this.orders).map((x: any) => {
-      x["Đơn Hàng"] = result.data[0].Id;
+      x["Đơn Hàng"] = result.data[0].Id; //data.data[0]["Id"]
       x["Thành Tiền"] = parseInt(x["Số Lượng"]) * parseInt(x["Đơn giá"]);
       x["Ngày"] = date;
       return x;
@@ -258,9 +271,10 @@ export class OrderComponent {
 
     result.data[0].chitiets = resultChitiet;
     donhang["chitiets"] = chitiet;
+    donhang["Id"] = result.data[0]["Id"];
     this.donhang = donhang;
-    this.dataService.sendMessage({ add: Status.Add, donhang: result[0] });
-    return result[0];
+    this.dataService.sendMessage({ add: Status.Add, donhang });
+    return result;
   }
   async onSavePrint() {
     await this.onSave();

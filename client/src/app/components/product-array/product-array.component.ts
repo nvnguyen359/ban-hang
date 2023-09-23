@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject } from "@angular/core";
+import { Component, ElementRef, Inject, Input } from "@angular/core";
 import {
   FormArray,
   FormBuilder,
@@ -13,7 +13,7 @@ import { ChiTiet, ChiTietDonHang } from "src/app/Models/chiTietDonHang";
 import { DonHang } from "src/app/Models/donHang";
 import { KhachHang } from "src/app/Models/khachHangs";
 import { SanPham } from "src/app/Models/sanPham";
-import { Status, delay } from "src/app/general";
+import { BaseApiUrl, Status, delay } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 import { DataService } from "src/app/services/data.service";
 import "../../lib.extensions";
@@ -64,7 +64,7 @@ export class ProductArrayComponent {
   chietkhau = 0;
   donvi = 1000;
   statusText = "Đặt Hàng";
-
+  @Input() dataAll:any;
   optionButtonUpdate = true;
   constructor(
     private fb: FormBuilder,
@@ -75,6 +75,7 @@ export class ProductArrayComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
   async ngOnInit() {
+    console.log(this.dataAll)
     this.statusText = "Đặt Hàng";
     this.showKeys = ["Id", "Tên Sản Phẩm", "Đơn giá", "Số Lượng"];
 
@@ -100,16 +101,7 @@ export class ProductArrayComponent {
       chitiets: this.fb.array([]),
     });
     if (this.khachhangs == undefined) {
-      const setTime = setInterval(async () => {
-        this.getDataService();
-        const data = await this.getDataService();
-        this.sanphams = data?.sanphams;
-        this.khachhangs = data?.khachhangs;
-        if (data?.khachhangs.length > 0) {
-          clearInterval(setTime);
-          console.log("clear");
-        }
-      }, 200);
+     // this.getDataService();
       this.onAdd();
       this.onAdd();
       this.onAdd();
@@ -118,21 +110,15 @@ export class ProductArrayComponent {
     console.log("khoi tao ");
   }
   getDataService(): any {
-    return new Promise((res, rej) => {
+    return new Promise(async(res, rej) => {
       try {
-        this.dataService.currentMessage.subscribe((data: any) => {
-          if (data?.all) {
-            if (data.all["sanphams"])
-              this.sanphams = Array.from(data.all["sanphams"]).filter(
-                (sp: any) => !this.danhsachTenSanPham.includes(sp["Name"])
-              );
-            if (data.all["khachhangs"])
-              this.khachhangs = Array.from(
-                data.all["khachhangs"]
-              ) as KhachHang[];
-          }
-          res(data.all);
-        });
+        let result:any= await this.serviceApi.get(BaseApiUrl.All);
+        console.log(result)
+        this.sanphams = Array.from(result["sanphams"])
+        this.khachhangs = Array.from(
+          result["khachhangs"]
+        ) as KhachHang[];
+        res(result);
       } catch (error) {
         res(null);
       }
@@ -182,6 +168,7 @@ export class ProductArrayComponent {
 
     this.formGroup = this.fb.group({
       Id: [dh["Id"]],
+      "Khách Hàng":[dh ? dh["Khách Hàng"] : "" || ""],
       "Tên Khách Hàng": [
         dh ? dh["Tên Khách Hàng"] : "" || "",
         Validators.required,
@@ -192,7 +179,7 @@ export class ProductArrayComponent {
       "Thành Tiền": [dh ? dh["Thành Tiền"] : "" || ""],
       "Ngày Bán": [
         dh
-          ? `${dh["Ngày Bán"]}`.convertDateVNToISO(true)
+          ? `${dh["Ngày Bán"]}`.convertDateVNToISO()
           : "" || new Date().toLocaleDateString(),
         Validators.required,
       ],
@@ -234,8 +221,9 @@ export class ProductArrayComponent {
       e["Thành Tiền"] = parseInt(e["Đơn giá"]) * parseInt(e["Số Lượng"]);
       if (sp) {
         e["Sản Phẩm"] = sp["Id"];
+        e["Đơn Vị Tính"] = sp["Đơn Vị Tính"];
       }
-      e["Đơn Vị Tính"] = sp["Đơn Vị Tính"];
+     
       e["Đơn Hàng"] = values["Id"];
       return e;
     });
@@ -383,6 +371,7 @@ export class ProductArrayComponent {
 
     //1. kiem tra co san pham moi hay khong
     //2. kiem tra cap nhat san pham hay khong
+
     const updateOrCreateSanPhams = await this.checkProduct.isNewProduct(
       this.sanphams,
       values["chitiets"]
@@ -431,7 +420,7 @@ export class ProductArrayComponent {
       this.serviceApi
         .post("donhang", [this.formGroup.value])
         .then(async(data: any) => {
-      
+   
           this.formGroup.value["chitiets"] = this.formGroup.value[
             "chitiets"
           ].map((x: any) => {

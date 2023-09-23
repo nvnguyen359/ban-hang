@@ -6,6 +6,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { OrderComponent } from "./components/order/order.component";
 import { DateAdapter, MAT_DATE_LOCALE } from "@angular/material/core";
 import { DataService } from "./services/data.service";
+import { async } from "@angular/core/testing";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -39,25 +40,30 @@ export class AppComponent implements OnInit, AfterViewInit {
     @Inject(MAT_DATE_LOCALE) private _locale: string
   ) {
     this.getVersion();
-    //this.getAllData();
+
+    this.getAllData();
   }
 
-  getAllData() {
+  async getAllData() {
     const all = localStorage.getItem("all");
-
     if (this.flagOffline) {
       this.dataService.sendMessage(JSON.parse(all + ""));
       return;
     }
-    this.service.get("all").then((data: any) => {
-      if (!localStorage.getItem("all")) {
-        localStorage.setItem("all", JSON.stringify({ all: data }));
-      }
-      this.dataService.sendMessage({ all: data });
-    });
+    let dem = 0;
+    const n = await this.getAll();
   }
-  getAll(){
-
+  async getAll() {
+    let data = (await this.service.get("all")) as any;
+    if (!localStorage.getItem("all")) {
+      localStorage.setItem("all", JSON.stringify({ all: data }));
+    }
+    this.dataService.sendMessage({ all: data });
+    console.log(data)
+    return data["donhangs"].length;
+  }
+  async getData() {
+    return await this.service.get("all");
   }
   getVersion() {
     this.socket.getMessage().subscribe((x: any) => {
@@ -86,7 +92,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
   ngOnInit(): void {
     this.french();
-    this.getAllData();
   }
   ngAfterViewInit() {}
 }

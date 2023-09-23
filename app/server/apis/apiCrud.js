@@ -1,4 +1,5 @@
 const lib = require("./../../shares/lib");
+require("colors");
 const apis = require("./apiExcute");
 const callApis = (app) => {
   const { CRUD } = require("../../features/crud");
@@ -55,6 +56,7 @@ const callApis = (app) => {
   apis.apis(app);
 };
 const getAlldata = (app, crud) => {
+  console.log("===load all data===".green);
   // let crud = new CRUD('sanpham');
   app.get(`/all`, async (req, res, next) => {
     crud.nameSheetTitle = "Sản Phẩm";
@@ -72,7 +74,7 @@ const getAlldata = (app, crud) => {
       nhaphangs,
       donhangs,
       chitiets,
-      khachhangs
+      khachhangs,
     };
     res.status(200).json(data);
     next();
@@ -117,7 +119,7 @@ const put = (element, app, crud) => {
   app.put(`/${element.value.trim()}`, async (req, res, next) => {
     const row = req.body ? req.body : null;
     //console.log(row)
-    res.send({data:await crud.put(row),mes:'success'});
+    res.send({ data: await crud.put(row), mes: "success" });
     next();
   });
 };
@@ -137,18 +139,14 @@ const deleteId = async (element, app, crud) => {
 const bulkDelete = async (element, app, crud) => {
   app.delete(`/${element.value.trim()}`, async (req, res, next) => {
     try {
-
       const ids = `${req.query.ids}`.split(",");
       console.log("bulkDelete ", ids);
-      for(let index =0; index<ids.length;index++){
-        await crud.deleteId(id);
-        await delay(200);
-      }
-      res.send({data: await crud.getAll()});
-      next();
+      await crud.bulkDelete(ids);
+      res.send({ data: await crud.getAll(),mes:'success' });
+     // next();
     } catch (error) {
-      next();
-      return res.send("404");
+     // next();
+      return res.send({mes: error});
     }
   });
 };

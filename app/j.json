@@ -1,8 +1,8 @@
 {
-    "nsis": {
-        "allowElevation": false,
-        "allowToChangeInstallationDirectory": true,
-        "oneClick": false,
-        "perMachine": true
-      }
+  "nsis": {
+    "allowElevation": true,
+    "allowToChangeInstallationDirectory": true,
+    "oneClick": false,
+    "perMachine": false
+  }
 }

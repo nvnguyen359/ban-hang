@@ -44,10 +44,7 @@ mat-button-toggle-group {
 
 .main {
     display: flex;
-    max-height: 720px;
-    overflow-y: auto;
     flex-direction: row;
-    width: 1197px;
 }
 
 th td:not(:nth-child(0)) {

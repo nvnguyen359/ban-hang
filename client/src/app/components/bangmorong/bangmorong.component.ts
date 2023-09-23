@@ -22,6 +22,7 @@ import { SelectionModel } from "@angular/cdk/collections";
 import { ChiTietDonHang } from "src/app/Models/chiTietDonHang";
 import { ApiService } from "src/app/services/api.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { async } from "@angular/core/testing";
 
 @Component({
   selector: "app-bangmorong",
@@ -91,23 +92,78 @@ export class BangmorongComponent {
     private snackbar: MatSnackBar
   ) {}
   ngOnInit() {
-    this.loadingService();
     this.onLoadData();
-   
+    this.loadingService();
+  }
+  async mapdonHangs() {
+    return new Promise(async (res, rej) => {
+      let data: any = [];
+      let donhangs = (await this.service.get("donhang")) as any;
+      //   console.log(donhangs)
+      const chitiets = (await this.service.get("chitietdonhang")) as any;
+      console.log(chitiets)
+      for (let i = 0; i < donhangs.length; i++) {
+        const donhang = donhangs[i];
+        donhang["Ngày Bán"] = `${donhang["Ngày Bán"]}`.DateFormatDDMMYYY();
+        const chitiet = chitiets.filter(
+          (x: any) => x["Đơn Hàng"] == donhang["Id"]
+        );
+        donhang["chitiets"] = chitiet.map((x: any) => {
+          x["Ngày"] = `${"Ngày"}`.DateFormatDDMMYYY();
+          return x;
+        });
+        data.push(donhang);
+      }
+      res(data);
+    });
+  }
+  onGetAllDonHangs(donhangs?: any, chitiets?: any) {
+    let donhangx = Array.from(donhangs as any[]).map((x: any) => {
+      x["Ngày Bán"] = `${x["Ngày Bán"]}`.DateFormatDDMMYYY();
+      return x;
+    });
+    chitiets = chitiets as any[];
+
+    donhangs = Array.from(donhangx).map((x: any) => {
+      x["chitiets"] = chitiets
+        .map((x: any) => {
+          if (x["Ngày"]) x["Ngày"] = `${x["Ngày"]}`.DateFormatDDMMYYY();
+          return x;
+        })
+        .filter((a: any) => a["Đơn Hàng"] == x["Id"]);
+      // x['Tên Khách Hàng'] =` <button mat-button color="primary">${x['Tên Khách Hàng']}</button>`;
+      return x;
+    });
+    console.log(donhangs);
+    this.dataSource = donhangs
+      ? new MatTableDataSource(ELEMENT_DATA)
+      : new MatTableDataSource(Array.from(donhangs).reverse());
+    this.columnsToDisplayWithExpand = [...this.columnsToDisplay, "expand"];
+    this.dataSource.paginator = this.paginator;
+    // this.changeDetectorRefs.detectChanges();
   }
   loadingService() {
     this.dataService.currentMessage.subscribe((result: any) => {
-   
+      console.log("loadingService", result);
+      if (result.all) {
+        const donhangs = result.all["donhangs"];
+        const chitiets = result.all["chitiets"];
+        // console.log(donhangs,chitiets)
+        // this.onGetAllDonHangs(donhangs, chitiets);
+      }
+
       if (result.status == Status.Refesh) {
         const donhang = result.donhang;
         const donhangs = this.dataSource.data.map((x: DonHang) => {
           return x["Id"] == donhang["Id"] ? donhang : x;
         });
+
         this.dataSource.data = donhangs;
         this.changeDetectorRefs.detectChanges();
       }
-      console.log(result);
+      // console.log(result);
       if (result["add"] == Status.Add) {
+        console.log(result["donhang"]);
         this.refeshTable(result["donhang"]);
       }
     });
@@ -135,33 +191,20 @@ export class BangmorongComponent {
     this.changeDetectorRefs.detectChanges();
   }
   refeshTable(item: DonHang) {
-    let dta = [...this.data, item];
-
-    // if (dta) {
-    //   this.columnsChild = Object.keys(this.data[0].chitiets[0]).filter(
-    //     (x) => !this.hideColumns?.includes(x)
-    //   );
-    // }
-
-    this.dataSource.data = dta.reverse();
-
-    this.changeDetectorRefs.detectChanges();
+    this.mapdonHangs().then((data: any) => {
+      console.log(data)
+      this.dataSource.data = data.reverse();
+      this.changeDetectorRefs.detectChanges();
+    });
   }
   classToday(value: any) {
+    // console.log(value)
     const today = new Date();
-    const t = value.split("/");
-    const current = new Date(
-      parseInt(t[2]),
-      parseInt(t[1]) - 1,
-      parseInt(t[0])
-    );
     // console.log(current.toLocaleDateString(),today.toLocaleDateString(),current.toLocaleDateString()==today.toLocaleDateString())
-    const result =
-      current.toLocaleDateString() == today.toLocaleDateString()
-        ? "tr-today"
-        : "fal";
+    const result = value == today.toLocaleDateString() ? "tr-today" : "fal";
     return result;
   }
+
   onLoadData() {
     this.dataSource = !this.data
       ? new MatTableDataSource(ELEMENT_DATA)

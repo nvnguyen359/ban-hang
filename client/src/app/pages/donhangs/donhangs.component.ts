@@ -28,9 +28,9 @@ export class DonhangsComponent {
   dataSource: any;
   displayedColumns: string[] = ["Index", "Tên Khách Hàng", "Phone", "Địa Chỉ"];
   donhangs: any[] = [];
-  khachhangs: any[]=[];
-  sanphams: any[]=[];
-  chitiets:any[]=[];
+  khachhangs: any[] = [];
+  sanphams: any[] = [];
+  chitiets: any[] = [];
   hideColumns: any = "Id,Khách Hàng,Nhân Viên,Sản Phẩm";
   options = {
     a: "Tên Khách Hàng",
@@ -45,11 +45,10 @@ export class DonhangsComponent {
     private dataService: DataService,
     private route: Router
   ) {
-   // this.getAllData();
+    // this.getAllData();
   }
   async ngOnInit() {
-   await this.getAllData();
-    
+    await this.getAllData();
     // this.getKhachHangs();
     // this.getSanPhams();
 
@@ -65,13 +64,30 @@ export class DonhangsComponent {
   }
   ngAfterContentInit() {}
   async getAllData() {
-    this.dataService.currentMessage.subscribe(async(data: any) => {
-      if (data.all) {
-        this.khachhangs = data.all["khachhangs"];
-        this.sanphams = data.all["sanphams"];
-        this.chitiets= data.all['chitiets'];
-        await this.onGetAll();
-      }
+    let dem = 0;
+    await this.getDhs(dem);
+    // const setImer = setInterval(async () => {
+    //   const ch = await this.getDhs(dem);
+    //   if (ch) {
+    //     clearInterval(setImer);
+    //   }
+    // }, 3000);
+  }
+  getDhs(dem: any) {
+    return new Promise((res, rej) => {
+      this.dataService.currentMessage.subscribe(async (data: any) => {
+        if (data.all) {
+          this.khachhangs = data.all["khachhangs"];
+          this.sanphams = data.all["sanphams"];
+          this.chitiets = data.all["chitiets"];
+          this.donhangs = data.all["donhangs"];
+          await this.onGetAll(this.donhangs);
+          console.log("load donhang", ++dem);
+          if (data.all["donhangs"].length > 0) {
+            res(true);
+          }
+        }
+      });
     });
   }
   onDialog() {
@@ -87,22 +103,27 @@ export class DonhangsComponent {
       this.sanphams = data as SanPham[];
     });
   }
-  async onGetAll() {
-    this.donhangs = await this.service.get('donhang') as DonHang[];
-    let donhangx = Array.from((this.donhangs) as any[]).map(
-      (x: any) => {
-        x["Ngày Bán"] = `${x["Ngày Bán"]}`.DateFormatDDMMYYY();
-        return x;
-      }
-    );
+  async onGetAll(donhangs?: any) {
+    this.donhangs = !donhangs
+      ? ((await this.service.get("donhang")) as DonHang[])
+      : (donhangs as DonHang[]);
+    let donhangx = Array.from(this.donhangs as any[]).map((x: any) => {
+      x["Ngày Bán"] = `${x["Ngày Bán"]}`.DateFormatDDMMYYY();
+      return x;
+    });
     const chitiets = this.chitiets as any[];
 
     this.donhangs = Array.from(donhangx).map((x: any) => {
-      x["chitiets"] = chitiets.filter((a: any) => a["Đơn Hàng"] == x["Id"]);
+      x["chitiets"] = chitiets
+        .map((x: any) => {
+          if (x["Ngày"]) x["Ngày"] = `${x["Ngày"]}`.DateFormatDDMMYYY();
+          return x;
+        })
+        .filter((a: any) => a["Đơn Hàng"] == x["Id"]);
       // x['Tên Khách Hàng'] =` <button mat-button color="primary">${x['Tên Khách Hàng']}</button>`;
       return x;
     });
-   // this.changeDetectorRefs.detectChanges();
+    // this.changeDetectorRefs.detectChanges();
   }
   eventClickButton(item: any) {
     console.log(item);

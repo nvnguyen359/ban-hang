@@ -33,11 +33,15 @@ export class CheckProduct {
   isNewProduct(sanphams: any, chitiets: any): any {
     return new Promise((res, rej) => {
       let updateSanPhams: any[] = [];
+      // console.log(chitiets)
+      // console.log(sanphams)
       chitiets.forEach((el: any) => {
+       // console.log(el)
         const check = sanphams.find(
-          (x: any) => x["Name"] == el["Tên Sản Phẩm"]
+          (x: any) =>{ return  x["Name"] == el["Tên Sản Phẩm"];}
         );
         if (check) {
+//console.log(check["Giá Bán"] ,el["Đơn giá"],check["Giá Bán"] != el["Đơn giá"])
           if (check["Giá Bán"] != el["Đơn giá"]) {
             updateSanPhams.push({
               Name: el["Tên Sản Phẩm"],
@@ -49,6 +53,7 @@ export class CheckProduct {
           }
         }
         if (!check) {
+          console.log(el)
           updateSanPhams.push({
             Name: el["Tên Sản Phẩm"],
             "Giá Bán": el["Đơn giá"],

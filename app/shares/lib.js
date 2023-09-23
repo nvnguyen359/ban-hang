@@ -47,7 +47,9 @@ const getPrinters = () => {
     });
   });
 };
-
+function delay(delayInms=1000) {
+  return new Promise(resolve => setTimeout(resolve, delayInms));
+}
 function createIdRow(id, nameSheet, startId ) {
   if (!startId) startId = createFirstId(nameSheet);
   if (!id) {
@@ -129,5 +131,5 @@ module.exports = {
   createIdRow,
   createFolder,
   writeFileSync,
-  exportPdfFromPupetteerSync,
+  exportPdfFromPupetteerSync,delay
 };

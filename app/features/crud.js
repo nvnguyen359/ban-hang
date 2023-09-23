@@ -70,6 +70,15 @@ class CRUD {
       return error;
     }
   }
+  async getDonHangs(){
+    this.initLoad('donhang');
+    const donhangs= await await this.getAll();
+    this.initLoad('chitietdonhang');
+    const chitiets= await await this.getAll();
+    const data = donhangs.map((x)=>{
+      x['chitiets']= chitiets.filter(c=>{c['Đơn Hàng']==x['Id']; c['Ngày'] =`${c['Ngày']}`.fo})
+    })
+  }
   async convertObject(row) {
     const _headerValues = row._worksheet._headerValues;
     return new Promise((res, rej) => {
@@ -89,10 +98,10 @@ class CRUD {
         return rows[index].get("Id") == id;
       });
       return new Promise(async (res, rej) => {
-        res({data:await this.convertObject(row),mes:'success'});
+        res({ data: await this.convertObject(row), mes: "success" });
       });
     } catch (error) {
-      return {mes:error};
+      return { mes: error };
     }
   }
   async post(values) {
@@ -120,9 +129,9 @@ class CRUD {
         return x;
       });
       sheet.addRows(newRows);
-      return {data:newRows,mes:'success'};
+      return { data: newRows, mes: "success" };
     } catch (error) {
-      return {mes:error};
+      return { mes: error };
     }
   }
   async put(value) {
@@ -133,7 +142,7 @@ class CRUD {
       const array = await sheet.getRows();
       const keys = Object.keys(values[0]);
       const keyId = "Id" || "id";
-   
+
       return new Promise(async (res, rej) => {
         array.forEach(async (row) => {
           const rowExist = values.find((v, index) => {
@@ -149,10 +158,10 @@ class CRUD {
             await row.save();
           }
         });
-        res({data:value,mes:'success'});
+        res({ data: value, mes: "success" });
       });
     } catch (error) {
-      return {mes:error};
+      return { mes: error };
     }
   }
   async deleteId(id) {
@@ -163,14 +172,37 @@ class CRUD {
     const row = rows.find((x, index) => {
       return rows[index].get(_headerValues[0]) == id;
     });
-   
+
     if (row) {
-      console.log('Delete ',id)
+      console.log("Delete ", id);
       row.delete();
-      return {mes:'success',data:await this.getAll()};
+      return { mes: "success", data: await this.getAll() };
     } else {
-      return {mes:`${id} does not exist`};
+      return { mes: `${id} does not exist` };
     }
+  }
+  async bulkDelete(ids) {
+    console.log('bulkDelete ',ids)
+    await this.initLoad(this.nameSheet);
+    const sheet = this.doc.sheetsByTitle[this.nameSheet];
+    const rows = Array.from(await sheet.getRows());
+    const _headerValues = rows[0]._worksheet._headerValues;
+    let data = [];
+    let mess = [];
+    for (let i = 0; i < ids.length; i++) {
+      const row = rows.find((x, index) => {
+        return rows[index].get(_headerValues[0]) == ids[i];
+      });
+      await lib.delay(500);
+      if (row) {
+        console.log("bulkDelete ", ids[i]);
+        row.delete();
+        data.push(ids[i]);
+      } else {
+        mess.push(`${ids[i]} does not exist`);
+      }
+    }
+    return { data, mess };
   }
   async filters(text) {
     const getAll = await this.getAll();

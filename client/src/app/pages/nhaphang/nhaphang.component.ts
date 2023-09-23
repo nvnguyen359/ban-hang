@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from "@angular/core";
-import { isEmpty } from "rxjs";
+import { async, isEmpty } from "rxjs";
 import { GroupDate, NhapHang } from "src/app/Models/nhapHang";
 import { ApiService } from "src/app/services/api.service";
 import "./../../lib.extensions";
@@ -65,25 +65,10 @@ export class NhaphangComponent {
   ngOnInit() {
     this.loadData();
     //console.log(this.groupsDate)
-    this.dataService.currentMessage.subscribe((e: any) => {
+    this.dataService.currentMessage.subscribe(async(e: any) => {
       if (e.status == Status.Refesh) {
-        if (e.nhaphang) {
-          const dh = e.nhaphang;
-          this.groupsDate = this.groups(dh);
-        }
-        if (e.dataUpdate) {
-          (this.nhaphangs as NhapHang[]).forEach((x: any) => {
-            const nhapUp = Array.from(e.dataUpdate).find(
-              (a: any) => {
-                return x["Id"] == a["Id"]
-              }
-            );
-            if (nhapUp) {
-              x = nhapUp;
-            }
-          });
-          this.groupsDate = this.groups(this.nhaphangs);
-        }
+        const nhs = await this.apiService.get('nhaphang') as any;
+        this.groupsDate =  this.groups(nhs.map((x:any)=>{x['Ngày Nhập']=`${x['Ngày Nhập']}`.DateFormatDDMMYYY(); return x;}));
         this.dataSource.data = this.groupsDate;
         this.changeDetectorRefs.detectChanges();
         this.snackBar.open("Cập Nhật Thành Công!");
@@ -100,7 +85,7 @@ export class NhaphangComponent {
             }
           );
           this.groupsDate = this.groups(this.nhaphangs.map((x:any)=>{x['Ngày Nhập']=`${x['Ngày Nhập']}`.DateFormatDDMMYYY(); return x;}));
-          this.dataSource=new MatTableDataSource( this.groupsDate);
+          this.dataSource=new MatTableDataSource( this.groupsDate.reverse());
           this.sanphams = data.all["sanphams"];
         } catch (error) {}
       }
@@ -173,7 +158,9 @@ export class NhaphangComponent {
     dt.afterClosed().subscribe((x) => {
       if (x) {
         this.apiService.bulkDelete("nhaphang", ids).then((result: any) => {
-          this.groupsDate.data = this.groups(result.data);
+        //  console.log(result.data)
+         
+          this.dataSource.data =  this.groups(result.data.map((x:any)=>{x['Ngày Nhập']=`${x['Ngày Nhập']}`.DateFormatDDMMYYY(); return x;}));
           this.changeDetectorRefs.detectChanges();
           this.snackBar.open("Xóa Thành Công!");
         });

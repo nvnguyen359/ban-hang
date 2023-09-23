@@ -17,7 +17,7 @@
                 <div class="flex" style="align-items: center;">
                     <div *ngIf="options.a===column"> <a (click)="onClickButton(element,$event)" class="tag-a"
                             style="text-align: left;">{{element[column]}}</a></div>
-                    <div *ngIf="options.a!==column && column!='Trạng Thái'" [innerHTML]="element[column]|formmatNumberX "> </div>
+                    <div *ngIf="options.a!==column && column!='Trạng Thái'" > {{element[column]|formmatNumberX}}</div>
                     <ng-container *ngIf="column=='Id'">
                         <mat-checkbox (click)="$event.stopPropagation()"
                             (change)="$event ? selection.toggle(element) : null"
@@ -58,7 +58,7 @@
                                 <tbody>
                                     <tr *ngFor="let item of element.chitiets">
                                         <td *ngFor="let th of columnsChild" [ngClass]="IsNumber(item[th])">
-                                            <div [innerHTML]="item[th]|formmatNumberX"></div>
+                                            <div >{{item[th]|formmatNumberX}}</div>
                                         </td>
                                     </tr>
                                 </tbody>

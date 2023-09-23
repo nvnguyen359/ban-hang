@@ -14,7 +14,7 @@
                 <div class="flex" style="flex-direction: row;">
                     <div class="flex" style="flex-direction: column;">
                         <div class="full-width">
-                            <app-autocomplete [data]="products" *ngIf="products"
+                            <app-autocomplete [data]="products" *ngIf="products.length>0"
                                 (selectTed)="onSelected($event)" (nameText)="onKeyupSanPham($event)"
                                 class="max-width490"></app-autocomplete>
                         </div>
@@ -27,7 +27,7 @@
                     <div class="right flex" style="flex-direction: column; margin-left:8px;max-width:400px">
                         <div>
                            <div class="flex">
-                             <app-autocomplete [data]="khachhangs" *ngIf="khachhangs" [options]="optionsKhs"
+                             <app-autocomplete [data]="khachhangs" *ngIf="khachhangs.length>0" [options]="optionsKhs"
                             class="left0" (selectTed)="onSelectedKh($event)" [required]="true"
                             class="max-width490" style="margin-right:8px"></app-autocomplete>
                             <app-status-order [statusText] ="status" (eventChange)="eventChangeStatus($event)"></app-status-order></div>
@@ -62,14 +62,14 @@
                            
                             <div class="flex">
                                 <mat-form-field style="margin-right:4px">
-                                    <mat-label>Choose one</mat-label>
-                                    <mat-select [(value)]="selectDv">
+                                    <mat-label>Chọn Đơn Vị</mat-label>
+                                    <mat-select matNativeControl required  [(ngModel)]="selectDv">
                                         <mat-option value="1000">x1000đ</mat-option>
                                         <mat-option value="100">x100đ</mat-option>
                                     </mat-select>
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <mat-label>Choose a date</mat-label>
+                                    <mat-label>Chọn Ngày</mat-label>
                                     <input matInput [matDatepicker]="picker" [formControl]="ngay">
                                     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                                     <mat-datepicker #picker></mat-datepicker>
@@ -122,7 +122,7 @@
                                         </td>
                                     </tr>
                                     <tr *ngIf="sumEnd?.giamgia">
-                                        <td colspan="5">Giảm Giá</td>
+                                        <td colspan="5">Chiết Khấu</td>
                                         <td colspan="1" style="text-align: right;">
                                             <span>{{sumEnd?.giamgia|number}}</span>
                                         </td>

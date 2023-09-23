@@ -65,7 +65,6 @@ export class OnNhapHangComponent {
       Array.from(this.data).forEach((nhaphang: any) => {
         formArray.push(this.fb.group(nhaphang));
       });
-      console.log(this.data[0]);
       this.form = this.fb.group({
         "Ngày Nhập": [
           `${this.data[0]["Ngày Nhập"]}`.convertDateVNToISO(),
@@ -105,7 +104,7 @@ export class OnNhapHangComponent {
         "Đơn Vị Tính": ["", Validators.required],
         "Giá Nhập": ["", Validators.required],
         "Giá Bán": ["", Validators.required],
-        "Thành tiền": ["", Validators.required],
+        "Thành tiền": [""],
       })
     );
     scrollTop(".nhap-hang");
@@ -178,6 +177,7 @@ export class OnNhapHangComponent {
     let nhapHangs = this.form.value["nhaphangs"];
     const url = "nhaphang";
     let data: any = [];
+    this.updatePriceOrCreateProduct(nhapHangs);
     for (let i = 0; i < nhapHangs.length; i++) {
       const nh = nhapHangs[i];
       nh["Ngày Nhập"] = this.form.value["Ngày Nhập"];
@@ -198,11 +198,40 @@ export class OnNhapHangComponent {
         const result = (await this.service.post(url, nh)) as any;
         data.push(result.data[0]);
       }
-      await delay(200);
+      await delay(100);
     }
+
     //this.dialogRef.close(data)
     if (data.length > 0) {
       this.dataService.sendMessage({ status: Status.Refesh, dataUpdate: data });
+    }
+  }
+  updatePriceOrCreateProduct(nhapHangs: any) {
+   // console.log("updatePriceOrCreateProduct");
+    let data: any = [];
+    for (let i = 0; i < nhapHangs.length; i++) {
+      const nh = nhapHangs[i];
+      let sanpham = Array.from(this.sanphams as any[]).find(
+        (x: any) =>
+          x["Name"] == nh["Tên sản phẩm"] &&
+          (x["Giá Nhập"] != nh["Giá Nhập"] || x["Giá Bán"] != nh["Giá Bán"])
+      ) as any;
+    
+      if (sanpham) {
+        sanpham["Id"] = nh["Sản Phẩm"];
+        sanpham["Giá Nhập"] = nh["Giá Nhập"];
+        sanpham["Giá Bán"] = nh["Giá Bán"];
+        sanpham["Đơn Vị Tính"] = nh["Đơn Vị Tính"];
+        sanpham["Name"] = nh["Tên sản phẩm"];
+        data.push(sanpham);
+        this.service.put("sanpham", sanpham);
+      }
+      if (!nh["Sản Phẩm"]) {
+        nh["Id"] = "";
+        nh['Name']= nh["Tên sản phẩm"];
+        data.push(nh);
+         this.service.post("sanpham", nh);
+      }
     }
   }
   onKeyup(nhaphang: any) {

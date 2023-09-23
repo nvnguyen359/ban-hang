@@ -4,6 +4,15 @@ export enum Status {
   LoadOrder,
   isDonhang,
 }
+export enum BaseApiUrl {
+  NhapHangs = "nhaphang",
+  ChiTietDonHangs = "chitietdonhang",
+  SanpPhams = "sanpham",
+  DonHangs = "donhang",
+  ChiPhis = "chiphi",
+  KhachHangs = "khachhang",
+  All='all'
+}
 /**default @param [ms=1000]  */
 export function delay(ms: number = 1000) {
   return new Promise((resolve) => setTimeout(resolve, ms));

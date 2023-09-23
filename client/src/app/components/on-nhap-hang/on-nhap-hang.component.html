@@ -16,7 +16,8 @@
                     <input type="hidden" name="" formControlName="Id">
                     <input type="hidden" name="" formControlName="Sản Phẩm">
                    
-                    <mat-form-field appearance="outline" style="flex-grow: 1;">
+                   <div class="flex" style="justify-items: center;    align-items: center;">
+                    <mat-form-field appearance="outline" style="flex-grow: 2;" >
                         <mat-label>Chọn Sản Phẩm</mat-label>
                         <input matInput placeholder="Sản Phẩm" tabindex="0" required list="dssp" formControlName="Tên sản phẩm" (change)="onChangeSanPham($event,i)">
                     </mat-form-field>
@@ -37,6 +38,7 @@
                         <input matInput placeholder="Giá Bán"  type="number"  formControlName="Giá Bán">
                     </mat-form-field>
                     <mat-icon color="warn" class="delete" (click)="onDelete(i)">delete</mat-icon>
+                   </div>
                 </ng-container>
             </div>
             </div>
