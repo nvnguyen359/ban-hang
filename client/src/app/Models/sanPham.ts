@@ -1,5 +1,6 @@
 export interface SanPham{
     //Id	Name	Giá Nhập	Giá Bán	Đơn Vị Tính
+    Index:number,
     Id?:string,
     'Name':string,
     'Giá Nhập'?:number,

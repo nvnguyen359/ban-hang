@@ -1,0 +1,6 @@
+.tr{  transition: 0.4s all;}
+.tr:hover{
+    background: whitesmoke;
+    color: var(    --mat-stepper-header-error-state-label-text-color);
+    cursor: pointer;
+}

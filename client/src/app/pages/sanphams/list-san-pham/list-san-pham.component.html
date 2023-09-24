@@ -1,0 +1,41 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div formArrayName="sanphams" *ngFor="let sanpham of form.controls.sanphams.value; index as i;trackBy: trackByFn">
+        <ng-container [formGroupName]="i" class="flex sanphams">
+            <input type="hidden" name="Id">
+            <mat-form-field appearance="outline" style="flex-grow: 1;">
+                <mat-label>Tên Sản Phẩm</mat-label>
+                <input matInput placeholder="Tên Sản Phẩm" required formControlName="Name"
+                    (change)="onChange($event,sanpham)" [readonly]="readonly" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>DVT</mat-label>
+                <mat-select placeholder="Đơn Vị Tính" required formControlName="Đơn Vị Tính">
+                    <mat-option *ngFor="let dvt of dvts" [value]="dvt">{{dvt}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Giá Nhập</mat-label>
+                <input matInput type="number" placeholder="Giá Nhập" step="500" required formControlName="Giá Nhập" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Giá Bán</mat-label>
+                <input matInput type="number" placeholder="Giá Bán" step="500" required formControlName="Giá Bán" />
+            </mat-form-field>
+            <mat-icon color="warn" class="delete" (click)="onDelete(i)">delete</mat-icon>
+        </ng-container>
+    </div>
+    <div class="flex full-width btns-bottom" style="justify-items: flex-end;margin-top:16px">
+        <button mat-flat-button color="primary" type="button" (click)="onAdd()" [disabled]="readonly">Thêm
+            &nbsp;<mat-icon>add</mat-icon></button>
+        <button mat-flat-button color="accent" type="submit" [mat-dialog-close]="true"
+            [disabled]="!form.valid">{{optionButtonUpdate?'Cập Nhật':'Save'}}
+            &nbsp;<mat-icon>{{optionButtonUpdate?'update':'save'}}</mat-icon></button>
+        <button mat-flat-button color="warn" type="button" mat-dialog-close>Đóng
+            &nbsp;<mat-icon>close</mat-icon></button>
+    </div>
+</form>
+
+<datalist id="dvts">
+    <option *ngFor="let dvt of dvts" [value]="dvt">{{dvt}}</option>
+</datalist>

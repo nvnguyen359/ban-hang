@@ -23,12 +23,12 @@ import {
   MatDialogModule,
 } from "@angular/material/dialog";
 import { DialogCustomerComponent } from "src/app/components/dialog-customer/dialog-customer.component";
+import { BaseApiUrl } from "src/app/general";
 @Component({
   selector: "app-customers",
   templateUrl: "./customers.component.html",
   styleUrls: ["./customers.component.scss"],
 })
-
 export class CustomersComponent implements AfterViewInit {
   dataSource: any;
   displayedColumns: string[] = ["Index", "Tên Khách Hàng", "Phone", "Địa Chỉ"];
@@ -47,7 +47,7 @@ export class CustomersComponent implements AfterViewInit {
   }
   getData() {
     console.log("====================");
-    this.api.get(this.url).then((e) => {
+    this.api.get(BaseApiUrl.KhachHangs).then((e) => {
       const khachhangs = (e as KhachHang[])
         .reverse()
         .map((x: KhachHang, index) => {
@@ -84,11 +84,9 @@ export class CustomersComponent implements AfterViewInit {
     const dia = this.dialog.open(DialogCustomerComponent, { data: row });
     dia.afterClosed().subscribe((result: any) => {
       console.log(`Dialog result: ${result}`);
-
-      setTimeout(() => {
-        // document.getElementById('refeshTable')?.click()
+      if (result) {
         this.refeshTable();
-      }, 800);
+      }
     });
   }
   refeshTable() {

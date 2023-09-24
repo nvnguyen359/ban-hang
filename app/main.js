@@ -36,6 +36,7 @@ app.whenReady().then(async () => {
     if (BrowserWindow.getAllWindows().length == 0) createWindow();
   });
   checkUpdat();
+  
 });
 setInterval(() => {
   checkUpdat();
@@ -44,7 +45,9 @@ function checkUpdat() {
   mes = `Đang kiểm tra các bản cập nhật. Phiên bản hiện tại ${app.getVersion()}`;
   console.log("dang kiem tra ban cap nhat");
   socket.sendMessage({ mes, ver: app.getVersion() });
-  autoUpdater.checkForUpdates();
+ autoUpdater.checkForUpdates();
+  // autoUpdater.checkForUpdatesAndNotify();
+ 
 }
 /*New Update Available*/
 autoUpdater.on("update-available", async (info) => {

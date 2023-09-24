@@ -20,7 +20,7 @@ import {
   animate,
 } from "@angular/animations";
 import { DataService } from "src/app/services/data.service";
-import { Status } from "src/app/general";
+import { BaseApiUrl, Status } from "src/app/general";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatTableDataSource } from "@angular/material/table";
 
@@ -65,10 +65,15 @@ export class NhaphangComponent {
   ngOnInit() {
     this.loadData();
     //console.log(this.groupsDate)
-    this.dataService.currentMessage.subscribe(async(e: any) => {
+    this.dataService.currentMessage.subscribe(async (e: any) => {
       if (e.status == Status.Refesh) {
-        const nhs = await this.apiService.get('nhaphang') as any;
-        this.groupsDate =  this.groups(nhs.map((x:any)=>{x['Ngày Nhập']=`${x['Ngày Nhập']}`.DateFormatDDMMYYY(); return x;}));
+        const nhs = (await this.apiService.get("nhaphang")) as any;
+        this.groupsDate = this.groups(
+          nhs.map((x: any) => {
+            x["Ngày Nhập"] = `${x["Ngày Nhập"]}`.DateFormatDDMMYYY();
+            return x;
+          })
+        );
         this.dataSource.data = this.groupsDate;
         this.changeDetectorRefs.detectChanges();
         this.snackBar.open("Cập Nhật Thành Công!");
@@ -76,19 +81,21 @@ export class NhaphangComponent {
     });
   }
   loadData() {
-    this.dataService.currentMessage.subscribe((data: any) => {
-      if (data.all) {
-        try {
-          this.nhaphangs = (data.all["nhaphangs"] as NhapHang[]).filter(
-            (x: any) => {
-              if (x["Ngày Nhập"] != undefined) return x;
-            }
-          );
-          this.groupsDate = this.groups(this.nhaphangs.map((x:any)=>{x['Ngày Nhập']=`${x['Ngày Nhập']}`.DateFormatDDMMYYY(); return x;}));
-          this.dataSource=new MatTableDataSource( this.groupsDate.reverse());
-          this.sanphams = data.all["sanphams"];
-        } catch (error) {}
-      }
+    this.apiService.get(BaseApiUrl.NhapHangs).then((e: any) => {
+      const nhaphangs = (e as NhapHang[]).reverse();
+      this.nhaphangs = nhaphangs.filter((x: any) => {
+        if (x["Ngày Nhập"] != undefined) return x;
+      });
+      this.groupsDate = this.groups(
+        this.nhaphangs.map((x: any) => {
+          x["Ngày Nhập"] = `${x["Ngày Nhập"]}`.DateFormatDDMMYYY();
+          return x;
+        })
+      );
+      this.dataSource = new MatTableDataSource(this.groupsDate.reverse());
+    });
+    this.apiService.get(BaseApiUrl.SanpPhams).then((e: any) => {
+      this.sanphams = e;
     });
   }
 
@@ -116,19 +123,19 @@ export class NhaphangComponent {
       const array: NhapHang[] = nhaphangs.filter(
         (x: NhapHang) => `${x["Ngày Nhập"]}` == el
       );
-      const  tong= Array.from(array)
-      .map(
-        (x: NhapHang) =>
-          parseInt(x["Số Lượng"].toString()) *
-          parseInt(x["Giá Bán"].toString())
-      )
-      .reduce((a, b) => a + b, 0)
-    const  quantity= array
-      .map((x: NhapHang) => parseInt(x["Số Lượng"].toString()))
-      .reduce((a, b) => a + b, 0)
+      const tong = Array.from(array)
+        .map(
+          (x: NhapHang) =>
+            parseInt(x["Số Lượng"].toString()) *
+            parseInt(x["Giá Bán"].toString())
+        )
+        .reduce((a, b) => a + b, 0);
+      const quantity = array
+        .map((x: NhapHang) => parseInt(x["Số Lượng"].toString()))
+        .reduce((a, b) => a + b, 0);
       const item: GroupDate = {
         date: `${el}`,
-        nhaphang: array.map((x:any, index) => {
+        nhaphang: array.map((x: any, index) => {
           x.index = index + 1;
           x["Số Lượng"] = parseInt(x["Số Lượng"]);
           x["Giá Nhập"] = parseInt(x["Giá Nhập"]);
@@ -136,8 +143,8 @@ export class NhaphangComponent {
           x["Thành tiền"] = x["Số Lượng"] * x["Giá Bán"];
           return x;
         }),
-        quantity: quantity.toLocaleString('vi'),
-        tong:tong.toLocaleString('vi'),
+        quantity: quantity.toLocaleString("vi"),
+        tong: tong.toLocaleString("vi"),
         count: array.length,
       };
       data.push(item);
@@ -158,9 +165,14 @@ export class NhaphangComponent {
     dt.afterClosed().subscribe((x) => {
       if (x) {
         this.apiService.bulkDelete("nhaphang", ids).then((result: any) => {
-        //  console.log(result.data)
-         
-          this.dataSource.data =  this.groups(result.data.map((x:any)=>{x['Ngày Nhập']=`${x['Ngày Nhập']}`.DateFormatDDMMYYY(); return x;}));
+          //  console.log(result.data)
+
+          this.dataSource.data = this.groups(
+            result.data.map((x: any) => {
+              x["Ngày Nhập"] = `${x["Ngày Nhập"]}`.DateFormatDDMMYYY();
+              return x;
+            })
+          );
           this.changeDetectorRefs.detectChanges();
           this.snackBar.open("Xóa Thành Công!");
         });

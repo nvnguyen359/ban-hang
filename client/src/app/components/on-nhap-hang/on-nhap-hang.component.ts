@@ -148,6 +148,9 @@ export class OnNhapHangComponent {
   }
   onDelete(index: number) {
     const chitiet = this.form.controls["nhaphangs"].at(index).value;
+    //console.log(index,chitiet)
+    (this.form.controls["nhaphangs"] as FormArray).removeAt(index);
+    return
     if (!chitiet["Id"]) {
       this.form.controls["nhaphangs"].removeAt(index);
       return;
@@ -157,17 +160,18 @@ export class OnNhapHangComponent {
       });
       dialogRef.afterClosed().subscribe((data: boolean) => {
         if (data) {
-          this.dialogRef.close();
-          this.service
-            .destroy("nhaphang", chitiet["Id"])
-            .then((result: any) => {
-              // console.log(result)
-              if (result) this.form.controls["nhaphangs"].removeAt(index);
-              this.dataService.sendMessage({
-                status: Status.Refesh,
-                nhaphang: result.data,
-              });
-            });
+          this.form.controls["nhaphangs"].removeAt(index);
+          // this.dialogRef.close();
+          // this.service
+          //   .destroy("nhaphang", chitiet["Id"])
+          //   .then((result: any) => {
+          //     // console.log(result)
+          //     if (result) this.form.controls["nhaphangs"].removeAt(index);
+          //     this.dataService.sendMessage({
+          //       status: Status.Refesh,
+          //       nhaphang: result.data,
+          //     });
+          //   });
         }
       });
     }
@@ -207,7 +211,7 @@ export class OnNhapHangComponent {
     }
   }
   updatePriceOrCreateProduct(nhapHangs: any) {
-   // console.log("updatePriceOrCreateProduct");
+    // console.log("updatePriceOrCreateProduct");
     let data: any = [];
     for (let i = 0; i < nhapHangs.length; i++) {
       const nh = nhapHangs[i];
@@ -216,7 +220,7 @@ export class OnNhapHangComponent {
           x["Name"] == nh["Tên sản phẩm"] &&
           (x["Giá Nhập"] != nh["Giá Nhập"] || x["Giá Bán"] != nh["Giá Bán"])
       ) as any;
-    
+
       if (sanpham) {
         sanpham["Id"] = nh["Sản Phẩm"];
         sanpham["Giá Nhập"] = nh["Giá Nhập"];
@@ -228,9 +232,9 @@ export class OnNhapHangComponent {
       }
       if (!nh["Sản Phẩm"]) {
         nh["Id"] = "";
-        nh['Name']= nh["Tên sản phẩm"];
+        nh["Name"] = nh["Tên sản phẩm"];
         data.push(nh);
-         this.service.post("sanpham", nh);
+        this.service.post("sanpham", nh);
       }
     }
   }
