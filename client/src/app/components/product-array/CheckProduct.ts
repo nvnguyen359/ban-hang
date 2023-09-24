@@ -31,6 +31,8 @@ export class CheckProduct {
    * @param chitiets chi tiết sản phẩm
    */
   isNewProduct(sanphams: any, chitiets: any): any {
+    console.log(sanphams),
+    console.log(chitiets)
     return new Promise((res, rej) => {
       let updateSanPhams: any[] = [];
       // console.log(chitiets)

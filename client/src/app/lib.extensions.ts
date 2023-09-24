@@ -7,6 +7,9 @@ interface String {
   convertDatefromVN(): Date;
   capitalizeFirstLetter(): string;
 }
+interface Array<T> {
+  convertDateVNView(): any[];
+}
 interface Date {}
 
 String.prototype.DateFormatDDMMYYY = function () {
@@ -66,4 +69,14 @@ String.prototype.capitalizeFirstLetter = function () {
   return this.charAt(0).toUpperCase() + this.slice(1);
 };
 
-
+Array.prototype.convertDateVNView = function () {
+  let array = this as any[];
+  array = array.map((x: any) => {
+    let ngays = ["Ngày Nhập", "Ngày", "Ngày Bán"];
+    ngays.forEach((ngay: any) => {
+      if (x[ngay]) x[ngay] = `${x[ngay]}`.DateFormatDDMMYYY();
+    });
+    return x;
+  });
+  return array;
+};

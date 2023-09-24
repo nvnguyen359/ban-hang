@@ -76,8 +76,11 @@ class CRUD {
     this.initLoad('chitietdonhang');
     const chitiets= await await this.getAll();
     const data = donhangs.map((x)=>{
-      x['chitiets']= chitiets.filter(c=>{c['Đơn Hàng']==x['Id']; c['Ngày'] =`${c['Ngày']}`.fo})
-    })
+      x['Ngày Bán']=`${x['Ngày Bán']}`.DateFormatDDMMYYY();
+      x['chitiets']= chitiets.filter(c=>{c['Đơn Hàng']==x['Id']; c['Ngày'] =`${c['Ngày']}`.DateFormatDDMMYYY()});
+      return x;
+    });
+    return data;
   }
   async convertObject(row) {
     const _headerValues = row._worksheet._headerValues;

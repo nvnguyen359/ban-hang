@@ -75,12 +75,15 @@ export class OrderComponent {
     });
   }
   async ngOnInit() {
-    await this.getAllDataService();
+    //await this.getAllDataService();
     // this.getProducts();
     // this.getKhachHang();
     this.selectDv = 1000;
     console.log(this.status);
     //console.log(this.khachhangs,this.products)
+    this.khachhangs = this.dataAll['khachhangs'];
+    this.getProducts(this.dataAll['sanphams']);
+    
   }
 
   async getAllDataService() {

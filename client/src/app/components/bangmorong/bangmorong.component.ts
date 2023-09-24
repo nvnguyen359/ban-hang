@@ -55,6 +55,7 @@ export class BangmorongComponent {
   ];
 
   @Input() data: any;
+  @Input() allData:any;
   @Input() columnsToDisplay: any = [
     "Id",
     "Tên Khách Hàng",
@@ -90,10 +91,12 @@ export class BangmorongComponent {
     private changeDetectorRefs: ChangeDetectorRef,
     private service: ApiService,
     private snackbar: MatSnackBar
-  ) {}
+  ) {
+
+  }
   ngOnInit() {
     this.onLoadData();
-    this.loadingService();
+    
   }
   async mapdonHangs() {
     return new Promise(async (res, rej) => {
@@ -101,7 +104,7 @@ export class BangmorongComponent {
       let donhangs = (await this.service.get("donhang")) as any;
       //   console.log(donhangs)
       const chitiets = (await this.service.get("chitietdonhang")) as any;
-      console.log(chitiets)
+     
       for (let i = 0; i < donhangs.length; i++) {
         const donhang = donhangs[i];
         donhang["Ngày Bán"] = `${donhang["Ngày Bán"]}`.DateFormatDDMMYYY();
@@ -142,32 +145,7 @@ export class BangmorongComponent {
     this.dataSource.paginator = this.paginator;
     // this.changeDetectorRefs.detectChanges();
   }
-  loadingService() {
-    this.dataService.currentMessage.subscribe((result: any) => {
-      console.log("loadingService", result);
-      if (result.all) {
-        const donhangs = result.all["donhangs"];
-        const chitiets = result.all["chitiets"];
-        // console.log(donhangs,chitiets)
-        // this.onGetAllDonHangs(donhangs, chitiets);
-      }
 
-      if (result.status == Status.Refesh) {
-        const donhang = result.donhang;
-        const donhangs = this.dataSource.data.map((x: DonHang) => {
-          return x["Id"] == donhang["Id"] ? donhang : x;
-        });
-
-        this.dataSource.data = donhangs;
-        this.changeDetectorRefs.detectChanges();
-      }
-      // console.log(result);
-      if (result["add"] == Status.Add) {
-        console.log(result["donhang"]);
-        this.refeshTable(result["donhang"]);
-      }
-    });
-  }
   refesh(item: any, status: string) {
     switch (status) {
       case "capnhat":
@@ -192,7 +170,6 @@ export class BangmorongComponent {
   }
   refeshTable(item: DonHang) {
     this.mapdonHangs().then((data: any) => {
-      console.log(data)
       this.dataSource.data = data.reverse();
       this.changeDetectorRefs.detectChanges();
     });
@@ -206,22 +183,12 @@ export class BangmorongComponent {
   }
 
   onLoadData() {
+    console.log(this.data)
     this.dataSource = !this.data
       ? new MatTableDataSource(ELEMENT_DATA)
       : new MatTableDataSource(Array.from(this.data).reverse());
-    // this.columnsToDisplay = Object.keys(this.data[0]).filter(
-    //   (x) =>
-    //     x != "chitiets" && !this.hideColumns?.replace("Id,", "")?.includes(x)
-    // );
     this.columnsToDisplayWithExpand = [...this.columnsToDisplay, "expand"];
-
-    // if (this.data) {
-    //   this.columnsChild = Object.keys(this.data[0].chitiets[0]).filter(
-    //     (x) => !this.hideColumns?.includes(x)
-    //   );
-    // }
     this.dataSource.paginator = this.paginator;
-    // this.changeDetectorRefs.detectChanges();
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;

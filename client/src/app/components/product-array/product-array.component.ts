@@ -78,14 +78,14 @@ export class ProductArrayComponent {
     console.log(this.dataAll)
     this.statusText = "Đặt Hàng";
     this.showKeys = ["Id", "Tên Sản Phẩm", "Đơn giá", "Số Lượng"];
-
+console.log(this.data)
     if (!this.data) {
       this.title = `Tạo Mới Đơn Hàng`;
       this.initNoInputData();
     } else {
       await this.switchCase();
     }
-    this.getDataService();
+   // this.getDataService();
   }
   initNoInputData() {
     this.optionButtonUpdate = false;
@@ -136,6 +136,9 @@ export class ProductArrayComponent {
       return;
     }
     // ['donhang', 'isDonhang', 'khachhangs']
+    if(this.data.sanphams){
+      this.sanphams= this.data.sanphams;
+    }
     const keys = Object.keys(this.data);
     if (keys.includes("donhang")) {
       this.isDonHang = true;
@@ -371,7 +374,7 @@ export class ProductArrayComponent {
 
     //1. kiem tra co san pham moi hay khong
     //2. kiem tra cap nhat san pham hay khong
-
+//console.log( values["chitiets"])
     const updateOrCreateSanPhams = await this.checkProduct.isNewProduct(
       this.sanphams,
       values["chitiets"]

@@ -22,8 +22,8 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
 const SHEET_ID = process.env.SHEET_ID;
 let curWindow;
-autoUpdater.autoDownload = false;
-autoUpdater.autoInstallOnAppQuit = true;
+// autoUpdater.autoDownload = false;
+// autoUpdater.autoInstallOnAppQuit = true;
 
 const socket = new SocketIo();
 function createWindow() {
@@ -65,9 +65,10 @@ autoUpdater.on("update-not-available", (info) => {
 /*Download Completion Message*/
 
 autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
+  console.log("da tai ban cap nhat");
   mes = `Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.`;
   socket.sendMessage({ mes, ver: app.getVersion() });
-  console.log("da tai ban cap nhat");
+
   const dialogOpts = {
     type: "info",
     buttons: ["Restart", "Later"],

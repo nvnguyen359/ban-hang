@@ -127,6 +127,6 @@ Tên Khách Hàng
   <div class="flex full-width btns-bottom" style="justify-items: flex-end;margin-top:16px">
     <button mat-flat-button color="primary" type="button" (click)="onAdd()">Thêm &nbsp;<mat-icon>add</mat-icon></button>
     <button mat-flat-button color="accent" type="submit" [mat-dialog-close]="true" [disabled]="!formGroup.valid">{{optionButtonUpdate?'Cập Nhật':'Thêm'}} &nbsp;<mat-icon>{{optionButtonUpdate?'update':'save'}}</mat-icon></button>
-    <button mat-flat-button color="warn" [mat-dialog-close]="true">Đóng &nbsp;<mat-icon>close</mat-icon></button>
+    <button mat-flat-button color="warn" type="button" mat-dialog-close>Đóng &nbsp;<mat-icon>close</mat-icon></button>
   </div>
 </form>

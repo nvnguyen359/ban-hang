@@ -39,8 +39,14 @@ export class ApiService {
       this.http.get(pathUrl, this.httpOptions).pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError)
-      ).subscribe((data) => {
-        return res(data);
+      ).subscribe((data:any) => {
+        if(Array.isArray(data)){
+          let dt = Array.from(data).convertDateVNView();
+          return res(dt);
+        }else{
+          res(data)
+        }
+      
       });;
     });
   }

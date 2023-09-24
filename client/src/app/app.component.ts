@@ -41,7 +41,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ) {
     this.getVersion();
 
-    this.getAllData();
+   // this.getAllData();
   }
 
   async getAllData() {

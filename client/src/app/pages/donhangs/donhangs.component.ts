@@ -10,7 +10,7 @@ import { DialogAlertComponent } from "src/app/components/dialog-alert/dialog-ale
 
 import { DataService } from "src/app/services/data.service";
 import { Route, Router } from "@angular/router";
-import { Status, delay } from "./../../general";
+import { BaseApiUrl, Status, delay } from "./../../general";
 import "../../lib.extensions";
 
 import { ChiTietDonHang } from "src/app/Models/chiTietDonHang";
@@ -19,6 +19,7 @@ import { KhachHang } from "src/app/Models/khachHangs";
 import { SanPham } from "src/app/Models/sanPham";
 import { async } from "rxjs";
 import { OrdersComponent } from "src/app/components/orders/orders.component";
+import { DialogRef } from "@angular/cdk/dialog";
 @Component({
   selector: "app-donhangs",
   templateUrl: "./donhangs.component.html",
@@ -35,7 +36,7 @@ export class DonhangsComponent {
   options = {
     a: "Tên Khách Hàng",
   };
-
+  all: any;
   @ViewChild(PrintOrderComponent) dirToPrint?: PrintOrderComponent;
   constructor(
     private service: ApiService,
@@ -52,14 +53,15 @@ export class DonhangsComponent {
     // this.getKhachHangs();
     // this.getSanPhams();
 
-    this.dataService.currentMessage.subscribe((data: any) => {
-      if (data == Status.Refesh) {
-        setTimeout(async () => {
-          await this.onGetAll();
-          this.dataService.sendMessage(true);
-        }, 800);
-      }
-    });
+    // this.dataService.currentMessage.subscribe((data: any) => {
+    //   if (data == Status.Refesh) {
+    //     setTimeout(async () => {
+    //       await this.onGetAll();
+    //       this.dataService.sendMessage(true);
+    //     }, 800);
+    //   }
+    // });
+
     //this.onDialog()
   }
   ngAfterContentInit() {}
@@ -75,15 +77,14 @@ export class DonhangsComponent {
   }
   getDhs(dem: any) {
     return new Promise((res, rej) => {
-      this.dataService.currentMessage.subscribe(async (data: any) => {
-        if (data.all) {
-          this.khachhangs = data.all["khachhangs"];
-          this.sanphams = data.all["sanphams"];
-          this.chitiets = data.all["chitiets"];
-          this.donhangs = data.all["donhangs"];
-          await this.onGetAll(this.donhangs);
-          console.log("load donhang", ++dem);
-          if (data.all["donhangs"].length > 0) {
+      this.service.get(BaseApiUrl.All).then(async (data: any) => {
+        if (data) {
+          this.all = data;
+          this.khachhangs = data["khachhangs"];
+          this.sanphams = data["sanphams"];
+          this.chitiets = data["chitiets"];
+          this.donhangs = data["orders"];
+          if (this.donhangs.length > 0) {
             res(true);
           }
         }
@@ -91,7 +92,10 @@ export class DonhangsComponent {
     });
   }
   onDialog() {
-    this.dialog.open(OrdersComponent);
+    const dialogRef = this.dialog.open(OrdersComponent, { data: this.all });
+    dialogRef.afterClosed().subscribe((d: any) => {
+      console.log("dong o ");
+    });
   }
   getKhachHangs() {
     this.service.get("khachhang").then((data: any) => {
@@ -148,7 +152,7 @@ export class DonhangsComponent {
       );
 
       this.dialog.open(ProductArrayComponent, {
-        data: { donhang: item, isDonhang: true },
+        data: { donhang: item, isDonhang: true,sanphams:this.sanphams },
       });
     }
   }

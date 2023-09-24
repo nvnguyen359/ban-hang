@@ -59,26 +59,45 @@ const getAlldata = (app, crud) => {
   console.log("===load all data===".green);
   // let crud = new CRUD('sanpham');
   app.get(`/all`, async (req, res, next) => {
-    crud.nameSheetTitle = "Sản Phẩm";
-    const sanphams = await crud.getAll();
-    crud.nameSheetTitle = "Đơn Hàng";
-    const donhangs = await crud.getAll();
-    crud.nameSheetTitle = "Nhập Hàng";
-    const nhaphangs = await crud.getAll();
-    crud.nameSheetTitle = "Chi Tiết Đơn Hàng";
-    const chitiets = await crud.getAll();
-    crud.nameSheetTitle = "Khách Hàng";
-    const khachhangs = await crud.getAll();
-    const data = {
-      sanphams,
-      nhaphangs,
-      donhangs,
-      chitiets,
-      khachhangs,
-    };
-    res.status(200).json(data);
-    next();
+    try {
+      crud.nameSheetTitle = "Sản Phẩm";
+      const sanphams = await crud.getAll();
+      crud.nameSheetTitle = "Đơn Hàng";
+      const donhangs = await crud.getAll();
+      crud.nameSheetTitle = "Nhập Hàng";
+      const nhaphangs = await crud.getAll();
+      crud.nameSheetTitle = "Chi Tiết Đơn Hàng";
+      const chitiets = await crud.getAll();
+      crud.nameSheetTitle = "Khách Hàng";
+      const khachhangs = await crud.getAll();
+
+      const orders = donhangs.map((x) => {
+        x["Ngày Bán"] = `${x["Ngày Bán"]}`.DateFormatDDMMYYY();
+        x["chitiets"] = chitiets
+          .filter((c) => c["Đơn Hàng"] == x["Id"])
+          .map((c) => {
+            c["Ngày"] = `${c["Ngày"]}`.DateFormatDDMMYYY();
+            return c;
+          });
+        return x;
+      });
+      const data = {
+        sanphams,
+        nhaphangs,
+        donhangs,
+        chitiets,
+        khachhangs,
+        orders,
+      };
+      res.status(200).json(data);
+      // next();
+    } catch (error) {
+      res.send(error);
+    }
   });
+};
+const getDonHangs = (app, crud) => {
+  app.get(`/donhangs`, async (req, res, next) => {});
 };
 const getAll = (element, app, crud) => {
   app.get(`/${element.value.trim()}`, async (req, res, next) => {
@@ -142,11 +161,11 @@ const bulkDelete = async (element, app, crud) => {
       const ids = `${req.query.ids}`.split(",");
       console.log("bulkDelete ", ids);
       await crud.bulkDelete(ids);
-      res.send({ data: await crud.getAll(),mes:'success' });
-     // next();
+      res.send({ data: await crud.getAll(), mes: "success" });
+      // next();
     } catch (error) {
-     // next();
-      return res.send({mes: error});
+      // next();
+      return res.send({ mes: error });
     }
   });
 };

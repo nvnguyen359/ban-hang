@@ -20,6 +20,23 @@ String.prototype.convertStringVNToDateISO = function () {
   let ngay = str[0] < 10 ? "0" + str[0] : str[0];
   return str[2] + "-" + thang + "-" + ngay;
 };
+
+String.prototype.DateFormatDDMMYYY = function () {
+  if (new Date(this.toString()).toString() !== "Invalid Date") {
+    var timestamp = new Date(this.toString());
+    const day =
+      timestamp.getDate() < 10
+        ? `0${timestamp.getDate()}`
+        : timestamp.getDate();
+    const m =
+      timestamp.getMonth() + 1 < 10
+        ? `0${timestamp.getMonth() + 1}`
+        : timestamp.getMonth() + 1;
+    return day + "/" + m + "/" + timestamp.getFullYear();
+  } else {
+    return this.toString();
+  }
+};
 const getPrinters = () => {
   return new Promise((res, rej) => {
     exec("wmic printer list brief", (err, stdout, stderr) => {

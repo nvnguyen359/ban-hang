@@ -1,1 +1,1 @@
-.btns{position:absolute;z-index:1;top:4px;left:4px}.orders-title{margin-left:80px;margin-top:-18px}.orders{width:auto;height:auto;transition:all .4s}
+.btns{position:absolute;z-index:1;top:4px;left:4px}.orders-title{margin-left:80px;margin-top:-18px}.orders{min-width:1500px;min-height:800px;transition:all .4s}

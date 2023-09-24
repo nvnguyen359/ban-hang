@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, Inject } from "@angular/core";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { BaseApiUrl } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 import { DataService } from "src/app/services/data.service";
@@ -13,19 +14,16 @@ export class OrdersComponent {
   key = "isViewMmodule";
   dataAll: any;
   isShow: boolean = false;
-  constructor(private service: ApiService) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data:any) {
+    this.dataAll = data;
+  }
 
   ngOnInit() {
-    this.getAll();
+    console.log(this.data)
+   // this.getAll();
     this.isViewMmodule = localStorage.getItem(this.key) as unknown as boolean;
   }
-  getAll() {
-    this.service.get(BaseApiUrl.All).then((data: any) => {
-      console.log("getAll", data);
-      this.dataAll = data;
-      if (data["sanphams"].length > 0) this.isShow = true;
-    });
-  }
+
   onEventView(event: boolean) {
     console.log(event);
     this.isViewMmodule = event;
