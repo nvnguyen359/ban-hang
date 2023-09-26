@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { SocketService } from "src/app/services/socket.service";
-
+import '../../general'
+import { BaseApiUrl } from "../../general";
 @Component({
   selector: "app-menu-left",
   templateUrl: "./menu-left.component.html",
@@ -34,27 +35,32 @@ export class MenuLeftComponent {
     },
     {
       text: "Đơn Hàng",
-      link: "/donhang",
+      link: `/${BaseApiUrl.DonHangs}`,
       icon: "shopping_basket",
     },
     {
       text: "Sản Phẩm",
-      link: "/sanpham",
+      link:  `/${BaseApiUrl.SanpPhams}`,
       icon: "spa",
     },
     {
       text: "Nhập Hàng",
-      link: "/nhaphang",
+      link:  `/${BaseApiUrl.NhapHangs}`,
       icon: "credit_card",
     },
     {
       text: "Khách Hàng",
-      link: "/customers",
+      link:  `/${BaseApiUrl.KhachHangs}`,
       icon: "account_box",
     },
     {
       text: "Chi Phí",
-      link: "/expense",
+      link:  `/${BaseApiUrl.ChiPhis}`,
+      icon: "money",
+    },
+    {
+      text: "Công Nợ",
+      link:  `/${BaseApiUrl.CongNos}`,
       icon: "money",
     },
     {

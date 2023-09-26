@@ -31,12 +31,8 @@ export class CheckProduct {
    * @param chitiets chi tiết sản phẩm
    */
   isNewProduct(sanphams: any, chitiets: any): any {
-   // console.log(sanphams),
-   // console.log(chitiets)
     return new Promise((res, rej) => {
       let updateSanPhams: any[] = [];
-      // console.log(chitiets)
-      // console.log(sanphams)
       chitiets.forEach((el: any) => {
        // console.log(el)
         const check = sanphams.find(
@@ -44,7 +40,6 @@ export class CheckProduct {
         );
       //  console.log(check)
         if (check) {
-//console.log(check["Giá Bán"] ,el["Đơn giá"],check["Giá Bán"] != el["Đơn giá"])
           if (check["Giá Bán"] != el["Đơn giá"]) {
             updateSanPhams.push({
               Name: el["Tên Sản Phẩm"],

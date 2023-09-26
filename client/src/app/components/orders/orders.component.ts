@@ -14,19 +14,16 @@ export class OrdersComponent {
   key = "isViewMmodule";
   dataAll: any;
   isShow: boolean = false;
-  constructor(@Inject(MAT_DIALOG_DATA) public data:any) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.dataAll = data;
   }
 
   ngOnInit() {
-    console.log(this.data)
-   // this.getAll();
-    this.isViewMmodule = localStorage.getItem(this.key) as unknown as boolean;
+    this.isViewMmodule = localStorage.getItem(this.key) == "true";
   }
 
   onEventView(event: boolean) {
-    console.log(event);
-    this.isViewMmodule = event;
+    this.isViewMmodule = event==true;
     localStorage.setItem(this.key, `${event}`);
   }
 }

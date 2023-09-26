@@ -1,6 +1,10 @@
 import { Component, Inject } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
 import { SanPham } from "src/app/Models/sanPham";
@@ -41,14 +45,18 @@ export class ListSanPhamComponent {
         this.data.sanphams.map((x: any) =>
           `${x["Đơn Vị Tính"]}`.capitalizeFirstLetter()
         )
-      )
+      ),
     ];
-    console.log(this.dvts)
+    console.log(this.dvts);
     if (this.data.row) {
+      const rows = Array.isArray(this.data.row)
+        ? Array.from(this.data.row)
+        : [this.data.row];
       this.readonly = true;
       this.optionButtonUpdate = true;
-      //console.log(this.data)
-      this.onAdd(this.data.row);
+      rows.forEach((row: any) => {
+        this.onAdd(row);
+      });
     } else {
       this.readonly = false;
       this.onAdd();
@@ -60,7 +68,7 @@ export class ListSanPhamComponent {
       this.service
         .put(BaseApiUrl.SanpPhams, this.form.value.sanphams)
         .then((e: any) => {
-          console.log(e)
+          console.log(e);
           this.snackBar.open("Cập Nhât Thành Công", "", this.optionSnackBar);
         });
     } else {

@@ -1,4 +1,5 @@
 require("dotenv").config({ path: './../.env' });
+
 var bodyParser = require('body-parser');
 const path = require("path");
 const cors = require("cors");
@@ -67,5 +68,8 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/imgs", express.static(path.join(__dirname, "imgs")));
 app.use("/public", express.static("public"));
 app.use("/app/public", express.static("public"));
+
+
+
 
 module.exports = app;

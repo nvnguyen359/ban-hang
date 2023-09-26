@@ -24,6 +24,7 @@ class SocketIo {
     if (!key) key = this.keyMeg;
     io.on("connection", (socket) => {
       socket.on(key, (msg) => {
+        console.log(msg)
         io.emit(key, msg);
       });
     });

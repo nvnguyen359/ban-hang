@@ -20,7 +20,8 @@ import { DialogAlertComponent } from "../dialog-alert/dialog-alert.component";
 import { isEmpty } from "rxjs";
 import { ProductComponent } from "../product/product.component";
 import { ApiService } from "src/app/services/api.service";
-import { Status, delay, scrollTop } from "src/app/general";
+import { BaseApiUrl, Status, delay, scrollTop } from "src/app/general";
+import { async } from "@angular/core/testing";
 
 @Component({
   selector: "app-on-nhap-hang",
@@ -33,13 +34,15 @@ export class OnNhapHangComponent {
     "Ngày Nhập": [new Date(), Validators.required],
     nhaphangs: this.fb.array([]),
   });
-  sanphams?: SanPham[] = [];
+  sanphams: any[] = [];
   nhaphangs: NhapHang[] = [];
   optionButtonUpdate = false;
   dvts: any[] = [];
+  readonly = false;
+  removeAts: any = [];
   title = "Nhập Hàng";
   constructor(
-    public dialogRef: MatDialogRef<DialogConfirmComponent>,
+    public dialogRef: MatDialogRef<OnNhapHangComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialog: MatDialog,
     private fb: FormBuilder,
@@ -50,29 +53,43 @@ export class OnNhapHangComponent {
       "Ngày Nhập": [new Date(), Validators.required],
       nhaphangs: this.fb.array([]),
     });
-    this.getDataService();
+    // this.getDataService();
     this.insertNhaphangs();
   }
   ngOninit() {
     // this.insertNhaphangs();
     // this.getDataService();
   }
+  initSelect() {
+    this.sanphams = this.data["sanphams"];
+    this.dvts = [
+      ...new Set(
+        Array.from(this.sanphams).map((e: any) =>
+          `${e["Đơn Vị Tính"]}`.capitalizeFirstLetter()
+        )
+      ),
+    ];
+  }
   insertNhaphangs() {
-    if (this.data && Array.from(this.data).length > 0) {
+    if (this.data && Array.from(this.data["nhaphangs"]).length > 0) {
+      this.readonly = true;
       this.optionButtonUpdate = true;
       const formArray = this.fb.array([]) as FormArray;
-      this.nhaphangs = this.data;
-      Array.from(this.data).forEach((nhaphang: any) => {
+      this.nhaphangs = this.data["nhaphangs"];
+      this.initSelect();
+      Array.from(this.nhaphangs).forEach((nhaphang: any) => {
         formArray.push(this.fb.group(nhaphang));
       });
+
       this.form = this.fb.group({
         "Ngày Nhập": [
-          `${this.data[0]["Ngày Nhập"]}`.convertDateVNToISO(),
+          `${this.nhaphangs[0]["Ngày Nhập"]}`.convertDateVNToISO(),
           Validators.required,
         ],
         nhaphangs: formArray,
       });
     } else {
+      this.initSelect();
       for (let index = 0; index < 5; index++) {
         this.addRow();
       }
@@ -111,11 +128,27 @@ export class OnNhapHangComponent {
   }
 
   onChangeSanPham(event: any, index: any) {
+    let val = event.target.value;
+    const nhs1 = this.form.value["nhaphangs"];
+    const checkSanPhams = nhs1.filter(
+      (e: any) => e["Tên sản phẩm"] != "" && e["Tên sản phẩm"] == val
+    );
+
+    if (checkSanPhams.length > 1) {
+      const dialogRef = this.dialog.open(DialogAlertComponent, {
+        data: `${val} bị trùng!`,
+      });
+      dialogRef.afterClosed().subscribe((e: any) => {
+        event.target.value = "";
+      });
+      return;
+    }
+
     let values = this.form.value;
     let nhs = Array.from(values["nhaphangs"]);
     nhs.forEach((e: any, i: number) => {
       const sanpham = Array.from(this.sanphams as any[]).find(
-        (x: any) => x["Name"] == event.target.value
+        (x: any) => x["Name"] == val
       ) as any;
       if (sanpham && i == index) {
         e["Giá Nhập"] = sanpham["Giá Nhập"];
@@ -129,59 +162,26 @@ export class OnNhapHangComponent {
     });
     values["nhaphangs"] = nhs;
     this.form.patchValue(values);
-    const nhs1 = this.form.value["nhaphangs"];
-
-    const checkSanPhams = nhs1.filter(
-      (e: any) =>
-        e["Tên sản phẩm"] != "" && e["Tên sản phẩm"] == event.target.value
+  }
+  onDelete(index: number, nhaphang: any) {
+    const ctrl = this.form.controls["nhaphangs"];
+    const value = ctrl.value;
+    const removeItem = ctrl.value.at(index);
+    if (removeItem["Id"] != "") this.removeAts.push(removeItem);
+    ctrl.setValue(
+      value
+        .slice(0, index)
+        .concat(value.slice(index + 1))
+        .concat(value[index])
     );
-
-    if (checkSanPhams.length > 1) {
-      const ten = event.target.value;
-      const dialogRef = this.dialog.open(DialogAlertComponent, {
-        data: `${ten} bị trùng!`,
-      });
-      dialogRef.afterClosed().subscribe((e: any) => {
-        event.target.value = "";
-      });
-    }
+    ctrl.removeAt(value.length - 1);
+    return;
   }
-  onDelete(index: number) {
-    const chitiet = this.form.controls["nhaphangs"].at(index).value;
-    //console.log(index,chitiet)
-    (this.form.controls["nhaphangs"] as FormArray).removeAt(index);
-    return
-    if (!chitiet["Id"]) {
-      this.form.controls["nhaphangs"].removeAt(index);
-      return;
-    } else {
-      const dialogRef = this.dialog.open(DialogAlertComponent, {
-        data: `Bạn Chắc Chắn Xóa [${chitiet["Tên sản phẩm"]}] ra khỏi nhập hàng hôm nay ?`,
-      });
-      dialogRef.afterClosed().subscribe((data: boolean) => {
-        if (data) {
-          this.form.controls["nhaphangs"].removeAt(index);
-          // this.dialogRef.close();
-          // this.service
-          //   .destroy("nhaphang", chitiet["Id"])
-          //   .then((result: any) => {
-          //     // console.log(result)
-          //     if (result) this.form.controls["nhaphangs"].removeAt(index);
-          //     this.dataService.sendMessage({
-          //       status: Status.Refesh,
-          //       nhaphang: result.data,
-          //     });
-          //   });
-        }
-      });
-    }
-  }
-  async onSubmit() {
-    console.log("submit");
+  updateOrCreateNhapHangs() {
     let nhapHangs = this.form.value["nhaphangs"];
-    const url = "nhaphang";
-    let data: any = [];
-    this.updatePriceOrCreateProduct(nhapHangs);
+    let posts: any = [];
+    let puts: any = [];
+
     for (let i = 0; i < nhapHangs.length; i++) {
       const nh = nhapHangs[i];
       nh["Ngày Nhập"] = this.form.value["Ngày Nhập"];
@@ -194,25 +194,64 @@ export class OnNhapHangComponent {
               x["Giá Nhập"] != nh[`Giá Nhập`])
         );
         if (checkEdit) {
-          const result = (await this.service.put(url, nh)) as any;
-          data.push(result.data.data);
+          checkEdit["Ngày Nhập"] = this.form.value["Ngày Nhập"];
+          puts.push(checkEdit);
+          // const result = (await this.service.put(url, nh)) as any;
+          // data.push(result.data.data);
         }
       }
       if (!nh["Id"]) {
-        const result = (await this.service.post(url, nh)) as any;
-        data.push(result.data[0]);
+        //  const result = (await this.service.post(url, nh)) as any;
+        nh["Name"] = nh["Tên sản phẩm"];
+        posts.push(nh);
       }
-      await delay(100);
     }
-
-    //this.dialogRef.close(data)
-    if (data.length > 0) {
-      this.dataService.sendMessage({ status: Status.Refesh, dataUpdate: data });
-    }
+    return { puts, posts };
   }
-  updatePriceOrCreateProduct(nhapHangs: any) {
-    // console.log("updatePriceOrCreateProduct");
+  async onSubmit() {
+    console.log("submit");
     let data: any = [];
+    const sanPhams = this.updatePriceOrCreateProduct();
+    await this.service.put(BaseApiUrl.SanpPhams, sanPhams.puts);
+    const nhaps = this.updateOrCreateNhapHangs();
+    await this.service.put(BaseApiUrl.NhapHangs, nhaps.puts);
+    if (nhaps.posts.length > 0) {
+      for (let i = 0; i < nhaps.posts.length; i++) {
+        let item = nhaps.posts[i];
+        const sp = (await this.service.post(BaseApiUrl.SanpPhams, item)) as any;
+        item["Sản Phẩm"] = sp.data[0]["Id"];
+        await this.service.post(BaseApiUrl.NhapHangs, item);
+      }
+    }
+    if (this.removeAts.length > 0) {
+      const ids = this.removeAts
+        .map((x: any) => {
+          return x["Id"];
+        })
+        .filter((x: any) => x != undefined);
+      const nameS = this.removeAts.map(
+        (x: any) => x["Tên sản phẩm"]
+      ) as string[];
+      if (ids.length > 0) {
+        const dialog = this.dialog.open(DialogAlertComponent, {
+          data: `Bạn chắc chắn muốn xóa [${nameS.join()}]`,
+        });
+      const result= await dialog.afterClosed().toPromise();
+      if (result) {
+        await this.service.bulkDelete(BaseApiUrl.NhapHangs, ids);
+      }
+      }
+    }
+   this.dataService.sendMessage(Status.Refesh);
+    // if (sanPhams.puts.length > 0) {
+    //   this.dataService.sendMessage({ status: Status.Refesh, dataUpdate: data });
+    // }
+  }
+  updatePriceOrCreateProduct() {
+    let nhapHangs = this.form.value["nhaphangs"];
+    // console.log("updatePriceOrCreateProduct");
+    let posts: any = [];
+    let puts: any = [];
     for (let i = 0; i < nhapHangs.length; i++) {
       const nh = nhapHangs[i];
       let sanpham = Array.from(this.sanphams as any[]).find(
@@ -227,16 +266,18 @@ export class OnNhapHangComponent {
         sanpham["Giá Bán"] = nh["Giá Bán"];
         sanpham["Đơn Vị Tính"] = nh["Đơn Vị Tính"];
         sanpham["Name"] = nh["Tên sản phẩm"];
-        data.push(sanpham);
-        this.service.put("sanpham", sanpham);
+        // data.push(sanpham);
+        puts.push(sanpham);
+        // this.service.put("sanpham", sanpham);
       }
       if (!nh["Sản Phẩm"]) {
         nh["Id"] = "";
         nh["Name"] = nh["Tên sản phẩm"];
-        data.push(nh);
-        this.service.post("sanpham", nh);
+        posts.push(nh);
+        // this.service.post("sanpham", nh);
       }
     }
+    return { posts, puts };
   }
   onKeyup(nhaphang: any) {
     console.log(nhaphang);

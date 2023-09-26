@@ -49,6 +49,7 @@ function checkUpdat() {
   // autoUpdater.checkForUpdatesAndNotify();
  
 }
+
 /*New Update Available*/
 autoUpdater.on("update-available", async (info) => {
   mes = `Cập nhật có sẵn. Phiên bản hiện tại ${app.getVersion()}`;

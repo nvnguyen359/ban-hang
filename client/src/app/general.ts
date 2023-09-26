@@ -11,7 +11,8 @@ export enum BaseApiUrl {
   DonHangs = "donhang",
   ChiPhis = "chiphi",
   KhachHangs = "khachhang",
-  All='all'
+  All='all',
+  CongNos='congnos'
 }
 /**default @param [ms=1000]  */
 export function delay(ms: number = 1000) {

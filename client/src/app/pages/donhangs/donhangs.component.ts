@@ -20,6 +20,8 @@ import { SanPham } from "src/app/Models/sanPham";
 import { async } from "rxjs";
 import { OrdersComponent } from "src/app/components/orders/orders.component";
 import { DialogRef } from "@angular/cdk/dialog";
+import { Socket } from "ngx-socket-io";
+import { SocketService } from "src/app/services/socket.service";
 @Component({
   selector: "app-donhangs",
   templateUrl: "./donhangs.component.html",
@@ -28,7 +30,7 @@ import { DialogRef } from "@angular/cdk/dialog";
 export class DonhangsComponent {
   dataSource: any;
   displayedColumns: string[] = ["Index", "Tên Khách Hàng", "Phone", "Địa Chỉ"];
-  donhangs: any[] = [];
+  donhangs: any;
   khachhangs: any[] = [];
   sanphams: any[] = [];
   chitiets: any[] = [];
@@ -44,52 +46,151 @@ export class DonhangsComponent {
     private printer: ThermalPrinterServiceService,
     private changeDetectorRefs: ChangeDetectorRef,
     private dataService: DataService,
-    private route: Router
+    private route: Router,
+    private socket: SocketService
   ) {
     // this.getAllData();
   }
   async ngOnInit() {
     await this.getAllData();
-    // this.getKhachHangs();
-    // this.getSanPhams();
-
-    // this.dataService.currentMessage.subscribe((data: any) => {
-    //   if (data == Status.Refesh) {
-    //     setTimeout(async () => {
-    //       await this.onGetAll();
-    //       this.dataService.sendMessage(true);
-    //     }, 800);
-    //   }
-    // });
-
-    //this.onDialog()
+    await this.onSubmit();
+    let dem = 0;
+    if (!this.donhangs) {
+      const settime = setInterval(async () => {
+        await this.getAllData();
+        console.log("loading...", ++dem);
+        if (this.donhangs) {
+          clearInterval(settime);
+          return;
+        }
+      }, 5000);
+    }
+  }
+  async onSubmit() {
+    this.dataService.currentMessage.subscribe(async (data: any) => {
+      if(data.status){
+        
+      }
+      console.log(data);
+      if (data.submit) {
+        const submit = data.submit;
+        console.log(submit.bulkDelete);
+        console.log(submit.donhang);
+        if (submit.donhang) {
+          this.chitiets = submit.donhang["chitiets"];
+          console.log(this.chitiets)
+         this.onUpdateOrCreateSanphams(this.chitiets);
+        //  const cts = (await this.onAddSanPhams(this.chitiets)) as any;
+        //  console.log(cts);
+        }
+        if (submit.bulkDelete?.length > 0) {
+          const nams = Array.from(submit.bulkDelete).map(
+            (x: any) => x["Tên sản phấm"]
+          );
+          const ok = this.dialog.open(DialogAlertComponent, {
+            data: `Bạn chắc chắn muốn xóa [${nams.join()}]`,
+          });
+          ok.afterClosed().subscribe(async (ok: any) => {
+            if (ok) {
+              const ids = Array.from(submit.bulkDelete).map(
+                (x: any) => x["Id"]
+              );
+              if (ids.length > 0) {
+                await this.service.bulkDelete(BaseApiUrl.ChiTietDonHangs, ids);
+              }
+            }
+          });
+        }
+      }
+    });
+  }
+  async onCapNhatChiTiets(chitiets: any[]) {}
+  async onAddSanPhams(chitiets: any[]) {
+    return new Promise(async (res, rej) => {
+      const newSps = chitiets.filter(
+        (x: ChiTietDonHang) => x["Sản Phẩm"] == ""
+      );
+      console.log(newSps);
+      for (let i = 0; i < newSps.length; i++) {
+        const result = (await this.service.post(
+          BaseApiUrl.SanpPhams,
+          newSps[i]
+        )) as any;
+        console.log(result);
+        if (result.data) {
+          const idSp = result.data[0]["Id"];
+          newSps[i]["Sản Phẩm"] = idSp;
+        }
+        await delay(500);
+      }
+      //this.socket.sendMessage(newSps,'addnewproduct');
+      res(newSps);
+    });
+  }
+  onUpdateOrCreateSanphams(chitiets: any[]) {
+    return new Promise(async (res, rej) => {
+      let data: any[] = [];
+      const sanphams = Array.from(this.sanphams);
+console.log(sanphams.length)
+console.log(chitiets)
+      chitiets.forEach((chitet: ChiTietDonHang) => {
+        console.log(chitet);
+        const sp = sanphams.find(
+          (x: SanPham) =>
+            x["Id"] != "" &&
+            chitet["Sản Phẩm"] == x["Id"] &&
+            (chitet["Đơn giá"] != x["Giá Bán"] )
+        ) as any;
+        if (sp) {
+          sp["Giá Bán"] = chitet["Đơn giá"];
+          sp["Giá Nhập"] = chitet["Giá Nhập"];
+          sp["Đơn Giá"] = chitet["Đơn giá"];
+          sp["Số Lượng"] = chitet["Số Lượng"];
+          sp["Name"] = chitet["Tên Sản Phẩm"];
+          //console.log(sp)
+          data.push(sp);
+        }
+       if(chitet["Sản Phẩm"]==''){
+        console.log(chitet)
+        const sp= { Id:'',Name:chitet["Tên Sản Phẩm"], "Giá Nhập":0,"Giá Bán":chitet['Đơn giá'],'Đơn Vị Tính':chitet['Đơn Vị Tính']} as SanPham
+        data.push(sp)
+       }
+      });
+      console.log(data)
+      if (data.length > 0) {
+        const dialog = this.dialog.open(DialogAlertComponent, {
+          data: `Bạn muốn cập nhật sản phấm ${data.map(
+            (x: SanPham) => x["Name"]
+          )}`,
+        });
+        const ok = await dialog.afterClosed().toPromise();
+        if (ok) {
+          return
+          for (let index = 0; index < data.length; index++) {
+            const element = data[index];
+            console.log(element)
+            const update = await this.service.put(
+              BaseApiUrl.SanpPhams,
+              element
+            );
+            console.log(update);
+            await delay(500);
+          }
+        }
+      }
+      res(data);
+    });
   }
   ngAfterContentInit() {}
   async getAllData() {
-    let dem = 0;
-    await this.getDhs(dem);
-    // const setImer = setInterval(async () => {
-    //   const ch = await this.getDhs(dem);
-    //   if (ch) {
-    //     clearInterval(setImer);
-    //   }
-    // }, 3000);
-  }
-  getDhs(dem: any) {
-    return new Promise((res, rej) => {
-      this.service.get(BaseApiUrl.All).then(async (data: any) => {
-        if (data) {
-          this.all = data;
-          this.khachhangs = data["khachhangs"];
-          this.sanphams = data["sanphams"];
-          this.chitiets = data["chitiets"];
-          this.donhangs = data["orders"];
-          if (this.donhangs.length > 0) {
-            res(true);
-          }
-        }
-      });
-    });
+    const data = (await this.service.get(BaseApiUrl.All)) as any;
+    console.log(data);
+    this.all = data;
+    this.khachhangs = data["khachhangs"];
+    this.sanphams = data["sanphams"];
+    this.chitiets = data["chitiets"];
+    this.donhangs = data["orders"];
+    console.log(this.donhangs);
   }
   onDialog() {
     const dialogRef = this.dialog.open(OrdersComponent, { data: this.all });
@@ -97,38 +198,7 @@ export class DonhangsComponent {
       console.log("dong o ");
     });
   }
-  getKhachHangs() {
-    this.service.get("khachhang").then((data: any) => {
-      this.khachhangs = data as KhachHang[];
-    });
-  }
-  getSanPhams() {
-    this.service.get("sanpham").then((data: any) => {
-      this.sanphams = data as SanPham[];
-    });
-  }
-  async onGetAll(donhangs?: any) {
-    this.donhangs = !donhangs
-      ? ((await this.service.get("donhang")) as DonHang[])
-      : (donhangs as DonHang[]);
-    let donhangx = Array.from(this.donhangs as any[]).map((x: any) => {
-      x["Ngày Bán"] = `${x["Ngày Bán"]}`.DateFormatDDMMYYY();
-      return x;
-    });
-    const chitiets = this.chitiets as any[];
 
-    this.donhangs = Array.from(donhangx).map((x: any) => {
-      x["chitiets"] = chitiets
-        .map((x: any) => {
-          if (x["Ngày"]) x["Ngày"] = `${x["Ngày"]}`.DateFormatDDMMYYY();
-          return x;
-        })
-        .filter((a: any) => a["Đơn Hàng"] == x["Id"]);
-      // x['Tên Khách Hàng'] =` <button mat-button color="primary">${x['Tên Khách Hàng']}</button>`;
-      return x;
-    });
-    // this.changeDetectorRefs.detectChanges();
-  }
   eventClickButton(item: any) {
     console.log(item);
   }
@@ -152,7 +222,7 @@ export class DonhangsComponent {
       );
 
       this.dialog.open(ProductArrayComponent, {
-        data: { donhang: item, isDonhang: true,sanphams:this.sanphams },
+        data: { donhang: item, isDonhang: true, sanphams: this.sanphams },
       });
     }
   }
@@ -166,15 +236,9 @@ export class DonhangsComponent {
         const ids = item.donhang["chitiets"].map(
           (x: ChiTietDonHang) => x["Id"]
         );
-        for (let index = 0; index < ids.length; index++) {
-          const id = `${ids[index]}`.trim();
-          await delay(1000);
-
-          this.service.destroy("chitietdonhang", id);
-          dataIds.push(id);
-        }
-        await this.service.destroy("donhang", item.donhang["Id"]);
-        //  this.dataService.sendMessage(Status.LoadOrder)
+        await this.service.bulkDelete(BaseApiUrl.ChiTietDonHangs, ids);
+        await this.service.destroy(BaseApiUrl.DonHangs, item.donhang["Id"]);
+        this.dataService.sendMessage(Status.Refesh);
       }
     });
   }

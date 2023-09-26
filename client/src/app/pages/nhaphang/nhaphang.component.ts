@@ -20,7 +20,7 @@ import {
   animate,
 } from "@angular/animations";
 import { DataService } from "src/app/services/data.service";
-import { BaseApiUrl, Status } from "src/app/general";
+import { BaseApiUrl, Status, delay } from "src/app/general";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatTableDataSource } from "@angular/material/table";
 
@@ -66,21 +66,26 @@ export class NhaphangComponent {
     this.loadData();
     //console.log(this.groupsDate)
     this.dataService.currentMessage.subscribe(async (e: any) => {
-      if (e.status == Status.Refesh) {
-        const nhs = (await this.apiService.get("nhaphang")) as any;
-        this.groupsDate = this.groups(
-          nhs.map((x: any) => {
-            x["Ngày Nhập"] = `${x["Ngày Nhập"]}`.DateFormatDDMMYYY();
-            return x;
-          })
-        );
-        this.dataSource.data = this.groupsDate;
-        this.changeDetectorRefs.detectChanges();
-        this.snackBar.open("Cập Nhật Thành Công!");
+
+      if (e == Status.Refesh) {
+        await delay(10);
+        this.loadData(true);
       }
     });
   }
-  loadData() {
+  async refeshTable() {
+    const nhs = (await this.apiService.get("nhaphang")) as any;
+    this.groupsDate = this.groups(
+      nhs.map((x: any) => {
+        x["Ngày Nhập"] = `${x["Ngày Nhập"]}`.DateFormatDDMMYYY();
+        return x;
+      })
+    );
+    this.dataSource.data = this.groupsDate;
+    this.changeDetectorRefs.detectChanges();
+    this.snackBar.open("Cập Nhật Thành Công!");
+  }
+  loadData(refesh?: boolean) {
     this.apiService.get(BaseApiUrl.NhapHangs).then((e: any) => {
       const nhaphangs = (e as NhapHang[]).reverse();
       this.nhaphangs = nhaphangs.filter((x: any) => {
@@ -92,7 +97,12 @@ export class NhaphangComponent {
           return x;
         })
       );
-      this.dataSource = new MatTableDataSource(this.groupsDate.reverse());
+      if (refesh) {
+        this.dataSource.data = this.groupsDate.reverse();
+      } else {
+        this.dataSource = new MatTableDataSource(this.groupsDate.reverse());
+      }
+      this.changeDetectorRefs.detectChanges();
     });
     this.apiService.get(BaseApiUrl.SanpPhams).then((e: any) => {
       this.sanphams = e;
@@ -180,12 +190,10 @@ export class NhaphangComponent {
     });
   }
   onUpdate(element: any = null) {
-    // if(!element){
-    //   this.dialog.open(OnNhapHangComponent);
-    // }
     const nhs = element?.nhaphang ? element?.nhaphang : [];
-    this.dialog.open(OnNhapHangComponent, {
-      data: nhs,
+    const dialog = this.dialog.open(OnNhapHangComponent, {
+      data: { nhaphangs: nhs, sanphams: this.sanphams },
     });
+   
   }
 }

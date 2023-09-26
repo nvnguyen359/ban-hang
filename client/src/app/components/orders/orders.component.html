@@ -1,16 +1,18 @@
 <div class="orders">
     <mat-button-toggle-group #group="matButtonToggleGroup" class="btns"  [value]="isViewMmodule">
-        <mat-button-toggle value="true" aria-label="Text align left" value="true" (click)="onEventView(true)">
+        <mat-button-toggle value="true" aria-label="Text align left" value="true" (change)="onEventView(true)">
             <mat-icon>view_module</mat-icon>
         </mat-button-toggle>
-        <mat-button-toggle value="false" aria-label="Text align center"  (click)="onEventView(false)">
+        <mat-button-toggle value="false" aria-label="Text align center"  (change)="onEventView(false)">
             <mat-icon>reorder</mat-icon>
         </mat-button-toggle>
     </mat-button-toggle-group>
-    <ng-container *ngIf="isViewMmodule" >
+  
+    <ng-container *ngIf="!isViewMmodule" >
         <app-order [dataAll]="dataAll" *ngIf="dataAll"></app-order>
     </ng-container>
-    <!-- <ng-container *ngIf="!isViewMmodule" >
-        <app-product-array [dataAll]="dataAll"  *ngIf="dataAll"></app-product-array>
-    </ng-container> -->
+    <ng-container *ngIf="isViewMmodule" >
+        <app-product-array [dataAll]="dataAll" [newOrder]="true"  *ngIf="dataAll"></app-product-array>
+    </ng-container>
+ 
 </div>

@@ -65,6 +65,7 @@ export class ProductArrayComponent {
   donvi = 1000;
   statusText = "Đặt Hàng";
   @Input() dataAll:any;
+  @Input() newOrder=false;
   optionButtonUpdate = true;
   constructor(
     private fb: FormBuilder,
@@ -75,14 +76,15 @@ export class ProductArrayComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
   async ngOnInit() {
-    console.log(this.dataAll)
     this.statusText = "Đặt Hàng";
     this.showKeys = ["Id", "Tên Sản Phẩm", "Đơn giá", "Số Lượng"];
-console.log(this.data)
-    if (!this.data) {
+
+    if (this.newOrder) {
+      console.log('don hang moi')
       this.title = `Tạo Mới Đơn Hàng`;
       this.initNoInputData();
     } else {
+      console.log('cap')
       await this.switchCase();
     }
    // this.getDataService();
@@ -102,6 +104,9 @@ console.log(this.data)
     });
     if (this.khachhangs == undefined) {
      // this.getDataService();
+     console.log(this.dataAll)
+     this.khachhangs = this.dataAll['khachhangs'];
+     this.sanphams = this.dataAll['sanphams']
       this.onAdd();
       this.onAdd();
       this.onAdd();
@@ -319,7 +324,20 @@ console.log(this.data)
     this.formGroup.value["Thành Tiền"] = sumThanhTien;
     this.formGroup.value["Chiết Khấu"] = chietkhau;
   }
+  removeAts:any[]=[];
   onDelete(index: number) {
+    const ctrl = this.formGroup.controls["chitiets"];
+    const value = ctrl.value;
+    const removeItem = ctrl.value.at(index);
+    if (removeItem["Id"] != "") this.removeAts.push(removeItem);
+    ctrl.setValue(
+      value
+        .slice(0, index)
+        .concat(value.slice(index + 1))
+        .concat(value[index])
+    );
+    ctrl.removeAt(value.length - 1);
+    return;
     const chitiet = this.formGroup.controls["chitiets"].at(index).value;
     const dialogRef = this.dialog.open(DialogAlertComponent, {
       data: `Bạn Chắc Chắn Xóa [${chitiet["Tên Sản Phẩm"]}] ra khỏi đơn hàng ?`,
@@ -331,7 +349,6 @@ console.log(this.data)
           .then((result: any) => {
             console.log(result);
             this.formGroup.controls["chitiets"].removeAt(index);
-            //  this.onCal();
           });
       }
     });
@@ -369,12 +386,16 @@ console.log(this.data)
     await this.onCal();
   }
   async onSubmit() {
+    await this.onCal();
     console.log("submit");
-    let values = this.formGroup.value as DonHang;
-
-    //1. kiem tra co san pham moi hay khong
+    let values = this.formGroup.value as any;
+    this.onUpdateForm();
+     //1. kiem tra co san pham moi hay khong
     //2. kiem tra cap nhat san pham hay khong
-//console.log( values["chitiets"])
+    this.dataService.sendMessage({submit: {donhang:values, bulkDelete: this.removeAts}})
+return;
+   
+//
     const updateOrCreateSanPhams = await this.checkProduct.isNewProduct(
       this.sanphams,
       values["chitiets"]
@@ -389,17 +410,17 @@ console.log(this.data)
         );
         if (sanpham) {
           const chitiet = chitiets[index] as ChiTietDonHang;
-          chitiet["Đơn giá"] = sanpham["Giá Bán"];
-          chitiet["Tên Sản Phẩm"] = sanpham["Name"];
-          chitiet["Giá Nhập"] = sanpham["Giá Nhập"];
+          // chitiet["Đơn giá"] = sanpham["Giá Bán"];
+          // chitiet["Tên Sản Phẩm"] = sanpham["Name"];
+          // chitiet["Giá Nhập"] = sanpham["Giá Nhập"];
         }
       }
       await this.onCal();
       values["chitiets"] = chitiets;
       this.formGroup.patchValue(values);
     }
-    await this.onCal();
-    this.onUpdateForm();
+   
+   
     const date = this.formGroup.value["Ngày Bán"];
     if (this.optionButtonUpdate) {
       this.serviceApi
@@ -438,6 +459,7 @@ console.log(this.data)
           donhang: this.formGroup.value,
         });
         });
+        this.dataService.sendMessage({status: Status.Refesh})
     }
 
     // cap nhap don hang

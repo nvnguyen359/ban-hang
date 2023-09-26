@@ -1,3 +1,5 @@
+
+
 interface String {
   add(...strings: string[]): string;
   removeAccents(): string;
@@ -10,6 +12,8 @@ interface String {
 interface Array<T> {
   convertDateVNView(): any[];
 }
+
+
 interface Date {}
 
 String.prototype.DateFormatDDMMYYY = function () {

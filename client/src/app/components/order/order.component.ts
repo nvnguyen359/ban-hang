@@ -276,7 +276,7 @@ export class OrderComponent {
     donhang["chitiets"] = chitiet;
     donhang["Id"] = result.data[0]["Id"];
     this.donhang = donhang;
-    this.dataService.sendMessage({ add: Status.Add, donhang });
+    this.dataService.sendMessage({ status: Status.Refesh, donhang });
     return result;
   }
   async onSavePrint() {

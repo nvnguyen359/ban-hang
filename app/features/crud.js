@@ -185,7 +185,7 @@ class CRUD {
     }
   }
   async bulkDelete(ids) {
-    console.log('bulkDelete ',ids)
+  //  console.log('bulkDelete ',ids)
     await this.initLoad(this.nameSheet);
     const sheet = this.doc.sheetsByTitle[this.nameSheet];
     const rows = Array.from(await sheet.getRows());
@@ -196,7 +196,7 @@ class CRUD {
       const row = rows.find((x, index) => {
         return rows[index].get(_headerValues[0]) == ids[i];
       });
-      await lib.delay(500);
+      await lib.delay(1200);
       if (row) {
         console.log("bulkDelete ", ids[i]);
         row.delete();
