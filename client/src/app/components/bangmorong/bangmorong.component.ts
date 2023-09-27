@@ -95,8 +95,17 @@ export class BangmorongComponent {
   ngOnInit() {
     this.onLoadData();
     this.dataService.currentMessage.subscribe((e: any) => {
+      console.log('e,e',e)
       if (e.status == Status.Refesh) {
        this.service.get(BaseApiUrl.All).then((data:any)=>{
+        /* The `data` property in the `BangmorongComponent` class is used to
+        store the data that will be displayed in the table. It is an input
+        property, which means that the data can be passed into the component
+        from its parent component. The `data` property is then used to
+        initialize the `dataSource` property, which is an instance of the
+        `MatTableDataSource` class. The `dataSource` is responsible for
+        providing the data to the table. */
+       // console.log(data)
         this.dataSource.data = data['orders'].reverse();
         this.changeDetectorRefs.detectChanges();
        })

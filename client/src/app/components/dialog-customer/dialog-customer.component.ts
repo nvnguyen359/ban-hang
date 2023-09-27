@@ -2,6 +2,7 @@ import { Component, Inject } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { KhachHang } from "src/app/Models/khachHangs";
+import { BaseApiUrl } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 
 @Component({
@@ -49,12 +50,13 @@ export class DialogCustomerComponent {
     const url ='khachhang'
     if(!id){
       
-      this.api.post(url,result).then((e)=>{
+      this.api.post(BaseApiUrl.KhachHangs,result).then((e)=>{
         this.reultCode = e;
+        console.log()
         this.dialogRef.close(e);
       })
     }else{
-      this.api.put(url,result).then((e)=>{
+      this.api.put(BaseApiUrl.KhachHangs,result).then((e)=>{
         this.reultCode = e;
         this.dialogRef.close(e);
       })

@@ -15,18 +15,20 @@ Tên Khách Hàng
 -->
 
 
-<center><h1 mat-dialog-title innerHTML="{{title}}" class="orders-title"></h1></center>
+<center>
+  <h1 mat-dialog-title innerHTML="{{title}}" class="orders-title"></h1>
+</center>
 <form [formGroup]="formGroup" class="full-width" style=" margin-left: 8px;" (ngSubmit)="onSubmit()">
   <input type="hidden" name="Id" formControlName="Id">
-  <input formControlName='Khách Hàng'  type="hidden" >
-  <input formControlName='Trạng Thái'  type="hidden" >
+  <input formControlName='Khách Hàng' type="hidden">
+  <input formControlName='Trạng Thái' type="hidden">
   <div class="flex">
     <div class="customer">
-      <mat-form-field appearance="outline" >
+      <mat-form-field appearance="outline">
         <mat-label>Danh Sách KH</mat-label>
         <input list="dsKhachHang" matInput placeholder="Chọn Khách Hàng" formControlName="Tên Khách Hàng"
           (change)="onKeyUpCustomer($event.target)">
-       
+
         <datalist id="dsKhachHang">
           <option *ngFor="let khach of khachhangs" [value]="khach['Tên Khách Hàng']">{{khach['Phone']}}</option>
         </datalist>
@@ -35,7 +37,8 @@ Tên Khách Hàng
         <mat-icon>add</mat-icon>
       </button>
     </div>
-<app-status-order  [required]="true" formControlName='Trạng Thái' (eventChange)="eventChangeStatus($event)"></app-status-order>
+    <app-status-order [required]="true" formControlName='Trạng Thái'
+      (eventChange)="eventChangeStatus($event)"></app-status-order>
 
     <!-- <mat-form-field>
       <mat-label>Trạng Thái</mat-label>
@@ -63,7 +66,7 @@ Tên Khách Hàng
     </div>
     <mat-form-field appearance="outline">
       <mat-label>Ngày Bán</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="Ngày Bán">
+      <input matInput [matDatepicker]="picker" formControlName="Ngày Bán" (dateChange)="onChangeNgayBan($event)">
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
@@ -75,7 +78,7 @@ Tên Khách Hàng
       style="flex-grow: 1;"></app-autocomplete>
     <mat-form-field appearance="outline" style="max-width: 150px;margin-left:8px">
       <mat-label>Đơn Vị</mat-label>
-      <select matNativeControl required  [value]="donvi">
+      <select matNativeControl required [value]="donvi">
         <option value="1000">x1000đ</option>
         <option value="100">x100đ</option>
       </select>
@@ -87,7 +90,7 @@ Tên Khách Hàng
     </mat-form-field>
   </div>
   <div>
-    <div class="details"  id="scrollTop" style="display: flex;">
+    <div class="details" id="scrollTop" style="display: flex;">
       <div formArrayName="chitiets"
         *ngFor="let chitiet of formGroup.controls.chitiets?.value; index as i;trackBy: trackByFn">
         <ng-container [formGroupName]="i">
@@ -96,24 +99,31 @@ Tên Khách Hàng
           <input placeholder="Sản Phẩm" type="hidden" formControlName="Sản Phẩm" />
           <input placeholder="Sản Phẩm" type="hidden" formControlName="Đơn Hàng" />
           <input placeholder="Sản Phẩm" type="hidden" formControlName="Giá Nhập" />
+          <input placeholder="Sản Phẩm" type="hidden" formControlName="Ngày" [(ngModel)]="ngay" />
           <mat-form-field appearance="outline" style="flex-grow: 1;">
             <mat-label>Tên Sản Phẩm</mat-label>
-            <input matInput list="dsSps" placeholder="Tên Sản Phẩm" required formControlName="Tên Sản Phẩm"
+            <!-- <input matInput list="dsSps" placeholder="Tên Sản Phẩm" required formControlName="Tên Sản Phẩm"
               (change)="onChangeValue($event.target)" />
-              <datalist id="dsSps">
-                <option *ngFor="let sanpham of sanphams" value="{{sanpham['Name']}}"></option>
-              </datalist>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Đơn Giá</mat-label>
-            <input matInput placeholder="Đơn Giá" type="number" required step="1000" formControlName="Đơn giá"
-              (change)="onChangeValue()" />
+            <datalist id="dsSps">
+              <option *ngFor="let sanpham of sanphams" value="{{sanpham['Name']}}"></option>
+            </datalist> -->
+            <mat-select (selectionChange)="onChangeValue($event,i)" placeholder="Tên Sản Phẩm" required formControlName="Tên Sản Phẩm">
+              <mat-option *ngFor="let sanpham of sanphams" [value]="sanpham['Name']" >
+                {{sanpham['Name']}}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Số Lượng</mat-label>
-            <input matInput placeholder="Số Lượng" type="number" required formControlName="Số Lượng"
-              (change)="onChangeValue()" />
+            <input matInput placeholder="Số Lượng" type="number" required formControlName="Số Lượng" 
+              (change)="onChangeValue()"  (keyup)="onChangeValue()"/>
           </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Đơn Giá</mat-label>
+            <input matInput placeholder="Đơn Giá" type="number" required step="1000" formControlName="Đơn giá"  readonly
+              (change)="onChangeValue()"  />
+          </mat-form-field>
+
           <mat-form-field appearance="outline">
             <mat-label>Thành Tiền</mat-label>
             <input matInput placeholder="Thành Tiền" type="number" formControlName="Thành Tiền" readonly />
@@ -126,7 +136,9 @@ Tên Khách Hàng
   </div>
   <div class="flex full-width btns-bottom" style="justify-items: flex-end;margin-top:16px">
     <button mat-flat-button color="primary" type="button" (click)="onAdd()">Thêm &nbsp;<mat-icon>add</mat-icon></button>
-    <button mat-flat-button color="accent" type="submit" [mat-dialog-close]="true" [disabled]="!formGroup.valid">{{optionButtonUpdate?'Cập Nhật':'Thêm'}} &nbsp;<mat-icon>{{optionButtonUpdate?'update':'save'}}</mat-icon></button>
+    <button mat-flat-button color="accent" type="submit" [mat-dialog-close]="true"
+      [disabled]="!formGroup.valid">{{optionButtonUpdate?'Cập Nhật':'Thêm'}}
+      &nbsp;<mat-icon>{{optionButtonUpdate?'update':'save'}}</mat-icon></button>
     <button mat-flat-button color="warn" type="button" mat-dialog-close>Đóng &nbsp;<mat-icon>close</mat-icon></button>
   </div>
 </form>

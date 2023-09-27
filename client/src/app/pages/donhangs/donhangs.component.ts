@@ -66,40 +66,77 @@ export class DonhangsComponent {
       }, 5000);
     }
   }
+  async getDataService(): Promise<any> {
+    return new Promise((res, rej) => {
+      return this.dataService.currentMessage.subscribe((x) => res(x));
+    });
+  }
   async onSubmit() {
     this.dataService.currentMessage.subscribe(async (data: any) => {
-      if(data.status){
-        
-      }
-      console.log(data);
       if (data.submit) {
         const submit = data.submit;
         console.log(submit.bulkDelete);
         console.log(submit.donhang);
         if (submit.donhang) {
-          this.chitiets = submit.donhang["chitiets"];
-          console.log(this.chitiets)
-         this.onUpdateOrCreateSanphams(this.chitiets);
-        //  const cts = (await this.onAddSanPhams(this.chitiets)) as any;
-        //  console.log(cts);
+          const donhang = submit.donhang;
+          this.chitiets = Array.from(submit.donhang["chitiets"]);
+          // tao moi don hang
+          if (!donhang["Id"]) await this.onPostDh(submit);
+          if (donhang["Id"]) {
+            console.log("cap nhat don hang");
+            await this.onPutDh(submit);
+          }
         }
         if (submit.bulkDelete?.length > 0) {
-          const nams = Array.from(submit.bulkDelete).map(
-            (x: any) => x["Tên sản phấm"]
-          );
-          const ok = this.dialog.open(DialogAlertComponent, {
-            data: `Bạn chắc chắn muốn xóa [${nams.join()}]`,
-          });
-          ok.afterClosed().subscribe(async (ok: any) => {
-            if (ok) {
-              const ids = Array.from(submit.bulkDelete).map(
-                (x: any) => x["Id"]
-              );
-              if (ids.length > 0) {
-                await this.service.bulkDelete(BaseApiUrl.ChiTietDonHangs, ids);
-              }
-            }
-          });
+          await this.onDeleteChiTiets(submit);
+        }
+
+        console.log("hoan thanh");
+        this.dataService.sendMessage({ status: Status.Refesh });
+      }
+    });
+  }
+  async onPostDh(submit: any) {
+    const donhang = submit.donhang;
+    let idDh = "";
+    if (!donhang["Id"]) {
+      const dh = (await this.service.post(BaseApiUrl.DonHangs, donhang)) as any;
+      idDh = dh.data[0]["Id"];
+    }
+    this.chitiets = Array.from(submit.donhang["chitiets"]).map((x: any) => {
+      x["Đơn Hàng"] = idDh;
+      return x;
+    });
+    await this.service.post(BaseApiUrl.ChiTietDonHangs, this.chitiets);
+  }
+  async onPutDh(submit: any){
+    const donhang = submit.donhang;
+    let idDh = "";
+    if (donhang["Id"]) {
+      const dh = (await this.service.put(BaseApiUrl.DonHangs, donhang)) as any;
+      console.log(donhang)
+      idDh = dh.data[0]["Id"];
+    }
+    this.chitiets = Array.from(submit.donhang["chitiets"]).map((x: any) => {
+      x["Đơn Hàng"] = idDh;
+      return x;
+    });
+  
+
+    await this.service.put(BaseApiUrl.ChiTietDonHangs, this.chitiets);
+  }
+  async onDeleteChiTiets(submit: any) {
+    const nams = Array.from(submit.bulkDelete).map(
+      (x: any) => x["Tên sản phấm"]
+    );
+    const ok = this.dialog.open(DialogAlertComponent, {
+      data: `Bạn chắc chắn muốn xóa [${nams.join()}]`,
+    });
+    ok.afterClosed().subscribe(async (ok: any) => {
+      if (ok) {
+        const ids = Array.from(submit.bulkDelete).map((x: any) => x["Id"]);
+        if (ids.length > 0) {
+          await this.service.bulkDelete(BaseApiUrl.ChiTietDonHangs, ids);
         }
       }
     });
@@ -131,15 +168,15 @@ export class DonhangsComponent {
     return new Promise(async (res, rej) => {
       let data: any[] = [];
       const sanphams = Array.from(this.sanphams);
-console.log(sanphams.length)
-console.log(chitiets)
+      console.log(sanphams.length);
+      console.log(chitiets);
       chitiets.forEach((chitet: ChiTietDonHang) => {
         console.log(chitet);
         const sp = sanphams.find(
           (x: SanPham) =>
             x["Id"] != "" &&
             chitet["Sản Phẩm"] == x["Id"] &&
-            (chitet["Đơn giá"] != x["Giá Bán"] )
+            chitet["Đơn giá"] != x["Giá Bán"]
         ) as any;
         if (sp) {
           sp["Giá Bán"] = chitet["Đơn giá"];
@@ -150,13 +187,19 @@ console.log(chitiets)
           //console.log(sp)
           data.push(sp);
         }
-       if(chitet["Sản Phẩm"]==''){
-        console.log(chitet)
-        const sp= { Id:'',Name:chitet["Tên Sản Phẩm"], "Giá Nhập":0,"Giá Bán":chitet['Đơn giá'],'Đơn Vị Tính':chitet['Đơn Vị Tính']} as SanPham
-        data.push(sp)
-       }
+        if (chitet["Sản Phẩm"] == "") {
+          console.log(chitet);
+          const sp = {
+            Id: "",
+            Name: chitet["Tên Sản Phẩm"],
+            "Giá Nhập": 0,
+            "Giá Bán": chitet["Đơn giá"],
+            "Đơn Vị Tính": chitet["Đơn Vị Tính"],
+          } as SanPham;
+          data.push(sp);
+        }
       });
-      console.log(data)
+      console.log(data);
       if (data.length > 0) {
         const dialog = this.dialog.open(DialogAlertComponent, {
           data: `Bạn muốn cập nhật sản phấm ${data.map(
@@ -165,10 +208,10 @@ console.log(chitiets)
         });
         const ok = await dialog.afterClosed().toPromise();
         if (ok) {
-          return
+          return;
           for (let index = 0; index < data.length; index++) {
             const element = data[index];
-            console.log(element)
+            console.log(element);
             const update = await this.service.put(
               BaseApiUrl.SanpPhams,
               element
@@ -190,7 +233,6 @@ console.log(chitiets)
     this.sanphams = data["sanphams"];
     this.chitiets = data["chitiets"];
     this.donhangs = data["orders"];
-    console.log(this.donhangs);
   }
   onDialog() {
     const dialogRef = this.dialog.open(OrdersComponent, { data: this.all });

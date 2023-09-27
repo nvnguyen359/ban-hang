@@ -64,9 +64,10 @@ export class ProductArrayComponent {
   chietkhau = 0;
   donvi = 1000;
   statusText = "Đặt Hàng";
-  @Input() dataAll:any;
-  @Input() newOrder=false;
+  @Input() dataAll: any;
+  @Input() newOrder = false;
   optionButtonUpdate = true;
+  ngay?: any;
   constructor(
     private fb: FormBuilder,
     private serviceApi: ApiService,
@@ -76,18 +77,18 @@ export class ProductArrayComponent {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
   async ngOnInit() {
+    this.ngay = new Date();
     this.statusText = "Đặt Hàng";
     this.showKeys = ["Id", "Tên Sản Phẩm", "Đơn giá", "Số Lượng"];
 
     if (this.newOrder) {
-      console.log('don hang moi')
       this.title = `Tạo Mới Đơn Hàng`;
       this.initNoInputData();
     } else {
-      console.log('cap')
+      console.log("cap");
       await this.switchCase();
     }
-   // this.getDataService();
+    // this.getDataService();
   }
   initNoInputData() {
     this.optionButtonUpdate = false;
@@ -103,10 +104,10 @@ export class ProductArrayComponent {
       chitiets: this.fb.array([]),
     });
     if (this.khachhangs == undefined) {
-     // this.getDataService();
-     console.log(this.dataAll)
-     this.khachhangs = this.dataAll['khachhangs'];
-     this.sanphams = this.dataAll['sanphams']
+      // this.getDataService();
+      console.log(this.dataAll);
+      this.khachhangs = this.dataAll["khachhangs"];
+      this.sanphams = this.dataAll["sanphams"];
       this.onAdd();
       this.onAdd();
       this.onAdd();
@@ -115,14 +116,12 @@ export class ProductArrayComponent {
     console.log("khoi tao ");
   }
   getDataService(): any {
-    return new Promise(async(res, rej) => {
+    return new Promise(async (res, rej) => {
       try {
-        let result:any= await this.serviceApi.get(BaseApiUrl.All);
-        console.log(result)
-        this.sanphams = Array.from(result["sanphams"])
-        this.khachhangs = Array.from(
-          result["khachhangs"]
-        ) as KhachHang[];
+        let result: any = await this.serviceApi.get(BaseApiUrl.All);
+        console.log(result);
+        this.sanphams = Array.from(result["sanphams"]);
+        this.khachhangs = Array.from(result["khachhangs"]) as KhachHang[];
         res(result);
       } catch (error) {
         res(null);
@@ -141,8 +140,8 @@ export class ProductArrayComponent {
       return;
     }
     // ['donhang', 'isDonhang', 'khachhangs']
-    if(this.data.sanphams){
-      this.sanphams= this.data.sanphams;
+    if (this.data.sanphams) {
+      this.sanphams = this.data.sanphams;
     }
     const keys = Object.keys(this.data);
     if (keys.includes("donhang")) {
@@ -176,7 +175,7 @@ export class ProductArrayComponent {
 
     this.formGroup = this.fb.group({
       Id: [dh["Id"]],
-      "Khách Hàng":[dh ? dh["Khách Hàng"] : "" || ""],
+      "Khách Hàng": [dh ? dh["Khách Hàng"] : "" || ""],
       "Tên Khách Hàng": [
         dh ? dh["Tên Khách Hàng"] : "" || "",
         Validators.required,
@@ -215,7 +214,7 @@ export class ProductArrayComponent {
     values["chitiets"] = chitiets;
     this.formGroup.patchValue(values);
   }
-  onChangeValue(event?: any) {
+  onChangeValue(event?: any, index?: number) {
     if (!event) {
       this.updateArray();
       return;
@@ -223,18 +222,19 @@ export class ProductArrayComponent {
     const tenSp = event.value;
     const sps = this.sanphams;
     let values = this.formGroup.value;
+    //console.log(values)
     let chitiets = Array.from(values["chitiets"]);
-    chitiets = chitiets.map((e: any) => {
-      const sp = sps.find((x: any) => x["Name"] == tenSp);
-      e["Thành Tiền"] = parseInt(e["Đơn giá"]) * parseInt(e["Số Lượng"]);
-      if (sp) {
-        e["Sản Phẩm"] = sp["Id"];
-        e["Đơn Vị Tính"] = sp["Đơn Vị Tính"];
-      }
-     
-      e["Đơn Hàng"] = values["Id"];
-      return e;
-    });
+    // chitiets = chitiets.map((e: any) => {
+    //   const sp = sps.find((x: any) => x["Name"] == tenSp);
+    //   e["Thành Tiền"] = parseInt(e["Đơn giá"]) * parseInt(e["Số Lượng"]);
+    //   if (sp) {
+    //     e["Sản Phẩm"] = sp["Id"];
+    //     e["Đơn Vị Tính"] = sp["Đơn Vị Tính"];
+    //   }
+
+    //   e["Đơn Hàng"] = values["Id"];
+    //   return e;
+    // });
     try {
       const checkSps = Array.from(
         this.formGroup.value["chitiets"].map((x: any) => x["Tên Sản Phẩm"])
@@ -246,7 +246,16 @@ export class ProductArrayComponent {
             header: "Cảnh Báo!",
           },
         });
-        event.value = "";
+        if (index) {
+          chitiets = chitiets.map((x: any, i: number) => {
+            if (i == index) {
+              x["Tên Sản Phẩm"] = "";
+              return x;
+            }
+          });
+        }
+        values["chitiets"] = chitiets;
+        this.formGroup.patchValue(values);
         return;
       }
       const sp: SanPham = this.sanphams.find(
@@ -293,8 +302,7 @@ export class ProductArrayComponent {
     this.formGroup.value["Số Lượng"] = sumSoLuong;
     this.formGroup.value["Tiền Công"] = tiencong;
     this.formGroup.value["Thành Tiền"] = sumThanhTien;
-    const date =this.formGroup.value["Ngày Bán"]
-    ;
+    const date = this.formGroup.value["Ngày Bán"];
     this.formGroup.value["Ngày Bán"] = date;
   }
   onUpdateForm() {
@@ -324,7 +332,7 @@ export class ProductArrayComponent {
     this.formGroup.value["Thành Tiền"] = sumThanhTien;
     this.formGroup.value["Chiết Khấu"] = chietkhau;
   }
-  removeAts:any[]=[];
+  removeAts: any[] = [];
   onDelete(index: number) {
     const ctrl = this.formGroup.controls["chitiets"];
     const value = ctrl.value;
@@ -360,6 +368,7 @@ export class ProductArrayComponent {
     arr.push(
       this.fb.group({
         Id: "",
+        Ngày: [item ? item["Ngày"] : ""],
         "Tên Sản Phẩm": [item ? item["Name"] : "", Validators.required],
         "Đơn giá": [item ? item["Giá Bán"] : 0, Validators.required],
         "Số Lượng": [1, Validators.required],
@@ -389,13 +398,16 @@ export class ProductArrayComponent {
     await this.onCal();
     console.log("submit");
     let values = this.formGroup.value as any;
+    console.log(values);
     this.onUpdateForm();
-     //1. kiem tra co san pham moi hay khong
+    //1. kiem tra co san pham moi hay khong
     //2. kiem tra cap nhat san pham hay khong
-    this.dataService.sendMessage({submit: {donhang:values, bulkDelete: this.removeAts}})
-return;
-   
-//
+    this.dataService.sendMessage({
+      submit: { donhang: values, bulkDelete: this.removeAts },
+    });
+    return;
+
+    //
     const updateOrCreateSanPhams = await this.checkProduct.isNewProduct(
       this.sanphams,
       values["chitiets"]
@@ -419,13 +431,12 @@ return;
       values["chitiets"] = chitiets;
       this.formGroup.patchValue(values);
     }
-   
-   
+
     const date = this.formGroup.value["Ngày Bán"];
     if (this.optionButtonUpdate) {
       this.serviceApi
         .put("donhang", [this.formGroup.value])
-        .then(async(data: any) => {
+        .then(async (data: any) => {
           this.formGroup.value["chitiets"] = this.formGroup.value[
             "chitiets"
           ].map((x: any) => {
@@ -436,15 +447,14 @@ return;
           this.formGroup.patchValue(this.formGroup.value);
           await this.addOrUpdateChitiets(date);
         });
-        this.dataService.sendMessage({
-          status: Status.Refesh,
-          donhang: this.formGroup.value,
-        });
+      this.dataService.sendMessage({
+        status: Status.Refesh,
+        donhang: this.formGroup.value,
+      });
     } else {
       this.serviceApi
         .post("donhang", [this.formGroup.value])
-        .then(async(data: any) => {
-   
+        .then(async (data: any) => {
           this.formGroup.value["chitiets"] = this.formGroup.value[
             "chitiets"
           ].map((x: any) => {
@@ -453,13 +463,13 @@ return;
             return x;
           });
           this.formGroup.patchValue(this.formGroup.value);
-         await this.addOrUpdateChitiets(date);
-         this.dataService.sendMessage({
-          status: Status.Refesh,
-          donhang: this.formGroup.value,
+          await this.addOrUpdateChitiets(date);
+          this.dataService.sendMessage({
+            status: Status.Refesh,
+            donhang: this.formGroup.value,
+          });
         });
-        });
-        this.dataService.sendMessage({status: Status.Refesh})
+      this.dataService.sendMessage({ status: Status.Refesh });
     }
 
     // cap nhap don hang
@@ -470,11 +480,11 @@ return;
       donhang: this.formGroup.value,
     });
   }
-  async addOrUpdateChitiets(date:Date) {
+  async addOrUpdateChitiets(date: Date) {
     const chitietsDH = this.formGroup.value["chitiets"];
     const url = "chitietdonhang";
     for (let i = 0; i < chitietsDH.length; i++) {
-      chitietsDH[i]['Ngày']=date;
+      chitietsDH[i]["Ngày"] = date;
       //console.log("id", chitietsDH[i]);
       if (chitietsDH[i]["Id"]) {
         // console.log("cap nhat");
@@ -501,13 +511,19 @@ return;
         data: { "Tên Khách Hàng": event.value, Id: "" },
       });
       dialogRef.afterClosed().subscribe((khachhang: any) => {
+      khachhang = khachhang.data[0];
         values["Tên Khách Hàng"] = khachhang["Tên Khách Hàng"];
         values["Khách Hàng"] = khachhang["Id"];
         this.formGroup.patchValue(values);
       });
     }
   }
-
+  onChangeNgayBan(event: any) {
+    console.log(event);
+    const value = event.target.value;
+    console.log("value", value);
+    this.ngay = value;
+  }
   trackByFn(index: any) {
     return index;
   }

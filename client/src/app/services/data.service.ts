@@ -10,9 +10,11 @@ export class DataService {
   constructor() {}
   async receiveMessage() {
     return new Promise((res, rej) => {
+    setTimeout(() => {
       this.messageSource.asObservable().subscribe((data: any) => {
         res(data);
       });
+    }, 500);
     });
   }
   sendMessage(message: any) {

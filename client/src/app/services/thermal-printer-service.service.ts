@@ -3,6 +3,7 @@ import { ApiService } from "./api.service";
 import { KhachHang } from "../Models/khachHangs";
 import { DonHang } from "../Models/donHang";
 import { ChiTietDonHang } from "../Models/chiTietDonHang";
+import { BaseApiUrl } from "../general";
 
 @Injectable({
   providedIn: "root",
@@ -115,11 +116,17 @@ export class ThermalPrinterServiceService {
     </script>
   </head>`;
   }
-  addInforStore(donhang:DonHang) {
-    const addInfo = donhang['Id']+'-'+donhang['Tên Khách Hàng']+'-'+donhang['Ngày Bán']
+  addInforStore(donhang: DonHang) {
+    const addInfo =
+      donhang["Id"] +
+      "-" +
+      donhang["Tên Khách Hàng"] +
+      "-" +
+      donhang["Ngày Bán"];
+    // console.log(`https://img.vietqr.io/image/VCB-0041000171668-compact2.jpg?amount=${donhang["Thanh Toán"]}&amp;accountName=DO%20VAN%20HIEU&addInfo=${addInfo}"`)
     return `<div class="infor-store">
 <b class="block text-center">HÓA ĐƠN BÁN HÀNG</b>
-<small class="block text-center">${donhang['Ngày Bán']}</small>
+<small class="block text-center">${donhang["Ngày Bán"]}</small>
 <p></p>
 <div class="flex">
 <div class="left">
@@ -131,14 +138,14 @@ export class ThermalPrinterServiceService {
 <b class="block"> ĐT: 0988.114.714 - 0842.399.889</b>
 </div>
 <div class="qr">
-<img id="qrViet" src="https://img.vietqr.io/image/VCB-0041000171668-compact2.jpg?amount=${donhang['Thanh Toán']}&amp;accountName=DO%20VAN%20HIEU&addInfo=${addInfo}" height="140" alt="" style="">
+<img id="qrViet" width='150' height='150' src="https://img.vietqr.io/image/VCB-0041000171668-compact2.jpg?amount=${donhang["Thanh Toán"]}&amp;accountName=DO%20VAN%20HIEU&addInfo=${addInfo}"  alt="" style="">
 </div>
 </div>
 </div>`;
   }
   async getKh(id: any, idDh: any) {
-    console.log("id", id);
-    const kh = (await this.service.getId("khachhang", id)) as KhachHang;
+    let kh = ((await this.service.getId(BaseApiUrl.KhachHangs, id)) as any)
+      .data as any;
     return `<div class="kh">
 <div class="block"><b>ID:</b>${idDh}</div>
 <div class="block"><b>Khách Hàng:</b>${kh["Tên Khách Hàng"]} (${kh["Phone"]})</div>
@@ -151,7 +158,10 @@ export class ThermalPrinterServiceService {
       return x;
     });
     let tableBody = "";
-
+console.log(columns)
+if(columns.filter((x:any)=>x=='STT').length>1){
+  columns.pop();
+}
     chitiets.forEach((x: any, index) => {
       if (!isPageA5) {
         delete x["STT"];
@@ -161,7 +171,9 @@ export class ThermalPrinterServiceService {
       columns.forEach((column) => {
         const item = !Number.isInteger(parseInt(x[column]))
           ? `<td >${x[column]}</td>`
-          : `<td class="text-right">${parseInt(x[column]).toLocaleString()}</td>`;
+          : `<td class="text-right">${parseInt(
+              x[column]
+            ).toLocaleString()}</td>`;
         tr += item;
       });
       tr += `</tr>`;
@@ -188,57 +200,71 @@ ${head}
     return tableBill;
   }
   setHeadTable(columns: any) {
-    columns=columns .map((a: any) => {
+    columns = columns.map((a: any) => {
       if (a == "Đơn Vị Tính") a = "ĐV";
       if (a == "Số Lượng") a = "SL";
       return a;
-    })
+    });
+    if (columns.filter((x: any) => x == "STT").length > 1) {
+      columns.pop();
+    }
     let thsHtml = "";
     columns.forEach((x: any) => {
       thsHtml += `<th>${x}</th>`;
     });
+
     return thsHtml;
   }
   setFootTable(donhangs: DonHang, isPageA5: any) {
-
     const colspan = isPageA5 ? 2 : 1;
     const colspanTong = isPageA5 ? 3 : 2;
     const colspanGiamGia = isPageA5 ? 5 : 3;
     const tong = `<tr>
     <td colspan="${colspan}">Tổng</td>
     <td class="text-right">${donhangs["Số Lượng"]}</td>
-    <td class="text-right" colspan="${colspanTong}">${donhangs["Thành Tiền"].toLocaleString()}</td>
+    <td class="text-right" colspan="${colspanTong}">${parseInt(
+      `${donhangs["Thành Tiền"]}`
+    ).toLocaleString()}</td>
     </tr>`;
-    const giamgia = donhangs["Giảm Giá"]>0?`
+    const giamgia =
+      donhangs["Giảm Giá"] > 0
+        ? `
     <tr>
     <td colspan="${colspanGiamGia}">Chiết Khấu</td>
     <td class="text-right" colspan="${colspanTong + 1}">${
-      donhangs["Giảm Giá"]
-    }</td>
+            donhangs["Giảm Giá"]
+          }</td>
     </tr>
-    `:'';
-    const tientong = donhangs["Tiền Công"]>0?`
+    `
+        : "";
+    const tientong =
+      donhangs["Tiền Công"] > 0
+        ? `
     <tr>
     <td colspan="${colspanGiamGia}">Tiền Công</td>
-    <td class="text-right" colspan="${colspanTong + 1}">${
-      donhangs["Tiền Công"].toLocaleString()
-    }</td>
+    <td class="text-right" colspan="${colspanTong + 1}">${parseInt(
+            donhangs["Tiền Công"] + ""
+          ).toLocaleString()}</td>
     </tr>
-    `:'';
-    const phiship = donhangs["Phí Ship"]>0?`
+    `
+        : "";
+    const phiship =
+      donhangs["Phí Ship"] > 0
+        ? `
     <tr>
     <td colspan="${colspanGiamGia}">Phí Ship</td>
-    <td class="text-right" colspan="${colspanTong + 1}">${
-      donhangs["Phí Ship"].toLocaleString()
-    }</td>
+    <td class="text-right" colspan="${colspanTong + 1}">${parseInt(
+            `${donhangs["Phí Ship"]}`
+          ).toLocaleString()}</td>
     </tr>
-    `:'';
+    `
+        : "";
     const thanhtoan = `
     <tr>
     <td colspan="${colspanGiamGia}">Thanh Toán</td>
-    <td class="text-right" colspan="${colspanTong + 1}"><b>${
-      donhangs["Thanh Toán"].toLocaleString()
-    }</b></td>
+    <td class="text-right" colspan="${colspanTong + 1}"><b>${parseInt(
+      donhangs["Thanh Toán"] + ""
+    ).toLocaleString("vi")}</b></td>
     </tr>
     `;
     const tfoot = `
@@ -251,14 +277,14 @@ ${head}
     return tfoot;
   }
   async print(donhang: any) {
-
-    console.log(donhang);
+    //console.log(donhang);
     const classMain = this.PaperWidth == "80mm" ? "a8" : "a5";
     const isPageA5 = classMain == "a5";
     console.log(classMain);
     const filter = ["Id", "Sản Phẩm", "Ngày", "Giá Nhập", "Đơn Hàng"];
-    const columnsChitiets = Object.keys(donhang["chitiets"][0])
-      .filter((x) => !filter.includes(x)); //['Id', 'Sản Phẩm', 'Tên Sản Phẩm', 'Đơn giá', 'Số Lượng', 'Đơn Vị Tính', 'Thành Tiền', 'Ngày', 'Giá Nhập', 'Đơn Hàng']
+    const columnsChitiets = Object.keys(donhang["chitiets"][0]).filter(
+      (x) => !filter.includes(x)
+    ); //['Id', 'Sản Phẩm', 'Tên Sản Phẩm', 'Đơn giá', 'Số Lượng', 'Đơn Vị Tính', 'Thành Tiền', 'Ngày', 'Giá Nhập', 'Đơn Hàng']
 
     let columns = isPageA5
       ? ["STT", ...columnsChitiets]

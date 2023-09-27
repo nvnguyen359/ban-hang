@@ -23,7 +23,12 @@
       "target": "nsis"
     },
     "includeSubNodeModules": true,
-   
+    "nsis": {
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "perMachine": false
+    },
     "directories": {
       "output": "dist"
     },
