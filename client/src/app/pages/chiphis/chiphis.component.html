@@ -1,0 +1,27 @@
+<form [formGroup]="siteForm">
+    <button (click)="addContact()">add something</button>
+  
+    <div>
+      <div
+        formArrayName="contacts"
+        *ngFor="
+          let item of siteForm.get('contacts')?.value;
+          let i = index;
+          trackBy: trackByFn
+        "
+      >
+        <div [formGroupName]="i">
+          <div>
+            <input class="form-control" type="text" [formControlName]="'type'" />
+            - index {{ i }}
+            <button type="button" (click)="deleteContact(i)">delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  
+  <div>
+    <pre>{{ siteForm.get('contacts')?.value | json }}</pre>
+  </div>
+  

@@ -10,9 +10,3 @@ function updateMessage(event, message) {
   let elemE = document.getElementById("message");
   elemE.innerHTML = message;
 }
-
-function getPrinters(event, data) {
-  document.getElementById(
-    "listPrinters"
-  ).innerHTML = `Danh sách máy in: ${JSON.stringify(data)}`;
-}

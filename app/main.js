@@ -44,8 +44,10 @@ setInterval(() => {
 function checkUpdat() {
   mes = `Đang kiểm tra các bản cập nhật. Phiên bản hiện tại ${app.getVersion()}`;
   console.log("dang kiem tra ban cap nhat");
-  socket.sendMessage({ mes, ver: app.getVersion() });
+
  autoUpdater.checkForUpdates();
+ curWindow.showMessage(`Checking for updates. Current version ${app.getVersion()}`);
+ socket.sendMessage({ mes, ver: app.getVersion() });
   // autoUpdater.checkForUpdatesAndNotify();
  
 }
@@ -54,16 +56,19 @@ function checkUpdat() {
 autoUpdater.on("update-available", async (info) => {
   mes = `Cập nhật có sẵn. Phiên bản hiện tại ${app.getVersion()}`;
   socket.sendMessage({ mes, ver: app.getVersion() });
+  curWindow.showMessage(`Update available. Current version ${app.getVersion()}`);
   let pth = await autoUpdater.downloadUpdate();
   mes = pth;
   console.log("dang tai ban cap nhat");
   socket.sendMessage({ mes, ver: app.getVersion() });
+  curWindow.showMessage(pth);
 });
 
 autoUpdater.on("update-not-available", (info) => {
   mes = `Cập nhật có sẵn. Phiên bản hiện tại ${app.getVersion()}`;
   console.log("cap nhat co san");
   socket.sendMessage({ mes, ver: app.getVersion() });
+  curWindow.showMessage(`No update available. Current version ${app.getVersion()}`);
 });
 
 /*Download Completion Message*/
@@ -72,7 +77,7 @@ autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
   console.log("da tai ban cap nhat");
   mes = `Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.`;
   socket.sendMessage({ mes, ver: app.getVersion() });
-
+  curWindow.showMessage(`Update downloaded. Current version ${app.getVersion()}`);
   const dialogOpts = {
     type: "info",
     buttons: ["Restart", "Later"],
