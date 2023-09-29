@@ -20,6 +20,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ListSanPhamComponent } from './list-san-pham/list-san-pham.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import { ListSanPhamComponent } from './list-san-pham/list-san-pham.component';
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatCheckboxModule
   ],schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ]

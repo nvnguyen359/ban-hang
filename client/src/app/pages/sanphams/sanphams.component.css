@@ -1,1 +1,1 @@
-.tr{transition:.4s all}.tr:hover{background:#f5f5f5;color:var(--mat-stepper-header-error-state-label-text-color);cursor:pointer}
+.tr{transition:.4s all}.tr:hover{background:#f5f5f5;color:var(--mat-stepper-header-error-state-label-text-color);cursor:pointer}.table{max-height:500px;overflow:auto}.mat-icon:hover{cursor:pointer;opacity:.8}

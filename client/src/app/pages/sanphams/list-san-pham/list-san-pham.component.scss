@@ -3,3 +3,8 @@
     align-items: center;
     flex-wrap: nowrap;
 }
+.body{
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

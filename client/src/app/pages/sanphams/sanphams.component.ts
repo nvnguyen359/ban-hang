@@ -8,6 +8,7 @@ import { SanPham } from "src/app/Models/sanPham";
 import { BaseApiUrl } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 import { ListSanPhamComponent } from "./list-san-pham/list-san-pham.component";
+import { SelectionModel } from "@angular/cdk/collections";
 
 @Component({
   selector: "app-sanphams",
@@ -18,6 +19,7 @@ export class SanphamsComponent {
   @ViewChild(MatTable) table: MatTable<SanPham> | undefined;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns = ["Index", "Name", "Đơn Vị Tính", "Giá Nhập", "Giá Bán"];
+  selection = new SelectionModel<any>(true, []);
   constructor(
     private service: ApiService,
     private router: Router,
@@ -70,14 +72,10 @@ export class SanphamsComponent {
       data: { row, sanphams: this.dataSource.data },
     });
     dia.afterClosed().subscribe((result: any) => {
-      if (result.length > 0) {
-        this.updateSanPhams(result);
-      }
-      if (result == true) {
-        setTimeout(() => {
-          this.refesh();
-        }, 1100);
-      }
+      console.log('loading...')
+      setTimeout(() => {
+        this.refesh();
+      }, 1100);
     });
   }
   refesh() {
@@ -100,5 +98,40 @@ export class SanphamsComponent {
       );
     }
     this.changeDetectorRefs.detectChanges();
+  }
+
+   /** Whether the number of selected elements matches the total number of rows. */
+   isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+  onSelect(){
+    console.log(this.selection.selected)
+    const dia = this.dialog.open(ListSanPhamComponent, {
+      data: { row:this.selection.selected, sanphams: this.dataSource.data },
+    });
+  }
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: any): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  }
+  createIndex(index:number){
+    const init ='000';
+    const charNum = `${index}`.length;
+    return `${init.slice(charNum)}${index}`
   }
 }

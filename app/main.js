@@ -61,14 +61,14 @@ autoUpdater.on("update-available", async (info) => {
   mes = pth;
   console.log("dang tai ban cap nhat");
   socket.sendMessage({ mes, ver: app.getVersion() });
-  curWindow.showMessage(pth);
+  curWindow.showMessage(mes);
 });
 
 autoUpdater.on("update-not-available", (info) => {
-  mes = `Cập nhật có sẵn. Phiên bản hiện tại ${app.getVersion()}`;
+  mes = `Không có bản cập nhật. Phiên bản hiện tại ${app.getVersion()}`;
   console.log("cap nhat co san");
   socket.sendMessage({ mes, ver: app.getVersion() });
-  curWindow.showMessage(`No update available. Current version ${app.getVersion()}`);
+  curWindow.showMessage(mes);
 });
 
 /*Download Completion Message*/
@@ -77,7 +77,7 @@ autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
   console.log("da tai ban cap nhat");
   mes = `Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.`;
   socket.sendMessage({ mes, ver: app.getVersion() });
-  curWindow.showMessage(`Update downloaded. Current version ${app.getVersion()}`);
+  curWindow.showMessage(mes);
   const dialogOpts = {
     type: "info",
     buttons: ["Restart", "Later"],

@@ -1,5 +1,7 @@
+<h1 mat-dialog-title style="text-align: center;">Sản Phẩm</h1>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div formArrayName="sanphams" *ngFor="let sanpham of form.controls.sanphams.value; index as i;trackBy: trackByFn">
+   <div class="body">
+     <div formArrayName="sanphams" *ngFor="let sanpham of form.controls.sanphams.value; index as i;trackBy: trackByFn" >
         <ng-container [formGroupName]="i" class="flex sanphams">
             <input type="hidden" name="Id">
             <mat-form-field appearance="outline" style="flex-grow: 1;">
@@ -25,10 +27,11 @@
             <mat-icon color="warn" class="delete" (click)="onDelete(i)">delete</mat-icon>
         </ng-container>
     </div>
+   </div>
     <div class="flex full-width btns-bottom" style="justify-items: flex-end;margin-top:16px">
         <button mat-flat-button color="primary" type="button" (click)="onAdd()" [disabled]="readonly">Thêm
             &nbsp;<mat-icon>add</mat-icon></button>
-        <button mat-flat-button color="accent" type="submit" [mat-dialog-close]="true"
+        <button mat-flat-button color="accent" type="submit" [mat-dialog-close]="update"
             [disabled]="!form.valid">{{optionButtonUpdate?'Cập Nhật':'Save'}}
             &nbsp;<mat-icon>{{optionButtonUpdate?'update':'save'}}</mat-icon></button>
         <button mat-flat-button color="warn" type="button" mat-dialog-close>Đóng

@@ -30,6 +30,7 @@ export class ListSanPhamComponent {
     horizontalPosition: "center",
     verticalPosition: "top",
   };
+  update = false;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
@@ -47,8 +48,9 @@ export class ListSanPhamComponent {
         )
       ),
     ];
-    console.log(this.dvts);
+   // console.log(this.dvts);
     if (this.data.row) {
+      this.update= true;
       const rows = Array.isArray(this.data.row)
         ? Array.from(this.data.row)
         : [this.data.row];
@@ -58,17 +60,18 @@ export class ListSanPhamComponent {
         this.onAdd(row);
       });
     } else {
+      this.update=false;
       this.readonly = false;
       this.onAdd();
     }
   }
 
   onSubmit() {
-    if (this.readonly) {
+    if (this.update) {
       this.service
         .put(BaseApiUrl.SanpPhams, this.form.value.sanphams)
         .then((e: any) => {
-          console.log(e);
+          //console.log(e);
           this.snackBar.open("Cập Nhât Thành Công", "", this.optionSnackBar);
         });
     } else {
