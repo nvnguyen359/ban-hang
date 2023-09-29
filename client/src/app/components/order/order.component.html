@@ -1,14 +1,15 @@
 <div class="main">
     <mat-card class="btns-left" style="min-width: 120px;">
         <mat-card-content>
-    
-           <div style="margin-top: 40px;">
-            <button mat-stroked-button  class="btn-left" color="primary" *ngFor="let item of groups"
-            (click)="onClick(item)">{{item}}</button>
-           </div>
+            <div style="margin-top: 40px;" class="left-1">
+                <div class="colection-left">
+                    <button mat-stroked-button class="btn-left" color="primary" *ngFor="let item of groups"
+                        (click)="onClick(item)">{{item}}</button>
+                </div>
+            </div>
         </mat-card-content>
     </mat-card>
-    <div  class="flex" style="width: 100%;flex-direction: column;">
+    <div class="flex" style="width: 100%;flex-direction: column;">
         <mat-card>
             <mat-card-content>
                 <div class="flex" style="flex-direction: row;">
@@ -26,11 +27,16 @@
                     </div>
                     <div class="right flex" style="flex-direction: column; margin-left:8px;max-width:400px">
                         <div>
-                           <div class="flex">
-                             <app-autocomplete [data]="khachhangs" *ngIf="khachhangs.length>0" [options]="optionsKhs"
-                            class="left0" (selectTed)="onSelectedKh($event)" [required]="true"
-                            class="max-width490" style="margin-right:8px"></app-autocomplete>
-                            <app-status-order [statusText] ="status" (eventChange)="eventChangeStatus($event)"></app-status-order></div>
+                            <div class="flex">
+                                <div class="flex-1"> <app-autocomplete [data]="khachhangs" *ngIf="khachhangs.length>0"
+                                        [options]="optionsKhs" class="left0" (selectTed)="onSelectedKh($event)"
+                                        [required]="true" class="max-width490"
+                                        style="margin-right:8px"></app-autocomplete></div>
+                               <div class="flex-2">
+                                <app-status-order [statusText]="status"
+                                (eventChange)="eventChangeStatus($event)"></app-status-order>
+                               </div>
+                            </div>
                             <div class="flex groupkhs">
                                 <div class="flex" style="flex-grow:1;margin-right:4px">
                                     <mat-button-toggle-group [(ngModel)]="groupGiamgia" (click)="onCal()">
@@ -39,11 +45,11 @@
                                     </mat-button-toggle-group>
                                     <mat-form-field appearance="fill" style="width: 100px;">
                                         <mat-label>Chiết Khấu</mat-label>
-                                        <input matInput placeholder="Chiết Khấu" type="number" min="0" [(ngModel)]="giamgia"
-                                            (keyup)="onCal()">
+                                        <input matInput placeholder="Chiết Khấu" type="number" min="0"
+                                            [(ngModel)]="giamgia" (keyup)="onCal()">
                                     </mat-form-field>
                                 </div>
-                                <div style="margin-right:4px">
+                                <div style="display: inline-grid; margin-right: 0px;">
                                     <mat-form-field appearance="fill">
                                         <mat-label>Tiền Công</mat-label>
                                         <input matInput placeholder="Tiền Công" type="number" min="0" (keyup)="onCal()"
@@ -57,13 +63,13 @@
                                             [(ngModel)]="phiship">
                                     </mat-form-field>
                                 </div> -->
-                                
+
                             </div>
-                           
+
                             <div class="flex">
                                 <mat-form-field style="margin-right:4px">
                                     <mat-label>Chọn Đơn Vị</mat-label>
-                                    <mat-select matNativeControl required  [(ngModel)]="selectDv">
+                                    <mat-select matNativeControl required [(ngModel)]="selectDv">
                                         <mat-option value="1000">x1000đ</mat-option>
                                         <mat-option value="100">x100đ</mat-option>
                                     </mat-select>
@@ -137,9 +143,10 @@
                             </table>
                         </div>
                         <div class="flex full-width" style="justify-content: flex-end;">
-                            <button mat-flat-button color="primary" mat-dialog-close="Status.Refesh" type="submit" (click)="onSave()"
-                                [disabled]="!checkDk">Lưu</button>
-                            <button mat-flat-button color="accent" mat-dialog-close="true" (click)="onSavePrint()" [disabled]="!checkDk">Lưu &
+                            <button mat-flat-button color="primary" mat-dialog-close="Status.Refesh" type="submit"
+                                (click)="onSave()" [disabled]="!checkDk">Lưu</button>
+                            <button mat-flat-button color="accent" mat-dialog-close="true" (click)="onSavePrint()"
+                                [disabled]="!checkDk">Lưu &
                                 In</button>
                             <!-- <button mat-flat-button color="warn" mat-dialog-close (click)="onReset()">Reset</button> -->
                         </div>

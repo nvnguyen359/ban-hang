@@ -1,4 +1,5 @@
-<mat-form-field>
+<div class="full-width flex" style="display: inline-grid;">
+  <mat-form-field>
     <mat-label>Trạng Thái</mat-label>
     <mat-select  [(ngModel)]='trangthai' (blur)="touched($event)"  (selectionChange)="onChange($event)">
       <mat-option *ngFor="let status of status" [value]="status.text" [style.color]="status.color" >
@@ -6,3 +7,4 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+</div>
