@@ -179,3 +179,23 @@ a {
 .mat-mdc-form-field-subscript-wrapper {
     height: 8px;
 }
+.table-ngay {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-ngay th {
+    color: rgb(41, 23, 23);
+}
+
+.table-ngay thead {
+    background: cadetblue;
+}
+
+.table-ngay,
+.table-ngay td,
+.table-ngay th {
+    border: 1px solid rgba(56, 56, 56, 0.116);
+    padding: 8px;
+
+}

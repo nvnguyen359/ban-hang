@@ -69,9 +69,9 @@
                             <div class="flex">
                                 <mat-form-field style="margin-right:4px">
                                     <mat-label>Chọn Đơn Vị</mat-label>
-                                    <mat-select matNativeControl required [(ngModel)]="selectDv">
-                                        <mat-option value="1000">x1000đ</mat-option>
-                                        <mat-option value="100">x100đ</mat-option>
+                                    <mat-select  required value="{{selectDv}}">
+                                        <mat-option value="1000">1000đ</mat-option>
+                                        <mat-option value="100">100đ</mat-option>
                                     </mat-select>
                                 </mat-form-field>
                                 <mat-form-field>

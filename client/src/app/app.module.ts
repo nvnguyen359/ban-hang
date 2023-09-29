@@ -64,6 +64,7 @@ import { StatusOrderComponent } from './components/status-order/status-order.com
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { SanphamComponent } from './components/sanpham/sanpham.component';
 import { OrdersComponent } from './components/orders/orders.component';
+import { IsNumberPipe } from './pipes/is-number.pipe';
 
 
 

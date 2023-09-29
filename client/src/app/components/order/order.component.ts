@@ -23,7 +23,7 @@ export class OrderComponent {
   tiencong!: number;
   phiship!: number;
   giamgia!: number;
-  selectDv:any = '1000';
+  selectDv = 1000;
   sumEnd: any;
   status = "Đặt Hàng";
   groupGiamgia: any = "vnd";
@@ -53,7 +53,7 @@ export class OrderComponent {
   ) {
     localStorage.setItem("sp", "");
     //this.getAllDataService();
-    this.selectDv='1000';
+
     console.log(this.dataAll)
   }
 
