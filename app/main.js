@@ -8,7 +8,7 @@ const { eventsAutoUpdate } = require("./shares/autoUpdaterJs");
 const { getPrinters } = require("./shares/lib");
 const { autoUpdater, AppUpdater } = require("electron-updater");
 const { SocketIo } = require("./socket");
-const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
+const { app, BrowserWindow, ipcMain, ipcRenderer,dialog } = require("electron");
 let mes = "";
 
 app.serve = require(pathServer);
@@ -36,8 +36,8 @@ app.whenReady().then(async () => {
     if (BrowserWindow.getAllWindows().length == 0) createWindow();
   });
   checkUpdat();
-  
 });
+
 setInterval(() => {
   checkUpdat();
 }, 60000);
@@ -46,7 +46,7 @@ function checkUpdat() {
   console.log("dang kiem tra ban cap nhat");
 
  autoUpdater.checkForUpdates();
- curWindow.showMessage(`Checking for updates. Current version ${app.getVersion()}`);
+ curWindow.showMessage(mes);
  socket.sendMessage({ mes, ver: app.getVersion() });
   // autoUpdater.checkForUpdatesAndNotify();
  
