@@ -1,27 +1,96 @@
-<form [formGroup]="siteForm">
-    <button (click)="addContact()">add something</button>
-  
-    <div>
-      <div
-        formArrayName="contacts"
-        *ngFor="
-          let item of siteForm.get('contacts')?.value;
-          let i = index;
-          trackBy: trackByFn
-        "
-      >
-        <div [formGroupName]="i">
-          <div>
-            <input class="form-control" type="text" [formControlName]="'type'" />
-            - index {{ i }}
-            <button type="button" (click)="deleteContact(i)">delete</button>
-          </div>
+<div class="flex full-width chiphi">
+  <mat-card style="margin-right: 8px;">
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" [formGroup]="formSubmit" class="left">
+        <input type="hidden" formControlName="Id">
+        <mat-form-field appearance="outline">
+          <mat-label>Tên</mat-label>
+          <input matInput placeholder="Tên chi phí..." required formControlName="Tên" [matAutocomplete]="auto">
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+            <mat-option *ngFor="let name of filteredNames| async " [value]="name">
+              {{name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Tiền</mat-label>
+          <input matInput placeholder="Số tiền chi..." type="number" formControlName="Số Tiền" required
+            autocomplete="cc-number">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Ghi Chú</mat-label>
+          <textarea matInput placeholder="Số tiền chi..." type="number" formControlName="Ghi Chú"
+            autocomplete="cc-number"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Chọn Ngày</mat-label>
+          <input matInput [matDatepicker]="picker" required formControlName="Ngày">
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <div class="flex full-width">
+          <button mat-raised-button color="primary" [disabled]="formSubmit.invalid" type="submit" class="margin-right-8">Save</button>
+          <button mat-raised-button color="warn" [disabled]="getId==''" type="button" (click)="onDelete()" class="margin-right-8">Delete</button>
+          <button mat-raised-button (click)="formSubmit.reset();onReset()"   type="button" [disabled]="formSubmit.invalid" >Reset</button>
         </div>
-      </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+ <mat-card>
+  <mat-card-content>
+    <div class="right full-width">
+      <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+        <ng-container matColumnDef="{{column}}"  *ngFor="let column of columnsToDisplay">
+          <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+          <td mat-cell *matCellDef="let element" ><div class="{{column}}"> {{element[column]|isNumber}}</div> </td>
+        </ng-container>
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button aria-label="expand row"
+              (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+              <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+              <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+  
+        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+            <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+              <div class="example-element-diagram">
+                <table class="full-width table-ngay">
+                  <thead>
+                    <th>#</th>
+                    <th>Chi Phí</th>
+                    <th>Số Tiền</th>
+                    <th>Ghi Chú</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of element['details']" (click)="onSelect(item)">
+                      <td>{{item['index']}}</td>
+                      <td>{{item['Tên']}}</td>
+                      <td>{{item['Số Tiền']|number}}</td>
+                      <td>{{item['Ghi Chú']}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+        <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
+          [class.example-expanded-row]="expandedElement === element"
+          (click)="expandedElement = expandedElement === element ? null : element">
+        </tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+      </table>
     </div>
-  </form>
-  
-  <div>
-    <pre>{{ siteForm.get('contacts')?.value | json }}</pre>
-  </div>
-  
+  </mat-card-content>
+ </mat-card>
+</div>

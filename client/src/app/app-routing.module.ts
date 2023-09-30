@@ -4,7 +4,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { BaseApiUrl } from "./general";
 
 const routes: Routes = [
-  // { path: '', loadChildren: () => import('./pages/nhaphang/nhaphang.module').then(m => m.NhaphangModule) },
+  { path: '', loadChildren: () => import('./pages/baocao/baocao.module').then(m => m.BaocaoModule) },
   {
     path: BaseApiUrl.KhachHangs,
     loadChildren: () =>
@@ -37,7 +37,8 @@ const routes: Routes = [
     loadChildren: () =>
       import("./pages/chiphis/chiphis.module").then((m) => m.ChiphisModule),
   },
-  { path:BaseApiUrl.CongNos, loadChildren: () => import('./pages/congnos/congnos.module').then(m => m.CongnosModule) }
+  { path:BaseApiUrl.CongNos, loadChildren: () => import('./pages/congnos/congnos.module').then(m => m.CongnosModule) },
+  { path: BaseApiUrl.BaoCaos, loadChildren: () => import('./pages/baocao/baocao.module').then(m => m.BaocaoModule) }
 ];
 
 @NgModule({

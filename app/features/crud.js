@@ -123,7 +123,7 @@ class CRUD {
       const newRows = values.map((x, index) => {
         const id = lib.createIdRow(count + index, this.nameSheet);
 
-        if (x["Id"] == "") {
+        if (x["Id"] == ""|| x['Id']== null ) {
           x["Id"] = id;
         }
         if (x["id"] == "") {

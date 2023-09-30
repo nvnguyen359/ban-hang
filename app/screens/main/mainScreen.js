@@ -7,8 +7,8 @@ class MainScreen {
   window;
 
   position = {
-    width: 1500,
-    height: 890,
+    width: 1360,
+    height: 768,
     maximized: false,
   };
 

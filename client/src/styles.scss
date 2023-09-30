@@ -3,12 +3,15 @@
 html,
 body {
     height: 100%;
-
+    width: 1366px;
+    height: 768px;
 }
 
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: #f4f4f4;
+    overflow: hidden;
 }
 
 .app-root {
@@ -52,13 +55,15 @@ body {
     background: #e2e3e6;
     color: #3f51b5;
 }
-.mes{
+
+.mes {
     position: fixed;
     z-index: 1000000;
     bottom: 5px;
-    left:200px;
+    left: 200px;
     opacity: 0.75;
 }
+
 .delete {
     color: var(--mat-stepper-header-error-state-label-text-color);
     cursor: pointer;
@@ -110,8 +115,12 @@ body {
     position: absolute;
 }
 
+a {
+    transition: cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s all;
+}
+
 .active {
-    background: #3f51b5;
+    background-color: var(--mat-stepper-header-selected-state-icon-background-color) !important;
     color: whitesmoke;
 }
 
@@ -177,4 +186,25 @@ a {
 
 .mat-mdc-form-field-subscript-wrapper {
     height: 8px;
+}
+
+.table-ngay {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-ngay th {
+    color: rgb(41, 23, 23);
+}
+
+.table-ngay thead {
+    background: cadetblue;
+}
+
+.table-ngay,
+.table-ngay td,
+.table-ngay th {
+    border: 1px solid rgba(56, 56, 56, 0.116);
+    padding: 8px;
+
 }

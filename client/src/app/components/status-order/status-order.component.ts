@@ -20,7 +20,7 @@ import { FormControl, NG_VALUE_ACCESSOR } from "@angular/forms";
   ],
 })
 export class StatusOrderComponent {
-  // @Input() trangthai!:any;
+  @Input() statusText!:any;
 
   @Output() eventChange = new EventEmitter();
   status = [
@@ -46,11 +46,13 @@ export class StatusOrderComponent {
     },
   ];
 
-  _trangthai = "";
+  _trangthai = this.statusText;
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.trangthai)
+  }
 
   get trangthai(): string {
     return this._trangthai;

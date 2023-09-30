@@ -8,7 +8,7 @@ const { eventsAutoUpdate } = require("./shares/autoUpdaterJs");
 const { getPrinters } = require("./shares/lib");
 const { autoUpdater, AppUpdater } = require("electron-updater");
 const { SocketIo } = require("./socket");
-const { app, BrowserWindow, ipcMain, ipcRenderer } = require("electron");
+const { app, BrowserWindow, ipcMain, ipcRenderer,dialog } = require("electron");
 let mes = "";
 
 app.serve = require(pathServer);
@@ -36,8 +36,8 @@ app.whenReady().then(async () => {
     if (BrowserWindow.getAllWindows().length == 0) createWindow();
   });
   checkUpdat();
-  
 });
+
 setInterval(() => {
   checkUpdat();
 }, 60000);
@@ -46,7 +46,7 @@ function checkUpdat() {
   console.log("dang kiem tra ban cap nhat");
 
  autoUpdater.checkForUpdates();
- curWindow.showMessage(`Checking for updates. Current version ${app.getVersion()}`);
+ curWindow.showMessage(mes);
  socket.sendMessage({ mes, ver: app.getVersion() });
   // autoUpdater.checkForUpdatesAndNotify();
  
@@ -78,18 +78,18 @@ autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
   mes = `Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.`;
   socket.sendMessage({ mes, ver: app.getVersion() });
   curWindow.showMessage(mes);
-  const dialogOpts = {
-    type: "info",
-    buttons: ["Restart", "Later"],
-    title: "Application Update",
-    message: process.platform === "win32" ? releaseNotes : releaseName,
-    detail:
-      "Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.",
-  };
+  // const dialogOpts = {
+  //   type: "info",
+  //   buttons: ["Restart", "Later"],
+  //   title: "Application Update",
+  //   message: process.platform === "win32" ? releaseNotes : releaseName,
+  //   detail:
+  //     "Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.",
+  // };
 
-  dialog.showMessageBox(dialogOpts).then((returnValue) => {
-    if (returnValue.response === 0) autoUpdater.quitAndInstall();
-  });
+  // dialog.showMessageBox(dialogOpts).then((returnValue) => {
+  //   if (returnValue.response === 0) autoUpdater.quitAndInstall();
+  // });
 });
 autoUpdater.on("error", (info) => {
   mes = info;
