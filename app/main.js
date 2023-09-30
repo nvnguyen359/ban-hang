@@ -8,7 +8,13 @@ const { eventsAutoUpdate } = require("./shares/autoUpdaterJs");
 const { getPrinters } = require("./shares/lib");
 const { autoUpdater, AppUpdater } = require("electron-updater");
 const { SocketIo } = require("./socket");
-const { app, BrowserWindow, ipcMain, ipcRenderer,dialog } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  ipcRenderer,
+  dialog,
+} = require("electron");
 let mes = "";
 
 app.serve = require(pathServer);
@@ -22,8 +28,8 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
 const SHEET_ID = process.env.SHEET_ID;
 let curWindow;
-// autoUpdater.autoDownload = false;
-// autoUpdater.autoInstallOnAppQuit = true;
+autoUpdater.autoDownload = true;
+autoUpdater.autoInstallOnAppQuit = true;
 
 const socket = new SocketIo();
 function createWindow() {
@@ -36,6 +42,9 @@ app.whenReady().then(async () => {
     if (BrowserWindow.getAllWindows().length == 0) createWindow();
   });
   checkUpdat();
+  if ((await curWindow.nhanData()) == "install") {
+    autoUpdater.quitAndInstall();
+  }
 });
 
 setInterval(() => {
@@ -45,18 +54,17 @@ function checkUpdat() {
   mes = `Đang kiểm tra các bản cập nhật. Phiên bản hiện tại ${app.getVersion()}`;
   console.log("dang kiem tra ban cap nhat");
 
- autoUpdater.checkForUpdates();
- curWindow.showMessage(mes);
- socket.sendMessage({ mes, ver: app.getVersion() });
+  autoUpdater.checkForUpdates();
+  curWindow.showMessage(mes);
+  socket.sendMessage({ mes, ver: app.getVersion() });
   // autoUpdater.checkForUpdatesAndNotify();
- 
 }
 
 /*New Update Available*/
 autoUpdater.on("update-available", async (info) => {
   mes = `Cập nhật có sẵn. Phiên bản hiện tại ${app.getVersion()}`;
   socket.sendMessage({ mes, ver: app.getVersion() });
-  curWindow.showMessage(`Update available. Current version ${app.getVersion()}`);
+  curWindow.showMessage(mes);
   let pth = await autoUpdater.downloadUpdate();
   mes = pth;
   console.log("dang tai ban cap nhat");

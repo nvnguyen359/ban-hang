@@ -39,7 +39,7 @@ class MainScreen {
     this.handleMessages();
 
     let wc = this.window.webContents;
-    //wc.openDevTools();
+   wc.openDevTools();
     this.window.loadFile("./screens/main/dist/index.html");
     this.window.webContents.openDevTools();
   }
@@ -52,7 +52,16 @@ class MainScreen {
   }
   upData(message) {
     this.window.webContents.send("upData", message);
+   
   }
+ async nhanData(){
+    return new Promise((res,rej)=>{
+      ipcMain.once('sendData',(e,item)=>{
+        res(item)
+      })
+    })
+  }
+
   close() {
     this.window.close();
     ipcMain.removeAllListeners();
@@ -64,6 +73,7 @@ class MainScreen {
 
   handleMessages() {
     //Ipc functions go here.
+   
   }
 }
 

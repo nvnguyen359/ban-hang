@@ -62,8 +62,36 @@ body {
     bottom: 5px;
     left: 200px;
     opacity: 0.75;
+    display: flex;
+}
+@keyframes rotating {
+    from{
+        -webkit-transform: rotate(0deg);
+    }
+    to{
+        -webkit-transform: rotate(360deg);
+    }
 }
 
+.rotating {
+    -webkit-animation: rotating 2s linear infinite;
+}
+@keyframes example {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+  }
+.refesh{
+    animation: rotating 2s linear infinite;
+    width: 24px;
+    height: 24px;
+   
+    align-items: center;
+    cursor: pointer;
+    display: none;
+}
+.refesh.show{
+    display: flex;
+}
 .delete {
     color: var(--mat-stepper-header-error-state-label-text-color);
     cursor: pointer;
