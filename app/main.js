@@ -78,18 +78,18 @@ autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
   mes = `Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.`;
   socket.sendMessage({ mes, ver: app.getVersion() });
   curWindow.showMessage(mes);
-  const dialogOpts = {
-    type: "info",
-    buttons: ["Restart", "Later"],
-    title: "Application Update",
-    message: process.platform === "win32" ? releaseNotes : releaseName,
-    detail:
-      "Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.",
-  };
+  // const dialogOpts = {
+  //   type: "info",
+  //   buttons: ["Restart", "Later"],
+  //   title: "Application Update",
+  //   message: process.platform === "win32" ? releaseNotes : releaseName,
+  //   detail:
+  //     "Một phiên bản mới đã được tải xuống. Khởi động lại ứng dụng để áp dụng các bản cập nhật.",
+  // };
 
-  dialog.showMessageBox(dialogOpts).then((returnValue) => {
-    if (returnValue.response === 0) autoUpdater.quitAndInstall();
-  });
+  // dialog.showMessageBox(dialogOpts).then((returnValue) => {
+  //   if (returnValue.response === 0) autoUpdater.quitAndInstall();
+  // });
 });
 autoUpdater.on("error", (info) => {
   mes = info;

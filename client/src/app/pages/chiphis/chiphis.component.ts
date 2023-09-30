@@ -1,5 +1,10 @@
 import { SelectionModel } from "@angular/cdk/collections";
-import { ChangeDetectorRef, Component, Injectable, ViewChild } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  Injectable,
+  ViewChild,
+} from "@angular/core";
 import { FormGroup, FormBuilder, FormArray, Validators } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { MatPaginator } from "@angular/material/paginator";
@@ -41,7 +46,6 @@ declare var removeAccents: any;
     ]),
   ],
 })
-
 export class ChiphisComponent {
   siteForm: FormGroup;
   @ViewChild(MatTable) table: MatTable<ChiPhi> | undefined;
@@ -54,9 +58,10 @@ export class ChiphisComponent {
     Tên: this.fb.control("", Validators.required),
     "Số Tiền": this.fb.control("", Validators.required),
     "Ghi Chú": this.fb.control(""),
-    'Id':[''],
+    Id: [""],
     Ngày: this.fb.control(new Date(), Validators.required),
   });
+  getId: any = "";
   names: any[] = [];
   filteredNames?: Observable<any[]>;
   columnsToDisplay = ["Ngày", "Tổng Chi"];
@@ -86,18 +91,25 @@ export class ChiphisComponent {
     );
     this.getAll();
   }
-  onSubmit() {
+  async onSubmit() {
     const value = this.formSubmit.value;
-    console.log(value);
-    this.service.post(BaseApiUrl.ChiPhis, value).then((data: any) => {
-      console.log(data);
-      setTimeout(() => {
-        this.getAll(true);
-      }, 800);
-    });
+    let data:any =value["Id"]?await this.service.put(BaseApiUrl.ChiPhis, value):await this.service.post(BaseApiUrl.ChiPhis, value);
+    console.log(data)
+    setTimeout(() => {
+      this.getAll(true);
+    }, 800);
   }
-  onSelect(item:ChiPhi){
-console.log(item)
+  onSelect(item: any) {
+    this.getId = item["Id"];
+    item["Ngày"] = `${item["Ngày"]}`.convertDateVNToISO();
+    this.formSubmit.patchValue(item);
+  }
+ async onDelete() {
+    const value = this.formSubmit.value;
+    await this.service.destroy(BaseApiUrl.ChiPhis, value["Id"]);
+  }
+  onReset(){
+    this.formSubmit.controls['Ngày'].setValue(new Date())
   }
   private _filter(value: string): any {
     if (!value) {

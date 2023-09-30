@@ -31,8 +31,9 @@
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
         <div class="flex full-width">
-          <button mat-raised-button color="primary" type="submit">Save</button>
-          <button mat-raised-button color="warn">Delete</button>
+          <button mat-raised-button color="primary" [disabled]="formSubmit.invalid" type="submit" class="margin-right-8">Save</button>
+          <button mat-raised-button color="warn" [disabled]="getId==''" type="button" (click)="onDelete()" class="margin-right-8">Delete</button>
+          <button mat-raised-button (click)="formSubmit.reset();onReset()"   type="button" [disabled]="formSubmit.invalid" >Reset</button>
         </div>
       </form>
     </mat-card-content>

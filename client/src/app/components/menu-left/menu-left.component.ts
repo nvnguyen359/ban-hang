@@ -61,7 +61,7 @@ export class MenuLeftComponent {
     {
       text: "Công Nợ",
       link:  `/${BaseApiUrl.CongNos}`,
-      icon: "money",
+      icon: "monetization_on",
     },
     {
       text: "Cài Dặt",

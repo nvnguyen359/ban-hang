@@ -110,10 +110,12 @@ body {
 .drawer-content-1 {
     position: absolute;
 }
-
-.active {
-    background: #3f51b5;
-    color: whitesmoke;
+a{
+transition: cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s all;
+}
+.active{
+    background-color: var(--mat-stepper-header-selected-state-icon-background-color)!important;
+   color: whitesmoke;
 }
 
 .center {

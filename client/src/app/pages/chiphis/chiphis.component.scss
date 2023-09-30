@@ -35,7 +35,6 @@ table {
   .example-element-diagram {
     min-width: 80px;
     border: 1px solid rgb(230, 230, 230);
-    padding: 8px;
     font-weight: lighter;
     margin: 8px 0;
     height: auto;
@@ -62,4 +61,12 @@ table {
         width: auto;
         opacity: 1;
     }
+  }
+  .table-ngay tbody tr{
+    transition: cubic-bezier(0.6, -0.28, 0.735, 0.045) 0.4s all;
+  }
+ .table-ngay tbody tr:hover {
+    background-color: var(--mat-sidenav-container-divider-color);
+    color: cornflowerblue;
+    cursor: pointer;
   }

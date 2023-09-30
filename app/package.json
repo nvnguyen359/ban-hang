@@ -1,6 +1,6 @@
 {
   "name": "AD",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Quản Lý Bán Hàng",
   "main": "main.js",
   "scripts": {
