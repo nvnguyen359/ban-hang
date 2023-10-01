@@ -1,7 +1,11 @@
 :root {
-    --height: 560px
+    --height: 400px
 }
-
+$height:500px;
+$width150:150px;
+.flex-2{
+    width: 150px;
+}
 .btn-left {
     width: 100px;
     margin: 4px;
@@ -17,7 +21,10 @@
 .left0 {
     margin-left: 0;
 }
-
+.show-table{
+    max-height: 280px;
+    overflow-y: auto;
+}
 mat-button-toggle-group {
     height: 57px;
     display: flex;
@@ -39,12 +46,12 @@ mat-button-toggle-group {
 .main {
     display: flex;
     flex-direction: row;
-    max-height: 600px;
+    max-height: $height;
     width: 100%;
 }
 
 .colection-left {
-    max-height: 520px;
+    max-height: $height;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -81,7 +88,7 @@ table {
 }
 
 .main .center {
-    max-height: 500px;
+    max-height: $height;
     overflow-y: auto;
     display: flex;
     flex-flow: wrap;

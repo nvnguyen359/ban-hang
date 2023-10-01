@@ -9,7 +9,7 @@
     margin-top: -18px;
 }
 .orders{
-    max-width: 1360px;
-    max-height: 768px;
+    max-width: auto;
+    max-height: var(--height);
     transition: all 0.4s;
 }

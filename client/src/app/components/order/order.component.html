@@ -19,7 +19,7 @@
                                 (selectTed)="onSelected($event)" (nameText)="onKeyupSanPham($event)"
                                 class="max-width490"></app-autocomplete>
                         </div>
-                        <div class="full-width center">
+                        <div class="full-width center btns-action">
                             <button mat-flat-button class="btn-center" color="primary"
                                 (click)="onClickSanPham(item,$event)" (keypress)="keyPress($event,item)"
                                 *ngFor="let item of filterProducts">{{item['Name']}}</button>
@@ -49,7 +49,7 @@
                                             [(ngModel)]="giamgia" (keyup)="onCal()">
                                     </mat-form-field>
                                 </div>
-                                <div style="display: inline-grid; margin-right: 0px;">
+                                <div style="display: inline-grid; margin-right: 0px;" class="flex-2">
                                     <mat-form-field appearance="fill">
                                         <mat-label>Tiền Công</mat-label>
                                         <input matInput placeholder="Tiền Công" type="number" min="0" (keyup)="onCal()"
@@ -67,14 +67,14 @@
                             </div>
 
                             <div class="flex">
-                                <mat-form-field style="margin-right:4px">
+                                <mat-form-field style="margin-right:4px" class="flex-2">
                                     <mat-label>Chọn Đơn Vị</mat-label>
                                     <mat-select  required value="{{selectDv}}">
                                         <mat-option value="1000">1000đ</mat-option>
                                         <mat-option value="100">100đ</mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <mat-form-field>
+                                <mat-form-field class="flex-2">
                                     <mat-label>Chọn Ngày</mat-label>
                                     <input matInput [matDatepicker]="picker" [formControl]="ngay">
                                     <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
@@ -85,7 +85,7 @@
 
                         <div class="show-table" style="flex-grow: 1;">
                             <table class="table-right" [hidden]="orders?.length<1">
-                                <thead>
+                                <thead style="position: sticky;">
                                     <th>#</th>
                                     <th>Tên Hàng</th>
                                     <th>SL</th>

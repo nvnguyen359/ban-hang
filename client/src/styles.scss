@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-
+$height:500px;
+$width150:150px;
 html,
 body {
     height: 100%;
@@ -236,3 +237,7 @@ a {
     padding: 8px;
 
 }
+app-baocao{
+    width: 100%;
+    height: 100%;
+  }
