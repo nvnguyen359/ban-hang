@@ -60,21 +60,22 @@ const getAlldata = (app, crud) => {
   // let crud = new CRUD('sanpham');
   app.get(`/all`, async (req, res, next) => {
     try {
+      const ms = 300;
       crud.nameSheetTitle = "Sản Phẩm";
       const sanphams = await crud.getAll();
-      await lib.delay(200);
-      crud.nameSheetTitle = "Đơn Hàng";
-      const donhangs = await crud.getAll();
-      await lib.delay(200);
+      await lib.delay(ms);
       crud.nameSheetTitle = "Nhập Hàng";
       const nhaphangs = await crud.getAll();
-      await lib.delay(200);
-      crud.nameSheetTitle = "Chi Tiết Đơn Hàng";
-      const chitiets = await crud.getAll();
-      await lib.delay(200);
+      await lib.delay(ms);
       crud.nameSheetTitle = "Khách Hàng";
       const khachhangs = await crud.getAll();
-      await lib.delay(100);
+      await lib.delay(ms);
+      crud.nameSheetTitle = "Đơn Hàng";
+      const donhangs = await crud.getAll();
+      await lib.delay(ms);
+      crud.nameSheetTitle = "Chi Tiết Đơn Hàng";
+      const chitiets = await crud.getAll();
+      await lib.delay(ms);
       const orders = donhangs.map((x) => {
         x["Ngày Bán"] = `${x["Ngày Bán"]}`.DateFormatDDMMYYY();
         x["chitiets"] = chitiets
