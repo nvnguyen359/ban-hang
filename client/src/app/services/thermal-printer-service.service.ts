@@ -3,7 +3,9 @@ import { ApiService } from "./api.service";
 import { KhachHang } from "../Models/khachHangs";
 import { DonHang } from "../Models/donHang";
 import { ChiTietDonHang } from "../Models/chiTietDonHang";
-import { BaseApiUrl } from "../general";
+import { BaseApiUrl, delay } from "../general";
+import { HttpClient } from "@angular/common/http";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Injectable({
   providedIn: "root",
@@ -13,7 +15,12 @@ export class ThermalPrinterServiceService {
   cssStyles = ``;
   paperWidth = "148mm";
   array: any;
-  constructor(private service: ApiService) {}
+  urlImg1: any;
+  constructor(
+    private service: ApiService,
+    private http: HttpClient,
+    private sanitizer: DomSanitizer
+  ) {}
   set PaperWidth(width: any) {
     this.paperWidth = width;
   }
@@ -116,14 +123,15 @@ export class ThermalPrinterServiceService {
     </script>
   </head>`;
   }
-  addInforStore(donhang: DonHang) {
+  async addInforStore(donhang: DonHang) {
     const addInfo =
       donhang["Id"] +
       "-" +
       donhang["Tên Khách Hàng"] +
       "-" +
       donhang["Ngày Bán"];
-    // console.log(`https://img.vietqr.io/image/VCB-0041000171668-compact2.jpg?amount=${donhang["Thanh Toán"]}&amp;accountName=DO%20VAN%20HIEU&addInfo=${addInfo}"`)
+    let urlImg = `https://img.vietqr.io/image/VCB-0041000171668-compact2.jpg?amount=${donhang["Thanh Toán"]}&amp;accountName=DO%20VAN%20HIEU&addInfo=${addInfo}`;
+
     return `<div class="infor-store">
 <b class="block text-center">HÓA ĐƠN BÁN HÀNG</b>
 <small class="block text-center">${donhang["Ngày Bán"]}</small>
@@ -138,7 +146,7 @@ export class ThermalPrinterServiceService {
 <b class="block"> ĐT: 0988.114.714 - 0842.399.889</b>
 </div>
 <div class="qr">
-<img id="qrViet" width='150' height='150' src="https://img.vietqr.io/image/VCB-0041000171668-compact2.jpg?amount=${donhang["Thanh Toán"]}&amp;accountName=DO%20VAN%20HIEU&addInfo=${addInfo}"  alt="" style="">
+<img id="qrViet" width='150' height='150' src="${urlImg}"  alt="" style="">
 </div>
 </div>
 </div>`;
@@ -158,10 +166,9 @@ export class ThermalPrinterServiceService {
       return x;
     });
     let tableBody = "";
-console.log(columns)
-if(columns.filter((x:any)=>x=='STT').length>1){
-  columns.pop();
-}
+    if (columns.filter((x: any) => x == "STT").length > 1) {
+      columns.pop();
+    }
     chitiets.forEach((x: any, index) => {
       if (!isPageA5) {
         delete x["STT"];
@@ -290,7 +297,7 @@ ${head}
       ? ["STT", ...columnsChitiets]
       : columnsChitiets.filter((x) => x != "ĐV");
     var html = "";
-    const inforStore = this.addInforStore(donhang);
+    const inforStore = await this.addInforStore(donhang);
     html += inforStore;
 
     var kh = await this.getKh(donhang["Khách Hàng"], donhang["Id"]);
