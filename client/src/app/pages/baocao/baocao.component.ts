@@ -17,6 +17,11 @@ export class BaocaoComponent {
   nams: any[] = [];
 
   donhangs: any;
+  tongDon: number = 0;
+  tongDoanhThu: number = 0;
+  tongChietKhau: number = 0;
+  filterOrder: any;
+  overviews: any[] = [];
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
@@ -28,7 +33,8 @@ export class BaocaoComponent {
     this.getMonths();
     this.getQuanter();
     this.getYears();
-    this.getAll();
+    // this.getAll();
+    this.getDonhangs();
   }
   //#region all
   getMonths() {
@@ -53,11 +59,18 @@ export class BaocaoComponent {
       if (!data) return;
       if (data["donhangs"]) {
         this.donhangs = (data["donhangs"] as any[]).map((x: any) => {
-         x["Ngày Bán"] = `${x["Ngày Bán"]}`.DateVNToISO();
+          x["Ngày Bán"] = `${x["Ngày Bán"]}`.DateVNToISO();
           return x;
         });
         console.log(this.donhangs);
       }
+    });
+  }
+  getDonhangs() {
+    this.service.get(BaseApiUrl.DonHangs).then((e: any) => {
+      this.donhangs = e as DonHang[];
+      console.log(this.donhangs);
+      this.filterOrders();
     });
   }
   onClosedMenu(event: any = null) {
@@ -70,7 +83,7 @@ export class BaocaoComponent {
     }
     if (`${event}`.includes("Tháng")) {
       const m = parseInt(`${event}`.replace("Tháng", "").trim());
-      const mount = firstlastMonth(y, m);
+      const mount = firstlastMonth(y, m - 1);
       this.firstDay = mount.firstDay;
       this.lastDay = mount.lastDay;
     }
@@ -81,15 +94,42 @@ export class BaocaoComponent {
       this.lastDay = quarter.lastDate;
     }
     if (`${event}`.includes("năm")) {
-      this.firstDay = new Date(y,0,1);
-      this.lastDay = new Date(y,11,31,23,59,59,999);
+      this.firstDay = new Date(y, 0, 1);
+      this.lastDay = new Date(y, 11, 31, 23, 59, 59, 999);
     }
     console.log(this.firstDay, this.lastDay);
-    let range=this.range.value;
-    console.log(range)
+    this.filterOrders();
   }
-  onRangeDate(start:any,event:any){
-    let range=this.range.value;
-    console.log(event)
+  filterOrders() {
+    this.overviews=[]
+    this.filterOrder = Array.from(this.donhangs)
+      .filter((x: any) => {
+        const date = `${x["Ngày Bán"]}`.DateVNToISO();
+        return date >= this.firstDay && date <= this.lastDay;
+      })
+      .map((x: any) => {
+        // x["Giá Bán"] = parseInt(x["Giá Bán"]);
+        x["Chiết Khấu"] = parseInt(x["Chiết Khấu"]);
+        x["Số Lượng"] = parseInt(x["Số Lượng"]);
+        x["Thanh Toán"] = parseInt(x["Thanh Toán"]);
+        x["Thành Tiền"] = parseInt(x["Thành Tiền"]);
+        return x;
+      });
+   const tongDon = Array.from(this.filterOrder).length;
+   const tongDoanhThu =Array.from(this.filterOrder).map((x:any)=>x['Thanh Toán']).reduce((a:number,b:number)=>a+b,0);
+   const tongChietKhau =Array.from(this.filterOrder).map((x:any)=>x['Chiết Khấu']).reduce((a:number,b:number)=>a+b,0);
+    this.overviews.push({title:'Đơn Hàng',sum:tongDon });
+    this.overviews.push({title:'Doanh Thu',sum:tongDoanhThu })
+    this.overviews.push({title:'Chiết Khấu',sum:tongChietKhau })
+    console.log(this.tongDon,this.tongDoanhThu)
+  }
+  onRangeDate(start: any, event: any) {
+    if (start == "start") {
+      this.firstDay = event.target.value;
+    }
+    if (start != "start") {
+      this.lastDay = event.target.value;
+    }
+    console.log(this.firstDay, this.lastDay);
   }
 }
