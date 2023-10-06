@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
+const url = require('url');
 
 //console.log('tin nhan nhan duoc',socket.getMessage())
 const path = require("path");
@@ -39,9 +40,18 @@ class MainScreen {
     this.handleMessages();
 
     let wc = this.window.webContents;
-   wc.openDevTools();
-    this.window.loadFile("./screens/main/dist/index.html");
-    this.window.webContents.openDevTools();
+   //wc.openDevTools();
+    //this.window.loadFile("./screens/main/dist/index.html");
+this.window.loadURL(`file://${__dirname}/dist/index.html`)
+    //this.window.webContents.openDevTools();
+   // const fileHtml=`file://${__dirname}/dist/index.html`;
+    // this.window.loadURL(
+    //   url.format({
+    //     pathname: path.join(__dirname, `/dist/index.html`),
+    //     protocol: "file:",
+    //     slashes: true
+    //   })
+    // );
   }
 
   showMessage(message) {

@@ -53,6 +53,7 @@ const callApis = (app) => {
     bulkDelete(element, app, crud);
   });
   getAlldata(app, new CRUD());
+  getOrders(app, new CRUD());
   apis.apis(app);
 };
 const getAlldata = (app, crud) => {
@@ -101,6 +102,33 @@ const getAlldata = (app, crud) => {
     }
   });
 };
+const getOrders= (app, crud) =>{
+  app.get(`/orders`, async (req, res, next) => {
+    try {
+      const ms = 300;;
+      crud.nameSheetTitle = "Đơn Hàng";
+      const donhangs = await crud.getAll();
+      await lib.delay(ms);
+      crud.nameSheetTitle = "Chi Tiết Đơn Hàng";
+      const chitiets = await crud.getAll();
+      await lib.delay(ms);
+      const orders = donhangs.map((x) => {
+        // x["Ngày Bán"] = new Date(x["Ngày Bán"])
+        x["chitiets"] = chitiets
+          .filter((c) => c["Đơn Hàng"] == x["Id"]) .map((c) => {
+            // c["Ngày"] = new Date(c["Ngày"]);
+            return c;
+          });
+        return x;
+      });
+
+      res.status(200).json(orders);
+      // next();
+    } catch (error) {
+      res.send(error);
+    }
+  });
+}
 const getDonHangs = (app, crud) => {
   app.get(`/donhangs`, async (req, res, next) => {});
 };

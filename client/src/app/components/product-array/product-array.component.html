@@ -102,16 +102,16 @@ Tên Khách Hàng
           <input placeholder="Sản Phẩm" type="hidden" formControlName="Ngày" [(ngModel)]="ngay" />
           <mat-form-field appearance="outline" style="flex-grow: 1;">
             <mat-label>Tên Sản Phẩm</mat-label>
-            <!-- <input matInput list="dsSps" placeholder="Tên Sản Phẩm" required formControlName="Tên Sản Phẩm"
+            <input matInput list="dsSps" placeholder="Tên Sản Phẩm" required formControlName="Tên Sản Phẩm"
               (change)="onChangeValue($event.target)" />
             <datalist id="dsSps">
               <option *ngFor="let sanpham of sanphams" value="{{sanpham['Name']}}"></option>
-            </datalist> -->
-            <mat-select (selectionChange)="onChangeValue($event,i)" placeholder="Tên Sản Phẩm" required formControlName="Tên Sản Phẩm">
+            </datalist>
+            <!-- <mat-select (selectionChange)="onChangeValue($event,i)" placeholder="Tên Sản Phẩm" required formControlName="Tên Sản Phẩm">
               <mat-option *ngFor="let sanpham of sanphams" [value]="sanpham['Name']" >
                 {{sanpham['Name']}}
               </mat-option>
-            </mat-select>
+            </mat-select> -->
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Số Lượng</mat-label>

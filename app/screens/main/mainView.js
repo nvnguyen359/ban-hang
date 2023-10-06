@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   window.bridge.updateMessage(updateMessage);
   window.bridge.upData(getPrinters);
+
 });
 document.querySelector(".refesh").addEventListener("click", () => {
   window.bridge.sendData("install");

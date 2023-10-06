@@ -6,7 +6,7 @@ import { ChiTietDonHang } from "../Models/chiTietDonHang";
 import { BaseApiUrl, delay } from "../general";
 import { HttpClient } from "@angular/common/http";
 import { DomSanitizer } from "@angular/platform-browser";
-
+import { DocTienBangChu } from "../general";
 @Injectable({
   providedIn: "root",
 })
@@ -144,9 +144,11 @@ export class ThermalPrinterServiceService {
    <div> Địa chỉ: TDP Hữu Lộc, P.Trúc Lâm, Nghi Sơn, Thanh Hóa</div>
 </div>
 <b class="block"> ĐT: 0988.114.714 - 0842.399.889</b>
+<div>TK: Do Van Hieu (0041000171668-VietComBank)</div>
 </div>
 <div class="qr">
-<img id="qrViet" width='150' height='150' src="${urlImg}"  alt="" style="">
+<img id="qrViet" width='150' height='150' src="${urlImg}"  alt="" style="opacity: 0;" >
+
 </div>
 </div>
 </div>`;
@@ -154,21 +156,61 @@ export class ThermalPrinterServiceService {
   async getKh(id: any, idDh: any) {
     let kh = ((await this.service.getId(BaseApiUrl.KhachHangs, id)) as any)
       .data as any;
+    const khHtml =
+      kh["Phone"] != undefined
+        ? `<div class="block" ><b>Khách Hàng:</b>${kh["Tên Khách Hàng"]} (${kh["Phone"]})</div>
+      <div class="block"><b>Địa Chỉ   :</b>${kh["Địa Chỉ"]}</div>`
+        : "";
     return `<div class="kh">
 <div class="block"><b>ID:</b>${idDh}</div>
-<div class="block"><b>Khách Hàng:</b>${kh["Tên Khách Hàng"]} (${kh["Phone"]})</div>
-<div class="block"><b>Địa Chỉ   :</b>${kh["Địa Chỉ"]}</div>
+${khHtml}
 </div>`;
   }
+  /**Giá Nhập
+: 
+"1400"
+Id
+: 
+"CTDH000028"
+Ngày
+: 
+"04/10/2023"
+STT
+: 
+1
+Sản Phẩm
+: 
+"SP000112"
+Số Lượng
+: 
+"20"
+Thành Tiền
+: 
+"50000"
+Tên Sản Phẩm
+: 
+"Kẽm bộ 5s2p dày 0.18mm"
+Đơn Hàng
+: 
+"DH000006"
+Đơn Vị Tính
+: 
+"Bộ"
+Đơn giá
+: 
+"2500" */
   setBodyTable(donhang: DonHang, isPageA5: any, columns: string[]) {
     const chitiets = Array.from(donhang["chitiets"]).map((x: any, index) => {
       x["STT"] = index + 1;
       return x;
     });
+    
+    console.log(chitiets)
     let tableBody = "";
-    if (columns.filter((x: any) => x == "STT").length > 1) {
-      columns.pop();
-    }
+    // if (columns.filter((x: any) => x == "STT").length > 1) {
+    //   columns.pop();
+    // }
+    columns =['STT','Tên Sản Phẩm','Số Lượng','Đơn Vị Tính','Đơn giá','Thành Tiền']
     chitiets.forEach((x: any, index) => {
       if (!isPageA5) {
         delete x["STT"];
@@ -188,7 +230,7 @@ export class ThermalPrinterServiceService {
     });
     return tableBody;
   }
-  setTable(head: any, body: any, foot: any) {
+  setTable(head: any, body: any, foot: any, donhang: DonHang) {
     const tableBill = `
 <div class="bill-table">
 <table>
@@ -202,7 +244,9 @@ ${head}
     ${foot}
     </tfoot>
 </table>
-<div class="block"><i>(Thanh toán nhanh bằng VietQr ở trên)</i></div>
+<div class="block"><i>(Thanh toán : ${DocTienBangChu(
+      parseInt(`${donhang["Thanh Toán"]}`)
+    )} đồng./)</i></div>
 </div>`;
     return tableBill;
   }
@@ -234,12 +278,12 @@ ${head}
     ).toLocaleString()}</td>
     </tr>`;
     const giamgia =
-      donhangs["Giảm Giá"] > 0
+      donhangs["Chiết Khấu"] > 0
         ? `
     <tr>
     <td colspan="${colspanGiamGia}">Chiết Khấu</td>
     <td class="text-right" colspan="${colspanTong + 1}">${
-            donhangs["Giảm Giá"]
+           parseInt(donhangs["Chiết Khấu"]+'').toLocaleString()
           }</td>
     </tr>
     `
@@ -305,7 +349,7 @@ ${head}
     const head = this.setHeadTable(columns);
     const body = this.setBodyTable(donhang, isPageA5, columns);
     const foot = this.setFootTable(donhang, isPageA5);
-    html += this.setTable(head, body, foot);
+    html += this.setTable(head, body, foot, donhang);
     const printerWindow = window.open(``, `_blank`);
     printerWindow?.document.write(`
     <!DOCTYPE html>

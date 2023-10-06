@@ -25,14 +25,3 @@ try {
   
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const menus = document.querySelectorAll('.menu  a.menu-item');
-if(menus){
-  menus.forEach((a,index)=>{
-    a.addEventListener('click',(event)=>{
-      menus.forEach((x)=>x.classList.remove('active'));
-      a.classList.add('active');
-    })
-  })
-}
-});

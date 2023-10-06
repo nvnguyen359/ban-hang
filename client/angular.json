@@ -33,7 +33,7 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
-            "scripts": ["src/assets/mainView.js","src/assets/lib.js"]
+            "scripts": ["src/assets/lib.js", "node_modules/apexcharts/dist/apexcharts.min.js"]
           },
           "configurations": {
             "production": {

@@ -16,14 +16,8 @@ const {
   dialog,
 } = require("electron");
 
-const { addBypassChecker } = require("electron-compile");
 let mes = "";
-addBypassChecker((filePath) => {
-  return (
-    filePath.indexOf(app.getAppPath()) === -1 &&
-    (/.jpg/.test(filePath) || /.ms/.test(filePath) || /.png/.test(filePath))
-  );
-});
+
 app.serve = require(pathServer);
 //require(pathServer);
 const MainScreen = require(path.join(__dirname, "./screens/main/mainScreen"));

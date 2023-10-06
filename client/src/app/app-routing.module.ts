@@ -4,7 +4,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { BaseApiUrl } from "./general";
 
 const routes: Routes = [
-  { path: '', loadChildren: () => import('./pages/baocao/baocao.module').then(m => m.BaocaoModule) },
+  { path: '', loadChildren: () =>  import("./pages/donhangs/donhangs.module").then((m) => m.DonhangsModule)},
   {
     path: BaseApiUrl.KhachHangs,
     loadChildren: () =>

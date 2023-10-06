@@ -7,6 +7,8 @@ import { OrderComponent } from "./components/order/order.component";
 import { DateAdapter, MAT_DATE_LOCALE } from "@angular/material/core";
 import { DataService } from "./services/data.service";
 import { async } from "@angular/core/testing";
+import { Router } from "@angular/router";
+import { BaseApiUrl } from "./general";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -37,11 +39,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     private _adapter: DateAdapter<any>,
     private service: ApiService,
     private dataService: DataService,
-    @Inject(MAT_DATE_LOCALE) private _locale: string
+    @Inject(MAT_DATE_LOCALE) private _locale: string,
+    private router: Router
   ) {
     this.getVersion();
-
-   // this.getAllData();
+    // this.getAllData();
   }
 
   async getAllData() {
@@ -59,7 +61,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       localStorage.setItem("all", JSON.stringify({ all: data }));
     }
     this.dataService.sendMessage({ all: data });
-    console.log(data)
+    console.log(data);
     return data["donhangs"].length;
   }
   async getData() {
@@ -91,6 +93,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this._adapter.setLocale(this._locale);
   }
   ngOnInit(): void {
+    setTimeout(() => {
+      this.router.navigate([`/${BaseApiUrl.BaoCaos}`]);
+    }, 500);
     this.french();
   }
   ngAfterViewInit() {}

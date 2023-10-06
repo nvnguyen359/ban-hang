@@ -65,7 +65,9 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { SanphamComponent } from './components/sanpham/sanpham.component';
 import { OrdersComponent } from './components/orders/orders.component';
 import { IsNumberPipe } from './pipes/is-number.pipe';
-
+import { DonutProductComponent } from './components/donut-product/donut-product.component';
+import{NgApexchartsModule} from 'ng-apexcharts';
+import { ChartOrderComponent } from './components/chart-order/chart-order.component'
 
 
 
@@ -138,6 +140,7 @@ const config: SocketIoConfig = { url: "http://localhost:18092", options: {} };
     MatIconModule,
     MatCheckboxModule,
     MatSnackBarModule,
+    NgApexchartsModule
   ],
   providers: [
     // { provide: MAT_DATE_LOCALE, useValue: 'vi-VN' },

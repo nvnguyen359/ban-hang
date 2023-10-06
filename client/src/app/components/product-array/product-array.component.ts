@@ -254,6 +254,7 @@ export class ProductArrayComponent {
             }
           });
         }
+        event.value = "";
         values["chitiets"] = chitiets;
         this.formGroup.patchValue(values);
         return;
@@ -511,7 +512,7 @@ export class ProductArrayComponent {
         data: { "Tên Khách Hàng": event.value, Id: "" },
       });
       dialogRef.afterClosed().subscribe((khachhang: any) => {
-      khachhang = khachhang.data[0];
+        khachhang = khachhang.data[0];
         values["Tên Khách Hàng"] = khachhang["Tên Khách Hàng"];
         values["Khách Hàng"] = khachhang["Id"];
         this.formGroup.patchValue(values);

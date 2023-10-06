@@ -13,6 +13,7 @@ export class MenuLeftComponent {
     setTimeout(() => {
       this.getVersion();
     }, 5000);
+   
   }
   getVersion() {
     this.socket.getMessage().subscribe((x: any) => {
@@ -30,7 +31,7 @@ export class MenuLeftComponent {
   links = [
     {
       text: "Trang Chủ",
-      link: "/",
+      link: `/${BaseApiUrl.BaoCaos}`,
       icon: "home",
     },
     {

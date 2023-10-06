@@ -168,8 +168,6 @@ export class DonhangsComponent {
     return new Promise(async (res, rej) => {
       let data: any[] = [];
       const sanphams = Array.from(this.sanphams);
-      console.log(sanphams.length);
-      console.log(chitiets);
       chitiets.forEach((chitet: ChiTietDonHang) => {
         console.log(chitet);
         const sp = sanphams.find(
@@ -199,7 +197,6 @@ export class DonhangsComponent {
           data.push(sp);
         }
       });
-      console.log(data);
       if (data.length > 0) {
         const dialog = this.dialog.open(DialogAlertComponent, {
           data: `Bạn muốn cập nhật sản phấm ${data.map(
@@ -209,16 +206,6 @@ export class DonhangsComponent {
         const ok = await dialog.afterClosed().toPromise();
         if (ok) {
           return;
-          for (let index = 0; index < data.length; index++) {
-            const element = data[index];
-            console.log(element);
-            const update = await this.service.put(
-              BaseApiUrl.SanpPhams,
-              element
-            );
-            console.log(update);
-            await delay(500);
-          }
         }
       }
       res(data);
@@ -227,7 +214,6 @@ export class DonhangsComponent {
   ngAfterContentInit() {}
   async getAllData() {
     const data = (await this.service.get(BaseApiUrl.All)) as any;
-    console.log(data);
     this.all = data;
     this.khachhangs = data["khachhangs"];
     this.sanphams = data["sanphams"];

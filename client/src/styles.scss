@@ -4,10 +4,10 @@ $width150:150px;
 html,
 body {
     height: 100%;
-    width: 1366px;
-    height: 768px;
+    width: 100%;
+ 
 }
-
+option{max-height: 300px;overflow-y: auto;}
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;

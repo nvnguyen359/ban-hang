@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from "@angular/common/http";
 import{environment} from './../environment'
 import { Observable, catchError, retry, throwError } from "rxjs";
+import { BaseApiUrl } from "../general";
 @Injectable({
   providedIn: "root",
 })
@@ -41,7 +42,7 @@ export class ApiService {
         catchError(this.handleError)
       ).subscribe((data:any) => {
         if(Array.isArray(data)){
-          let dt = Array.from(data).convertDateVNView();
+          let dt = !BaseApiUrl.Orders ?Array.from(data).convertDateVNView():Array.from(data);
           return res(dt);
         }else{
           res(data)
