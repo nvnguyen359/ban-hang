@@ -67,7 +67,8 @@ import { OrdersComponent } from './components/orders/orders.component';
 import { IsNumberPipe } from './pipes/is-number.pipe';
 import { DonutProductComponent } from './components/donut-product/donut-product.component';
 import{NgApexchartsModule} from 'ng-apexcharts';
-import { ChartOrderComponent } from './components/chart-order/chart-order.component'
+import { ChartOrderComponent } from './components/chart-order/chart-order.component';
+import { NumberRoundPipe } from './pipes/number-round.pipe'
 
 
 

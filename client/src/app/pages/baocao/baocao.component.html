@@ -6,7 +6,7 @@
           Bộ Lọc
           <mat-icon>filter_list</mat-icon>
         </button>
-        <div style="margin-right: 16px;font-size:48px; flex-grow:1;text-align: center;">Báo Cáo {{title}}</div>
+        <div style="margin-right: 16px;font-size:36px; flex-grow:1;text-align: center;">Báo Cáo {{title}}</div>
       </div>
     </mat-card-content>
   </mat-card>
@@ -14,13 +14,12 @@
 <div class="full-width flex">
   <div style="display: flex;
   max-width: 60%;
-  flex-wrap: wrap;">
+  flex-wrap: wrap;height:360px">
     <mat-card *ngFor="let item of overviews" class="mat-card">
       <mat-card-title class="center-text mat-card-title">{{item.title}}</mat-card-title>
       <mat-card-content>
         <div class="card">
-          <div class="style-content" *ngIf="item.sum>=1000">{{item.sum/1000|number}}k</div>
-          <div class="style-content" *ngIf="item.sum<1000">{{item.sum|number}}</div>
+          <div class="style-content" >{{item.sum|numberRound}}</div>
         </div>
       </mat-card-content>
     </mat-card>

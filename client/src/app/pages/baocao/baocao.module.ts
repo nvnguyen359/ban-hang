@@ -14,6 +14,7 @@ import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular
 import { DonutProductComponent } from 'src/app/components/donut-product/donut-product.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { ChartOrderComponent } from 'src/app/components/chart-order/chart-order.component';
+import { NumberRoundPipe } from 'src/app/pipes/number-round.pipe';
 const MY_DATE_FORMATS = {
   parse: {
     dateInput: "DD/MM/YYYY", // this is how your date will be parsed from Input
@@ -30,7 +31,8 @@ const MY_DATE_FORMATS = {
   declarations: [
     BaocaoComponent,
     DonutProductComponent,
-    ChartOrderComponent
+    ChartOrderComponent,
+    NumberRoundPipe
   ],
   imports: [
     CommonModule,
@@ -42,7 +44,8 @@ const MY_DATE_FORMATS = {
     MatDatepickerModule,
     MatInputModule,
     MatNativeDateModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    
   ],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   providers:[{ provide: MAT_DATE_LOCALE, useValue: 'vi-VN' }]

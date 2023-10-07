@@ -202,7 +202,6 @@ export class BaocaoComponent {
     const tongChietKhau = Array.from(this.filterOrder)
       .map((x: any) => parseInt(x["Chiết Khấu"]))
       .reduce((a: number, b: number) => a + b, 0);
-
     this.overviews.push({ title: "Đơn Hàng", sum: tongDon });
     this.overviews.push({ title: "Doanh Thu", sum: tongDoanhThu });
     this.overviews.push({ title: "Chiết Khấu", sum: tongChietKhau });

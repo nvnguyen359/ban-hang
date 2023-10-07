@@ -113,7 +113,7 @@ process.on("uncaughtException", function (err) {
 app.on("window-all-closed", function () {
   if (process.platform != "darwin") {
     try {
-      autoUpdater.quitAndInstall();
+      app.quit();
     } catch (error) {
       app.quit();
     }
