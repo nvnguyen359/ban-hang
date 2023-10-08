@@ -94,7 +94,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
   ngOnInit(): void {
     setTimeout(() => {
-      this.router.navigate([`/${BaseApiUrl.BaoCaos}`]);
+      if (location.pathname == "/")
+        this.router.navigate([`/${BaseApiUrl.BaoCaos}`]);
     }, 500);
     this.french();
   }

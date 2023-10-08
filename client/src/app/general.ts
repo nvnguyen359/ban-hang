@@ -15,6 +15,7 @@ export enum BaseApiUrl {
   CongNos = "congnos",
   BaoCaos = "baocao",
   Orders = "orders",
+  listOrders="listOrders"
 }
 /**default @param [ms=1000]  */
 export function delay(ms: number = 1000) {

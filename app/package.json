@@ -72,6 +72,7 @@
     "html-pdf": "^3.0.1",
     "html-pdf-node": "^1.0.7",
     "html2pdf.js": "^0.10.1",
+    "knex": "^3.0.1",
     "moment": "^2.29.4",
     "node-localstorage": "^3.0.5",
     "node-thermal-printer": "^4.2.1",
@@ -80,6 +81,7 @@
     "pdfkit": "^0.13.0",
     "save": "^2.9.0",
     "socket.io": "^4.7.2",
+    "sqlite3": "^5.1.6",
     "update-electron-app": "^2.0.1"
   }
 }

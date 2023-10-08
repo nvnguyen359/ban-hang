@@ -38,7 +38,8 @@ const routes: Routes = [
       import("./pages/chiphis/chiphis.module").then((m) => m.ChiphisModule),
   },
   { path:BaseApiUrl.CongNos, loadChildren: () => import('./pages/congnos/congnos.module').then(m => m.CongnosModule) },
-  { path: BaseApiUrl.BaoCaos, loadChildren: () => import('./pages/baocao/baocao.module').then(m => m.BaocaoModule) }
+  { path: BaseApiUrl.BaoCaos, loadChildren: () => import('./pages/baocao/baocao.module').then(m => m.BaocaoModule) },
+  { path: BaseApiUrl.listOrders, loadChildren: () => import('./pages/list-orders/list-orders.module').then(m => m.ListOrdersModule) }
 ];
 
 @NgModule({

@@ -38,6 +38,10 @@ export class MenuLeftComponent {
       text: "Đơn Hàng",
       link: `/${BaseApiUrl.DonHangs}`,
       icon: "shopping_basket",
+    },{
+      text:'Đơn Hàng',
+      link:`/${BaseApiUrl.listOrders}`,
+      icon: "shopping_basket",
     },
     {
       text: "Sản Phẩm",

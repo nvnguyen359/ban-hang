@@ -1,2 +1,3 @@
 ng g m nhaphang --route nhaphang --module app
 ng g m tableExpandableRows --route tableExpandableRows --module app
+ng g m listOrders --route listOrders --module app
