@@ -69,6 +69,7 @@ import { DonutProductComponent } from './components/donut-product/donut-product.
 import{NgApexchartsModule} from 'ng-apexcharts';
 import { ChartOrderComponent } from './components/chart-order/chart-order.component';
 import { NumberRoundPipe } from './pipes/number-round.pipe'
+import { MatTabsModule } from "@angular/material/tabs";
 
 
 
@@ -141,7 +142,8 @@ const config: SocketIoConfig = { url: "http://localhost:18092", options: {} };
     MatIconModule,
     MatCheckboxModule,
     MatSnackBarModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    MatTabsModule
   ],
   providers: [
     // { provide: MAT_DATE_LOCALE, useValue: 'vi-VN' },

@@ -1,12 +1,14 @@
-require("dotenv").config({ path: './../.env' });
+require("dotenv").config({ path: "./../.env" });
 
-var bodyParser = require('body-parser');
+var bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
 const apis = require("./apis/apiCrud");
+// const { apisSqlite } = require("./apis/apiSqlite");
 const express = require("express");
+
 const app = express();
-const port = process.env.PORT||3176;
+const port = process.env.PORT || 3176;
 app.get("/", (req, res, next) => {
   res.send("Api ready!");
   next();
@@ -16,7 +18,11 @@ app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
-const allowedOrigins = ["http://localhost:3177", "http://localhost:3177/#/"," http://localhost:18092"];
+const allowedOrigins = [
+  "http://localhost:3177",
+  "http://localhost:3177/#/",
+  " http://localhost:18092",
+];
 //require('./apis/apiExcute')
 
 app.use(express.json()); // for parsing application/json
@@ -53,23 +59,27 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-app.use(bodyParser.json({
-  type: '*/*'
-}));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+app.use(
+  bodyParser.json({
+    type: "*/*",
+  })
+);
 // Function to serve all static files
 // inside public directory.
 app.use(express.static("public"));
 apis.callApis(app);
+// apisSqlite(app);
 app.use("/uploads", express.static("uploads"));
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/imgs", express.static(path.join(__dirname, "imgs")));
 app.use("/public", express.static("public"));
 app.use("/app/public", express.static("public"));
 
-
-
+//C:\Users\Default\AppData\Local\Temp move data
 
 module.exports = app;

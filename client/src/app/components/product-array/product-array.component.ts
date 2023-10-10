@@ -61,6 +61,7 @@ export class ProductArrayComponent {
   showKeys: any = [];
   isDonHang: boolean = false;
   title: string = "";
+  showTitle: boolean = true;
   chietkhau = 0;
   donvi = 1000;
   statusText = "Đặt Hàng";
@@ -84,6 +85,7 @@ export class ProductArrayComponent {
     if (this.newOrder) {
       this.title = `Tạo Mới Đơn Hàng`;
       this.initNoInputData();
+      this.showTitle = true;
     } else {
       console.log("cap");
       await this.switchCase();
@@ -105,7 +107,6 @@ export class ProductArrayComponent {
     });
     if (this.khachhangs == undefined) {
       // this.getDataService();
-      console.log(this.dataAll);
       this.khachhangs = this.dataAll["khachhangs"];
       this.sanphams = this.dataAll["sanphams"];
       this.onAdd();
@@ -155,6 +156,7 @@ export class ProductArrayComponent {
 
       if (this.data["isDonhang"] && this.donhang["chitiets"].length > 0)
         this.title = `Cập Nhật Đơn Hàng <b>${this.donhang["Id"]}</b>`;
+      this.showTitle = false;
       await this.initDonHang();
     }
   }

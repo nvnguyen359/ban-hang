@@ -5,11 +5,21 @@ import { Pipe, PipeTransform } from "@angular/core";
 })
 export class FormmatNumberPipeX implements PipeTransform {
   transform(value: any): string {
-    //console.log(value, this.isNumeric(value),value.toLocaleString('vi-VN'));
     if (value == undefined) return value;
-    return value.toLocaleString('vi-VN');
+    if (this.isNumeric(value)) {
+      return parseInt(value).toLocaleString('vi');
+    } else {
+      if (new Date(value).toString() != "Invalid Date") {
+        return new Date(value).toLocaleDateString("vi");
+      } else {
+        return value;
+      }
+    }
   }
   isNumeric(str: any) {
     return /^-?\d+$/.test(str);
+  }
+  isValidDate(d: any) {
+    return d instanceof Date;
   }
 }

@@ -109,19 +109,18 @@ export class DonhangsComponent {
     });
     await this.service.post(BaseApiUrl.ChiTietDonHangs, this.chitiets);
   }
-  async onPutDh(submit: any){
+  async onPutDh(submit: any) {
     const donhang = submit.donhang;
     let idDh = "";
     if (donhang["Id"]) {
       const dh = (await this.service.put(BaseApiUrl.DonHangs, donhang)) as any;
-      console.log(donhang)
-      idDh = dh.data[0]["Id"];
+      console.log(donhang);
+      idDh = dh.data["Id"];
     }
     this.chitiets = Array.from(submit.donhang["chitiets"]).map((x: any) => {
       x["Đơn Hàng"] = idDh;
       return x;
     });
-  
 
     await this.service.put(BaseApiUrl.ChiTietDonHangs, this.chitiets);
   }
@@ -147,7 +146,6 @@ export class DonhangsComponent {
       const newSps = chitiets.filter(
         (x: ChiTietDonHang) => x["Sản Phẩm"] == ""
       );
-      console.log(newSps);
       for (let i = 0; i < newSps.length; i++) {
         const result = (await this.service.post(
           BaseApiUrl.SanpPhams,
@@ -169,7 +167,6 @@ export class DonhangsComponent {
       let data: any[] = [];
       const sanphams = Array.from(this.sanphams);
       chitiets.forEach((chitet: ChiTietDonHang) => {
-        console.log(chitet);
         const sp = sanphams.find(
           (x: SanPham) =>
             x["Id"] != "" &&
@@ -213,12 +210,12 @@ export class DonhangsComponent {
   }
   ngAfterContentInit() {}
   async getAllData() {
-    const data = (await this.service.get(BaseApiUrl.All)) as any;
-    this.all = data;
-    this.khachhangs = data["khachhangs"];
-    this.sanphams = data["sanphams"];
-    this.chitiets = data["chitiets"];
-    this.donhangs = data["orders"];
+    const data = (await this.service.get(BaseApiUrl.Orders)) as any;
+    const all = JSON.parse(`${localStorage.getItem("all")}`);
+    this.all = all;
+    this.khachhangs = all["khachhangs"];
+    this.sanphams = all["sanphams"];
+    this.donhangs = data;
   }
   onDialog() {
     const dialogRef = this.dialog.open(OrdersComponent, { data: this.all });
@@ -248,7 +245,7 @@ export class DonhangsComponent {
           return e;
         }
       );
-
+      console.log(item);
       this.dialog.open(ProductArrayComponent, {
         data: { donhang: item, isDonhang: true, sanphams: this.sanphams },
       });

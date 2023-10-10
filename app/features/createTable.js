@@ -67,9 +67,10 @@ const createTableCustomer = async (knex) => {
         notNullable: true,
       });
       table.string("Tên Khách Hàng", 250);
-      table.string("Phone", 11).notNullable();
+      table.string("Phone");
       table.string("Địa Chỉ");
       table.string("Email");
+      exoend(table);
     });
   } catch (error) {
     console.error(error.message);
@@ -88,27 +89,10 @@ const createTableProduct = async (knex) => {
         notNullable: true,
       });
       table.string("Name", 250);
-      table.integer("Giá Nhập", 11).notNullable();
+      table.integer("Giá Nhập");
       table.integer("Giá Bán");
       table.string("Đơn Vị Tính");
-    });
-  } catch (error) {
-    console.error(error.message);
-  }
-};
-const createTest = async (knex) => {
-  try {
-    const tbl = "test";
-    const hasTable = await knex.schema.hasTable(tbl);
-    if (hasTable) {
-      return;
-    }
-    await knex.schema.createTable(tbl, (table) => {
-      table.increments("Id", {
-        primaryKey: true,
-        notNullable: true,
-      });
-      table.string("Sản Phẩm", 250);
+      exoend(table);
     });
   } catch (error) {
     console.error(error.message);
@@ -139,8 +123,7 @@ const createInputProduct = async (knex) => {
       table.integer("Giá Bán").notNullable();
       table.integer("Thành tiền").notNullable();
       table.datetime("Ngày Nhập").notNullable();
-      table.datetime("createdAt").notNullable();
-      table.datetime("updatedAt").notNullable();
+      exoend(table);
     });
   } catch (error) {
     console.error(error.message);
@@ -162,8 +145,7 @@ const createCost = async (knex) => {
       table.integer("Số Tiền").notNullable();
       table.string("Ghi Chú");
       table.datetime("Ngày").notNullable();
-      table.datetime("createdAt").notNullable();
-      table.datetime("updatedAt").notNullable();
+      exoend(table);
     });
   } catch (error) {
     console.error(error.message);
@@ -189,13 +171,14 @@ const createCongNoKh = async (knex) => {
       table.datetime("Ngày Trả");
       table.datetime("createdAt").notNullable();
       table.datetime("updatedAt").notNullable();
+      exoend(table);
     });
   } catch (error) {
     console.error(error.message);
   }
 };
 const initTable = async (knex) => {
-  await createUsersTable(knex);
+ // await createUsersTable(knex);
   await createTableOrders(knex);
   await createTableDetailsOrders(knex);
   await createTableCustomer(knex);

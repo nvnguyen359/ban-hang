@@ -1,7 +1,7 @@
 :root {
     --height: 400px
 }
-$height:500px;
+$height:512px;
 $width150:150px;
 .flex-2{
     width: 150px;
@@ -17,7 +17,9 @@ $width150:150px;
     justify-content: flex-start;
 
 }
-
+.edit{
+    cursor: text;
+}
 .left0 {
     margin-left: 0;
 }

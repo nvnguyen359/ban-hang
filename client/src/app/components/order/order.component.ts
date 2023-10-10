@@ -16,7 +16,6 @@ import { DataService } from "src/app/services/data.service";
   styleUrls: ["./order.component.scss"],
 })
 export class OrderComponent {
- 
   ngay = new FormControl(new Date());
   serializedDate = new FormControl(new Date().toISOString());
   checkDk: any = false;
@@ -45,7 +44,7 @@ export class OrderComponent {
   codeSp: any;
 
   isViewMmodule = false;
-  @Input() dataAll:any;
+  @Input() dataAll: any;
   constructor(
     private service: ApiService,
     private printer: ThermalPrinterServiceService,
@@ -54,7 +53,7 @@ export class OrderComponent {
     localStorage.setItem("sp", "");
     //this.getAllDataService();
 
-    console.log(this.dataAll)
+    console.log(this.dataAll);
   }
 
   jsRun() {
@@ -81,9 +80,8 @@ export class OrderComponent {
     this.selectDv = 1000;
     console.log(this.status);
     //console.log(this.khachhangs,this.products)
-    this.khachhangs = this.dataAll['khachhangs'];
-    this.getProducts(this.dataAll['sanphams']);
-    
+    this.khachhangs = this.dataAll["khachhangs"];
+    this.getProducts(this.dataAll["sanphams"]);
   }
 
   async getAllDataService() {
@@ -189,6 +187,29 @@ export class OrderComponent {
     if (event) {
       this.status = event;
     }
+  }
+  onForcus(event: any) {
+
+  }
+  onEditTable(str: string, i: number, event: any) {
+    this.orders = this.orders.map((x: any, index: number) => {
+      if (index == i) {
+        if (str == "soluong") {
+          x["Số Lượng"] = parseInt(event.target.innerText);
+        }
+        if (str == "dongia") {
+          x["Giá Bán"] = parseInt(event.target.innerText);
+        }
+      }
+      return x;
+    });
+    // this.onCal();
+
+    // const val = event.target.innerText;
+    // event.target.innerText = "";
+    // setTimeout(() => {
+    //   event.target.innerText = val;
+    // },100);
   }
   onCal() {
     if (!this.orders) return;

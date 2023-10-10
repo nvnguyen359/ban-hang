@@ -32,10 +32,10 @@
                                         [options]="optionsKhs" class="left0" (selectTed)="onSelectedKh($event)"
                                         [required]="true" class="max-width490"
                                         style="margin-right:8px"></app-autocomplete></div>
-                               <div class="flex-2">
-                                <app-status-order [statusText]="status"
-                                (eventChange)="eventChangeStatus($event)"></app-status-order>
-                               </div>
+                                <div class="flex-2">
+                                    <app-status-order [statusText]="status"
+                                        (eventChange)="eventChangeStatus($event)"></app-status-order>
+                                </div>
                             </div>
                             <div class="flex groupkhs">
                                 <div class="flex" style="flex-grow:1;margin-right:4px">
@@ -69,7 +69,7 @@
                             <div class="flex">
                                 <mat-form-field style="margin-right:4px" class="flex-2">
                                     <mat-label>Chọn Đơn Vị</mat-label>
-                                    <mat-select  required value="{{selectDv}}">
+                                    <mat-select required value="{{selectDv}}">
                                         <mat-option value="1000">1000đ</mat-option>
                                         <mat-option value="100">100đ</mat-option>
                                     </mat-select>
@@ -94,12 +94,19 @@
                                     <th>T. Tiền</th>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let item of orders;let i= index">
+                                    <tr *ngFor="let item of orders;let i= index"(blur)="onCal()">
                                         <td><span>{{i+1}}</span></td>
                                         <td><span>{{item['Name']}}</span></td>
-                                        <td style="text-align: right;"><span>{{item['Số Lượng']}}</span></td>
+                                        <td style="text-align: right;">
+                                            <div class="edit" contenteditable
+                                            (blur)="onEditTable('soluong',i,$event)"
+                                                [innerHTML]="item['Số Lượng']"></div>
+                                        </td>
                                         <td style="text-align: right;"><span>{{item['Đơn Vị Tính']}}</span></td>
-                                        <td style="text-align: right;"><span>{{item['Giá Bán']|number}}</span></td>
+                                        <td style="text-align: right;">
+                                            <div class="edit" contenteditable
+                                               (blur)="onEditTable('dongia',i,$event)">{{item['Giá Bán']}}</div>
+                                        </td>
                                         <td style="text-align: right;"><span>{{(item['Giá
                                                 Bán']*item['Số Lượng'])|number}}</span></td>
                                     </tr>

@@ -4,5 +4,22 @@
     "allowToChangeInstallationDirectory": true,
     "oneClick": false,
     "perMachine": false
-  }
+  },
+  "extraFiles": [
+    {
+      "from": "./.env",
+      "to": "./.env"
+    },
+    {
+      "from": "./features/adDb.db",
+      "to": "./adDb.db"
+    },
+    {
+      "from": "./scratch",
+      "to": "./scratch",
+      "filter": [
+        "**/*"
+      ]
+    }
+  ]
 }

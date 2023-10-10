@@ -15,10 +15,10 @@ Tên Khách Hàng
 -->
 
 
-<center>
-  <h1 mat-dialog-title innerHTML="{{title}}" class="orders-title"></h1>
+<center *ngIf="!showTitle">
+  <h1 mat-dialog-title innerHTML="{{title}}" class="orders-title" ></h1>
 </center>
-<form [formGroup]="formGroup" class="full-width" style=" margin-left: 8px;" (ngSubmit)="onSubmit()">
+<form [formGroup]="formGroup" class="full-width" style=" margin-left: 8px;margin-top:8px" (ngSubmit)="onSubmit()">
   <input type="hidden" name="Id" formControlName="Id">
   <input formControlName='Khách Hàng' type="hidden">
   <input formControlName='Trạng Thái' type="hidden">
@@ -120,7 +120,7 @@ Tên Khách Hàng
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Đơn Giá</mat-label>
-            <input matInput placeholder="Đơn Giá" type="number" required step="1000" formControlName="Đơn giá"  readonly
+            <input matInput placeholder="Đơn Giá" type="number" required min="1" formControlName="Đơn giá"   autocomplete="off"
               (change)="onChangeValue()"  />
           </mat-form-field>
 

@@ -23,7 +23,7 @@ export class OrdersComponent {
   }
 
   onEventView(event: boolean) {
-    this.isViewMmodule = event==true;
+    this.isViewMmodule = event;
     localStorage.setItem(this.key, `${event}`);
   }
 }

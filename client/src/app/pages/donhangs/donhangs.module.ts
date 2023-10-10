@@ -19,7 +19,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BangmorongModule } from 'src/app/components/bangmorong/bangmorong.module';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-
+import {MatTabsModule} from '@angular/material/tabs';
 
 
 @NgModule({
@@ -46,7 +46,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatTooltipModule,
     BangmorongModule,
     FormsModule,
-    MatCheckboxModule
+    MatCheckboxModule,
   ],
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA

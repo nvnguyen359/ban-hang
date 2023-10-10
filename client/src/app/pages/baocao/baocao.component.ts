@@ -125,7 +125,7 @@ export class BaocaoComponent {
     if (!event) {
       this.firstDay = today.firstDate;
       this.lastDay = today.lastDate;
-      this.title = `Ngày ${this.firstDay.toLocaleDateString()}`;
+      this.title = `Ngày ${this.firstDay.toLocaleDateString('vi')}`;
     }
     if (`${event}`.includes("Tháng")) {
       const m = parseInt(`${event}`.replace("Tháng", "").trim());

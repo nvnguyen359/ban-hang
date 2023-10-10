@@ -2,6 +2,15 @@ const { exec } = require("child_process");
 const fs = require("fs");
 const puppeteer = require("puppeteer");
 const path = require("path");
+
+Date.prototype.addHours = function (h) {
+  this.setTime(this.getTime() + h * 60 * 60 * 1000);
+  return this;
+};
+Date.prototype.addDays = function (d = 0) {
+  this.setTime(this.getTime() + 24 * 60 * 60 * 1000 * d);
+  return this;
+};
 String.prototype.removeAccents = function () {
   return this.normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -14,6 +23,7 @@ String.prototype.xoaDau = function () {
     .replace(/đ/g, "d")
     .replace(/Đ/g, "D");
 };
+
 String.prototype.convertStringVNToDateISO = function () {
   const str = this.split("/").map((x) => parseInt(x));
   let thang = str[1] < 10 ? "0" + str[1] : str[1];
@@ -64,10 +74,10 @@ const getPrinters = () => {
     });
   });
 };
-function delay(delayInms=1000) {
-  return new Promise(resolve => setTimeout(resolve, delayInms));
+function delay(delayInms = 1000) {
+  return new Promise((resolve) => setTimeout(resolve, delayInms));
 }
-function createIdRow(id, nameSheet, startId ) {
+function createIdRow(id, nameSheet, startId) {
   if (!startId) startId = createFirstId(nameSheet);
   if (!id) {
     id = "0";
@@ -121,15 +131,15 @@ const exportPdfFromPupetteerSync = async (
   pageSize = "A6",
   rootPathExport = "D:/Don-Hang"
 ) => {
-  console.log(new Date().toISOString())
-  const date = (new Date().toISOString()).split("T")[0];
+  console.log(new Date().toISOString());
+  const date = new Date().toISOString().split("T")[0];
   const pathFile = `${idDonHang}_${date}.pdf`;
-//${rootPathExport}/
+  //${rootPathExport}/
   createFolder(rootPathExport);
-  const browser = await puppeteer.launch({headless:true});
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   await page.setContent(html);
- 
+
   await page.pdf({
     path: pathFile,
     format: pageSize,
@@ -143,10 +153,41 @@ const exportPdfFromPupetteerSync = async (
   await browser.close();
   return { data: pathFile };
 };
+//moves the $file to $dir2
+var moveFile = (file, dir2) => {
+  //include the fs, path modules
+  var fs = require("fs");
+  var path = require("path");
+
+  //gets file name and adds it to dir2
+  var f = path.basename(file);
+  if (!fs.existsSync(dir2)) {
+    fs.mkdirSync(dir2);
+  }
+
+  var dest = path.resolve(dir2, f);
+  if (fs.existsSync(dest)) {
+    return;
+  }
+  fs.promises.cp(
+    file,
+    dest,
+    {
+      recursive: true,
+    },
+    (err) => {
+      if (err) throw err;
+      else console.log("Successfully moved");
+    }
+  );
+};
+
 module.exports = {
   getPrinters,
   createIdRow,
   createFolder,
   writeFileSync,
-  exportPdfFromPupetteerSync,delay
+  exportPdfFromPupetteerSync,
+  delay,
+  moveFile,
 };

@@ -1,3 +1,5 @@
+
+require("dotenv").config({ path: "../.env" });
 require("dotenv").config();
 const lib = require("./../shares/lib");
 const moment = require("moment");

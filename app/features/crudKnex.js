@@ -21,15 +21,15 @@ class CRUDKNEX {
     return this.table;
   }
   async create(data) {
-    data.createdAt = new Date();
-    data.updatedAt = new Date();
+    data.createdAt = new Date().addHours(12).toISOString();
+    data.updatedAt = new Date().addHours(12).toISOString();
     const result = await knex(this.table).insert([data]);
 
     return result;
   }
   async update(data) {
     const Id = data?.Id;
-    data.updatedAt = new Date();
+    data.updatedAt = new Date().addHours(12).toISOString();
     const result = await knex(this.table).where({ Id }).update(data);
 
     return result;
@@ -40,13 +40,19 @@ class CRUDKNEX {
   async destroy(id) {
     return await knex(this.table).where({ Id: id }).delete();
   }
-  async findAll(query = "", limit = 100, offset = 0) {
+  async getAll(limit = 100, offset = 0, query = "") {
     const result =
       query == ""
         ? await knex(this.table).select("*").limit(limit).offset(offset)
         : await knex.raw(query);
-    //console.log(result)
+    console.log("result", result);
     return result;
+  }
+  async findId(id) {
+    return await knex(this.table).where({ Id: id }).first();
+  }
+  async findOne(obj) {
+    return await knex(this.table).where(obj).first();
   }
   async filterQuery(query) {
     const result = await knex.raw(query);
@@ -54,9 +60,8 @@ class CRUDKNEX {
     return result;
   }
 }
-
-(async () => {
-  let crud = new CRUDKNEX();
-  await crud.initTable();
-})();
+(async()=>{
+  let crud = new CRUDKNEX('Đơn Hàng');
+  await crud.getAll()
+})()
 module.exports = { CRUDKNEX };

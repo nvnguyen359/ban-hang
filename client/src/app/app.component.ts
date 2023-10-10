@@ -61,7 +61,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       localStorage.setItem("all", JSON.stringify({ all: data }));
     }
     this.dataService.sendMessage({ all: data });
-    console.log(data);
     return data["donhangs"].length;
   }
   async getData() {
@@ -98,6 +97,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.router.navigate([`/${BaseApiUrl.BaoCaos}`]);
     }, 500);
     this.french();
+    this.socket.getMessage('all').subscribe((data:any)=>localStorage.setItem('all',JSON.stringify(data)))
   }
   ngAfterViewInit() {}
 }
