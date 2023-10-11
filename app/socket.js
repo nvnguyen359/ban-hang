@@ -24,8 +24,19 @@ class SocketIo {
     if (!key) key = this.keyMeg;
     io.on("connection", (socket) => {
       socket.on(key, (msg) => {
-        console.log(msg)
+        console.log(msg);
         io.emit(key, msg);
+      });
+    });
+  }
+  async asyncGetMessage(key) {
+    if (!key) key = this.keyMeg;
+    return new Promise((res, rej) => {
+      io.on("connection", (socket) => {
+        socket.on(key, (msg) => {
+          io.emit(key, msg)
+          res(msg);
+        });
       });
     });
   }

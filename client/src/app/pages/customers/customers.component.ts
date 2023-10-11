@@ -24,6 +24,8 @@ import {
 } from "@angular/material/dialog";
 import { DialogCustomerComponent } from "src/app/components/dialog-customer/dialog-customer.component";
 import { BaseApiUrl } from "src/app/general";
+import { SocketService } from "src/app/services/socket.service";
+import { OrdersComponent } from "src/app/components/orders/orders.component";
 @Component({
   selector: "app-customers",
   templateUrl: "./customers.component.html",
@@ -38,12 +40,14 @@ export class CustomersComponent implements AfterViewInit {
   constructor(
     private api: ApiService,
     private readonly dialog: MatDialog,
-    private changeDetectorRefs: ChangeDetectorRef
+    private changeDetectorRefs: ChangeDetectorRef,
+    private socket: SocketService
   ) {
     //this.dataSource.paginator = this.paginator;
   }
   ngOnInit() {
     this.getData();
+    // this.getAllDonHangs();
   }
   getData() {
     console.log("====================");
@@ -70,6 +74,7 @@ export class CustomersComponent implements AfterViewInit {
       this.changeDetectorRefs.detectChanges();
     });
   }
+
   ngAfterViewInit() {}
   applyFilter(event: any) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -78,7 +83,17 @@ export class CustomersComponent implements AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
   }
-
+  onDialogDh(khachhang: KhachHang) {
+   // console.log(khachhang)
+    let all = JSON.parse(`${localStorage.getItem("all")}`);
+    const khachhangs = (all["khachhangs"] as KhachHang[]).map((x: any) => {
+      if (x["Id"] == khachhang["Id"]) x["selected"] = true;
+      return x;
+    });
+    all["khachhangs"] = khachhangs;
+    const dialogRef = this.dialog.open(OrdersComponent, { data: all });
+    dialogRef.afterClosed().subscribe((d: any) => {});
+  }
   onDialog(row?: KhachHang) {
     console.log(row);
     const dia = this.dialog.open(DialogCustomerComponent, { data: row });
@@ -90,7 +105,10 @@ export class CustomersComponent implements AfterViewInit {
     });
   }
   refeshTable() {
-    this.api.get(this.url).then((e) => {
+    this.api.get(BaseApiUrl.KhachHangs).then((e) => {
+      const all = JSON.parse(`${localStorage.getItem("all")}`);
+      all["khachhangs"] = e;
+      localStorage.setItem("all", JSON.stringify(all));
       const khachhangs = (e as KhachHang[])
         .reverse()
         .map((x: KhachHang, index) => {

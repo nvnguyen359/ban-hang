@@ -220,12 +220,15 @@ export class DonhangsComponent {
   onDialog() {
     const dialogRef = this.dialog.open(OrdersComponent, { data: this.all });
     dialogRef.afterClosed().subscribe((d: any) => {
-      console.log("dong o ");
     });
   }
 
   eventClickButton(item: any) {
     console.log(item);
+    const kh = this.khachhangs.find((x:KhachHang)=>x['Id']==item['Khách Hàng']);
+   if(kh['Phone']){
+    window.open('tel:'+kh['Phone'])
+   }
   }
 
   onPrint(item: any) {
@@ -245,7 +248,6 @@ export class DonhangsComponent {
           return e;
         }
       );
-      console.log(item);
       this.dialog.open(ProductArrayComponent, {
         data: { donhang: item, isDonhang: true, sanphams: this.sanphams },
       });
@@ -261,9 +263,10 @@ export class DonhangsComponent {
         const ids = item.donhang["chitiets"].map(
           (x: ChiTietDonHang) => x["Id"]
         );
-        await this.service.bulkDelete(BaseApiUrl.ChiTietDonHangs, ids);
-        await this.service.destroy(BaseApiUrl.DonHangs, item.donhang["Id"]);
-        this.dataService.sendMessage(Status.Refesh);
+        if(ids.length>0)
+         this.service.bulkDelete(BaseApiUrl.ChiTietDonHangs, ids);
+         this.service.destroy(BaseApiUrl.DonHangs, item.donhang["Id"]);
+        this.dataService.sendMessage({status:Status.Refesh, id:item.donhang["Id"]});
       }
     });
   }

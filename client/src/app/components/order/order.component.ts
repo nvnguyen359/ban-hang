@@ -8,7 +8,7 @@ import { ApiService } from "src/app/services/api.service";
 import { ThermalPrinterServiceService } from "src/app/services/thermal-printer-service.service";
 declare var capitalizeFirstLetter: any;
 declare var removeAccents: any;
-import { BaseApiUrl, Status } from "./../../general";
+import { BaseApiUrl, Status, delay } from "./../../general";
 import { DataService } from "src/app/services/data.service";
 @Component({
   selector: "app-order",
@@ -33,6 +33,7 @@ export class OrderComponent {
   obj?: SanPham;
   khachhangs: KhachHang[] = [];
   khach?: any;
+  khDefault:any;
   filteredOptions!: Observable<string[]>;
   optionsKhs = {
     showtext: "Tên Khách Hàng",
@@ -53,7 +54,7 @@ export class OrderComponent {
     localStorage.setItem("sp", "");
     //this.getAllDataService();
 
-    console.log(this.dataAll);
+   
   }
 
   jsRun() {
@@ -77,9 +78,10 @@ export class OrderComponent {
     //await this.getAllDataService();
     // this.getProducts();
     // this.getKhachHang();
+   
+    this.khDefault = this.dataAll['khachhangs'].find((x:any)=>x['selected']==true);
+    console.log(this.khDefault)
     this.selectDv = 1000;
-    console.log(this.status);
-    //console.log(this.khachhangs,this.products)
     this.khachhangs = this.dataAll["khachhangs"];
     this.getProducts(this.dataAll["sanphams"]);
   }
@@ -188,9 +190,7 @@ export class OrderComponent {
       this.status = event;
     }
   }
-  onForcus(event: any) {
-
-  }
+  onForcus(event: any) {}
   onEditTable(str: string, i: number, event: any) {
     this.orders = this.orders.map((x: any, index: number) => {
       if (index == i) {
@@ -203,13 +203,11 @@ export class OrderComponent {
       }
       return x;
     });
-    // this.onCal();
-
-    // const val = event.target.innerText;
-    // event.target.innerText = "";
-    // setTimeout(() => {
-    //   event.target.innerText = val;
-    // },100);
+  }
+  onKeyPress(event: any) {
+    const val = String.fromCharCode(event.which);
+    console.log(val);
+    if (isNaN(parseInt(val))) event.preventDefault();
   }
   onCal() {
     if (!this.orders) return;
@@ -302,6 +300,7 @@ export class OrderComponent {
   }
   async onSavePrint() {
     await this.onSave();
+    await delay(1000);
     await this.printer.print(this.donhang);
   }
   onReset() {

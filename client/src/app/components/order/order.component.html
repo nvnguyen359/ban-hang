@@ -28,7 +28,7 @@
                     <div class="right flex" style="flex-direction: column; margin-left:8px;max-width:400px">
                         <div>
                             <div class="flex">
-                                <div class="flex-1"> <app-autocomplete [data]="khachhangs" *ngIf="khachhangs.length>0"
+                                <div class="flex-1"> <app-autocomplete [data]="khachhangs" [default]="khDefault['Tên Khách Hàng']" *ngIf="khachhangs.length>0"
                                         [options]="optionsKhs" class="left0" (selectTed)="onSelectedKh($event)"
                                         [required]="true" class="max-width490"
                                         style="margin-right:8px"></app-autocomplete></div>
@@ -99,12 +99,12 @@
                                         <td><span>{{item['Name']}}</span></td>
                                         <td style="text-align: right;">
                                             <div class="edit" contenteditable
-                                            (blur)="onEditTable('soluong',i,$event)"
+                                            (blur)="onEditTable('soluong',i,$event)" (keypress)="onKeyPress($event)"
                                                 [innerHTML]="item['Số Lượng']"></div>
                                         </td>
                                         <td style="text-align: right;"><span>{{item['Đơn Vị Tính']}}</span></td>
                                         <td style="text-align: right;">
-                                            <div class="edit" contenteditable
+                                            <div class="edit" contenteditable (keypress)="onKeyPress($event)"
                                                (blur)="onEditTable('dongia',i,$event)">{{item['Giá Bán']}}</div>
                                         </td>
                                         <td style="text-align: right;"><span>{{(item['Giá

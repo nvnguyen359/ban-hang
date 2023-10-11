@@ -95,20 +95,19 @@ export class BangmorongComponent {
   ngOnInit() {
     this.onLoadData();
     this.dataService.currentMessage.subscribe((e: any) => {
-      console.log('e,e',e)
-      if (e.status == Status.Refesh) {
-       this.service.get(BaseApiUrl.All).then((data:any)=>{
-        /* The `data` property in the `BangmorongComponent` class is used to
-        store the data that will be displayed in the table. It is an input
-        property, which means that the data can be passed into the component
-        from its parent component. The `data` property is then used to
-        initialize the `dataSource` property, which is an instance of the
-        `MatTableDataSource` class. The `dataSource` is responsible for
-        providing the data to the table. */
-       // console.log(data)
-        this.dataSource.data = data['orders'].reverse();
+      if (e.id && e.status == Status.Refesh) {
+        this.dataSource.data = Array.from(
+          this.dataSource.data as DonHang[]
+        ).filter((x: DonHang) => x["Id"] != e["id"]);
         this.changeDetectorRefs.detectChanges();
-       })
+        return;
+      }
+      if (e.status == Status.Refesh || e == Status.Refesh) {
+        this.service.get(BaseApiUrl.Orders).then((data: any) => {
+          this.dataSource.data = data.reverse();
+          this.changeDetectorRefs.detectChanges();
+          return;
+        });
       }
     });
   }
@@ -130,16 +129,12 @@ export class BangmorongComponent {
       // x['Tên Khách Hàng'] =` <button mat-button color="primary">${x['Tên Khách Hàng']}</button>`;
       return x;
     });
-    console.log(donhangs);
     this.dataSource = new MatTableDataSource(Array.from(donhangs).reverse());
     this.columnsToDisplayWithExpand = [...this.columnsToDisplay, "expand"];
     this.dataSource.paginator = this.paginator;
     // this.changeDetectorRefs.detectChanges();
   }
 
-
-  
- 
   classToday(value: any) {
     // console.log(value)
     const today = new Date();
@@ -149,7 +144,6 @@ export class BangmorongComponent {
   }
 
   onLoadData() {
-    console.log(this.data);
     this.dataSource = new MatTableDataSource(Array.from(this.data).reverse());
     this.columnsToDisplayWithExpand = [...this.columnsToDisplay, "expand"];
     this.dataSource.paginator = this.paginator;
@@ -184,8 +178,6 @@ export class BangmorongComponent {
     event.stopPropagation();
   }
   OnEvent(item: any, ev: any) {
-    console.log({ donhang: item, onUpdate: ev });
-    //  this.refesh(item,ev)
     this.eventDeleteOrUpdate.emit({ donhang: item, onUpdate: ev });
   }
   onCapNhat(item: any, ev: any) {

@@ -8,7 +8,7 @@ const { eventsAutoUpdate } = require("./shares/autoUpdaterJs");
 const { getPrinters } = require("./shares/lib");
 const { autoUpdater, AppUpdater } = require("electron-updater");
 const { SocketIo } = require("./socket");
-const {CRUD} = require('./features/crud');
+const { CRUD } = require("./features/crud");
 const {
   app,
   BrowserWindow,
@@ -39,12 +39,12 @@ function createWindow() {
 }
 app.serve = require(pathServer);
 app.whenReady().then(async () => {
-  let crud=  new CRUD();
-crud.nameSheetTitle = "Khách Hàng";
-const khachhangs = await crud.getAll();
-crud.nameSheetTitle = "Sản Phẩm";
-const sanphams = await crud.getAll()
-socket.sendMessage({khachhangs,sanphams},'all')
+  let crud = new CRUD();
+  crud.nameSheetTitle = "Khách Hàng";
+  const khachhangs = await crud.getAll();
+  crud.nameSheetTitle = "Sản Phẩm";
+  const sanphams = await crud.getAll();
+  socket.sendMessage({ khachhangs, sanphams }, "all");
   createWindow();
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length == 0) createWindow();
@@ -53,7 +53,6 @@ socket.sendMessage({khachhangs,sanphams},'all')
   if ((await curWindow.nhanData()) == "install") {
     autoUpdater.quitAndInstall();
   }
- 
 });
 
 setInterval(() => {
@@ -127,8 +126,8 @@ app.on("window-all-closed", function () {
     }
   }
 });
-console.log('path',app.getPath("userData"))
-const dbFile = path.join(__dirname,'./features/adDb.db');
-const movepath =app.getPath("userData");
-console.log(movepath)
-lib.moveFile(dbFile,movepath)
+console.log("path", app.getPath("userData"));
+const dbFile = path.join(__dirname, "./features/adDb.db");
+const movepath = app.getPath("userData");
+console.log(movepath);
+lib.moveFile(dbFile, movepath);

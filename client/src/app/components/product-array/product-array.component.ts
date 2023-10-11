@@ -68,6 +68,7 @@ export class ProductArrayComponent {
   @Input() dataAll: any;
   @Input() newOrder = false;
   optionButtonUpdate = true;
+  defaultKh: any = null;
   ngay?: any;
   constructor(
     private fb: FormBuilder,
@@ -108,6 +109,8 @@ export class ProductArrayComponent {
     if (this.khachhangs == undefined) {
       // this.getDataService();
       this.khachhangs = this.dataAll["khachhangs"];
+      this.defaultKh= this.khachhangs.find((x:any)=>x['selected']==true);
+   
       this.sanphams = this.dataAll["sanphams"];
       this.onAdd();
       this.onAdd();

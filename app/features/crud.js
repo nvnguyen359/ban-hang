@@ -198,7 +198,7 @@ class CRUD {
       const row = rows.find((x, index) => {
         return rows[index].get(_headerValues[0]) == ids[i];
       });
-      await lib.delay(1200);
+      await lib.delay(50);
       if (row) {
         console.log("bulkDelete ", ids[i]);
         row.delete();

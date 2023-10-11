@@ -166,39 +166,7 @@ export class ThermalPrinterServiceService {
 ${khHtml}
 </div>`;
   }
-  /**Giá Nhập
-: 
-"1400"
-Id
-: 
-"CTDH000028"
-Ngày
-: 
-"04/10/2023"
-STT
-: 
-1
-Sản Phẩm
-: 
-"SP000112"
-Số Lượng
-: 
-"20"
-Thành Tiền
-: 
-"50000"
-Tên Sản Phẩm
-: 
-"Kẽm bộ 5s2p dày 0.18mm"
-Đơn Hàng
-: 
-"DH000006"
-Đơn Vị Tính
-: 
-"Bộ"
-Đơn giá
-: 
-"2500" */
+
   setBodyTable(donhang: DonHang, isPageA5: any, columns: string[]) {
     const chitiets = Array.from(donhang["chitiets"]).map((x: any, index) => {
       x["STT"] = index + 1;
@@ -210,7 +178,7 @@ Tên Sản Phẩm
     // if (columns.filter((x: any) => x == "STT").length > 1) {
     //   columns.pop();
     // }
-    columns =['STT','Tên Sản Phẩm','Số Lượng','Đơn Vị Tính','Đơn giá','Thành Tiền']
+    
     chitiets.forEach((x: any, index) => {
       if (!isPageA5) {
         delete x["STT"];
@@ -328,7 +296,7 @@ ${head}
     return tfoot;
   }
   async print(donhang: any) {
-    //console.log(donhang);
+    console.log(donhang);
     const classMain = this.PaperWidth == "80mm" ? "a8" : "a5";
     const isPageA5 = classMain == "a5";
     console.log(classMain);
@@ -338,7 +306,7 @@ ${head}
     ); //['Id', 'Sản Phẩm', 'Tên Sản Phẩm', 'Đơn giá', 'Số Lượng', 'Đơn Vị Tính', 'Thành Tiền', 'Ngày', 'Giá Nhập', 'Đơn Hàng']
 
     let columns = isPageA5
-      ? ["STT", ...columnsChitiets]
+      ? ['STT','Tên Sản Phẩm','Số Lượng','Đơn Vị Tính','Đơn giá','Thành Tiền']
       : columnsChitiets.filter((x) => x != "ĐV");
     var html = "";
     const inforStore = await this.addInforStore(donhang);

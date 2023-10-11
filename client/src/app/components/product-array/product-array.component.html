@@ -18,7 +18,7 @@ Tên Khách Hàng
 <center *ngIf="!showTitle">
   <h1 mat-dialog-title innerHTML="{{title}}" class="orders-title" ></h1>
 </center>
-<form [formGroup]="formGroup" class="full-width" style=" margin-left: 8px;margin-top:8px" (ngSubmit)="onSubmit()">
+<form [formGroup]="formGroup" class="full-width" style=" margin-left: 8px;margin-top:8px" (ngSubmit)="onSubmit()" >
   <input type="hidden" name="Id" formControlName="Id">
   <input formControlName='Khách Hàng' type="hidden">
   <input formControlName='Trạng Thái' type="hidden">
@@ -26,7 +26,7 @@ Tên Khách Hàng
     <div class="customer">
       <mat-form-field appearance="outline">
         <mat-label>Danh Sách KH</mat-label>
-        <input list="dsKhachHang" matInput placeholder="Chọn Khách Hàng" formControlName="Tên Khách Hàng"
+        <input list="dsKhachHang" matInput placeholder="Chọn Khách Hàng" formControlName="Tên Khách Hàng" [(ngModel)]="defaultKh['Tên Khách Hàng']"
           (change)="onKeyUpCustomer($event.target)">
 
         <datalist id="dsKhachHang">
