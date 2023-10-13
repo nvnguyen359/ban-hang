@@ -1,6 +1,6 @@
 {
   "name": "AD",
-  "version": "0.3.4",
+  "version": "0.3.6",
   "description": "Quản Lý Bán Hàng",
   "main": "main.js",
   "scripts": {
@@ -87,6 +87,7 @@
     "save": "^2.9.0",
     "socket.io": "^4.7.2",
     "sqlite3": "^5.1.6",
+    "uid": "^2.0.2",
     "update-electron-app": "^2.0.1"
   }
 }

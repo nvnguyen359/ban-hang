@@ -11,6 +11,7 @@ import {MatChipsModule} from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { DisplayHeaderNhaphangPipe } from 'src/app/pipes/display-header-nhaphang.pipe';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,7 @@ import { DisplayHeaderNhaphangPipe } from 'src/app/pipes/display-header-nhaphang
     MatChipsModule,
     MatButtonModule,
     MatTableModule,
-    MatIconModule
+    MatTabsModule
   ],schemas: [
     CUSTOM_ELEMENTS_SCHEMA,
     NO_ERRORS_SCHEMA

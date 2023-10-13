@@ -80,7 +80,7 @@ export class OrderComponent {
     // this.getKhachHang();
    
     this.khDefault = this.dataAll['khachhangs'].find((x:any)=>x['selected']==true);
-    console.log(this.khDefault)
+   this.khDefault = this.khDefault?this.khDefault['Tên Khách Hàng']:''
     this.selectDv = 1000;
     this.khachhangs = this.dataAll["khachhangs"];
     this.getProducts(this.dataAll["sanphams"]);

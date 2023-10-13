@@ -120,7 +120,7 @@ String.prototype.capitalizeFirstLetter = function () {
 Array.prototype.convertDateVNView = function () {
   let array = this as any[];
   array = array.map((x: any) => {
-    let ngays = ["Ngày Nhập", "Ngày", "Ngày Bán"];
+    let ngays = ["Ngày", "Ngày Bán"];
     ngays.forEach((ngay: any) => {
       if (x[ngay]) x[ngay] = `${x[ngay]}`.DateFormatDDMMYYY();
     });
@@ -128,4 +128,3 @@ Array.prototype.convertDateVNView = function () {
   });
   return array;
 };
-

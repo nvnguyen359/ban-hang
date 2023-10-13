@@ -66,7 +66,6 @@ export class NhaphangComponent {
     this.loadData();
     //console.log(this.groupsDate)
     this.dataService.currentMessage.subscribe(async (e: any) => {
-
       if (e == Status.Refesh) {
         await delay(10);
         this.loadData(true);
@@ -74,10 +73,13 @@ export class NhaphangComponent {
     });
   }
   async refeshTable() {
-    const nhs = (await this.apiService.get("nhaphang")) as any;
+    let nhs = (await this.apiService.get(BaseApiUrl.NhapHangs)) as NhapHang[];
+    nhs = nhs.sort(function (a: NhapHang, b: NhapHang) {
+      return new Date(b["Ngày Nhập"]).getTime() - new Date(a['Ngày Nhập']).getTime();
+    });
     this.groupsDate = this.groups(
       nhs.map((x: any) => {
-        x["Ngày Nhập"] = `${x["Ngày Nhập"]}`.DateFormatDDMMYYY();
+        x["Ngày Nhập"] = x["Ngày Nhập"].toLocaleDateString("vi");
         return x;
       })
     );
@@ -87,20 +89,23 @@ export class NhaphangComponent {
   }
   loadData(refesh?: boolean) {
     this.apiService.get(BaseApiUrl.NhapHangs).then((e: any) => {
-      const nhaphangs = (e as NhapHang[]).reverse();
+    let  nhs = e.sort(function (a: NhapHang, b: NhapHang) {
+        return new Date(b["Ngày Nhập"]).getTime() - new Date(a['Ngày Nhập']).getTime();
+      });
+      const nhaphangs = (nhs as NhapHang[]);
       this.nhaphangs = nhaphangs.filter((x: any) => {
         if (x["Ngày Nhập"] != undefined) return x;
       });
       this.groupsDate = this.groups(
         this.nhaphangs.map((x: any) => {
-          x["Ngày Nhập"] = `${x["Ngày Nhập"]}`.DateFormatDDMMYYY();
+         x["Ngày Nhập"] = new Date(x["Ngày Nhập"]).toLocaleDateString("vi");
           return x;
         })
       );
       if (refesh) {
-        this.dataSource.data = this.groupsDate.reverse();
+        this.dataSource.data = this.groupsDate;
       } else {
-        this.dataSource = new MatTableDataSource(this.groupsDate.reverse());
+        this.dataSource = new MatTableDataSource(this.groupsDate);
       }
       this.changeDetectorRefs.detectChanges();
     });
@@ -143,8 +148,9 @@ export class NhaphangComponent {
       const quantity = array
         .map((x: NhapHang) => parseInt(x["Số Lượng"].toString()))
         .reduce((a, b) => a + b, 0);
+        console.log(el)
       const item: GroupDate = {
-        date: `${el}`,
+        date: el,
         nhaphang: array.map((x: any, index) => {
           x.index = index + 1;
           x["Số Lượng"] = parseInt(x["Số Lượng"]);
@@ -159,10 +165,7 @@ export class NhaphangComponent {
       };
       data.push(item);
     });
-    return data.sort(
-      (a: GroupDate, b: GroupDate) =>
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    return data
   }
   onDelete(element: GroupDate) {
     const nhapHangs = element.nhaphang as NhapHang[];
@@ -179,7 +182,7 @@ export class NhaphangComponent {
 
           this.dataSource.data = this.groups(
             result.data.map((x: any) => {
-              x["Ngày Nhập"] = `${x["Ngày Nhập"]}`.DateFormatDDMMYYY();
+              x["Ngày Nhập"] = new Date( x["Ngày Nhập"]).toLocaleDateString('vi');
               return x;
             })
           );
@@ -194,6 +197,5 @@ export class NhaphangComponent {
     const dialog = this.dialog.open(OnNhapHangComponent, {
       data: { nhaphangs: nhs, sanphams: this.sanphams },
     });
-   
   }
 }

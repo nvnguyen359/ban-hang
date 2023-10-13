@@ -20,11 +20,11 @@ class SocketIo {
       console.log(`Socket.IO server running at http://localhost:${port}/`);
     });
   }
-  getMessage(key) {
+  getMessage(key,callback) {
     if (!key) key = this.keyMeg;
     io.on("connection", (socket) => {
       socket.on(key, (msg) => {
-        console.log(msg);
+        callback(msg)
         io.emit(key, msg);
       });
     });

@@ -50,7 +50,7 @@ export class MenuLeftComponent {
       icon: "spa",
     },
     {
-      text: "Nhập Hàng",
+      text: "Nhập  - Tồn Kho",
       link:  `/${BaseApiUrl.NhapHangs}`,
       icon: "credit_card",
     },

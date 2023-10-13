@@ -39,12 +39,6 @@ function createWindow() {
 }
 app.serve = require(pathServer);
 app.whenReady().then(async () => {
-  let crud = new CRUD();
-  crud.nameSheetTitle = "Khách Hàng";
-  const khachhangs = await crud.getAll();
-  crud.nameSheetTitle = "Sản Phẩm";
-  const sanphams = await crud.getAll();
-  socket.sendMessage({ khachhangs, sanphams }, "all");
   createWindow();
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length == 0) createWindow();
@@ -53,10 +47,29 @@ app.whenReady().then(async () => {
   if ((await curWindow.nhanData()) == "install") {
     autoUpdater.quitAndInstall();
   }
+  updateData();
+  nhapTonKho();
 });
-
-setInterval(() => {
+async function updateData() {
+  let crud = new CRUD();
+  crud.nameSheetTitle = "Khách Hàng";
+  const khachhangs = await crud.getAll();
+  crud.nameSheetTitle = "Sản Phẩm";
+  const sanphams = await crud.getAll();
+  socket.sendMessage({ khachhangs, sanphams }, "all");
+}
+async function nhapTonKho() {
+  let crud = new CRUD();
+  crud.nameSheetTitle = "Chi Tiết Đơn Hàng";
+  const chitiets = await crud.getAll();
+  crud.nameSheetTitle = "Nhập Hàng";
+  const nhaphangs = await crud.getAll();
+  socket.sendMessage({ chitiets, nhaphangs }, "tonkho");
+}
+setInterval(async () => {
   checkUpdat();
+  updateData();
+  nhapTonKho();
 }, 60000);
 function checkUpdat() {
   mes = `Đang kiểm tra các bản cập nhật. Phiên bản hiện tại ${app.getVersion()}`;

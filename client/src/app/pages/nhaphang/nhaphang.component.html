@@ -1,71 +1,76 @@
 
-<div style="width: 100%;" class="example-container mat-elevation-z8 table-nhaphang">
-    <table mat-table  *ngIf="dataSource" [dataSource]="dataSource" multiTemplateDataRows  >
-        <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay;  index as i">
-            <th mat-header-cell *matHeaderCellDef sticky=""> {{column|displayHeaderNhaphang}} </th>
-            <!-- <td mat-cell *matCellDef="let element" ngIf="column=='date'"> {{element[column]|date:'dd/mm/yyyy'}} </td> -->
-            <td mat-cell *matCellDef="let element" > {{element[column]}} </td>
+
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+    <mat-tab label="Nhập Hàng">
+        <div style="width: 100%;" class="example-container mat-elevation-z8 table-nhaphang">
+            <table mat-table  *ngIf="dataSource" [dataSource]="dataSource" multiTemplateDataRows  >
+                <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay;  index as i">
+                    <th mat-header-cell *matHeaderCellDef sticky=""> {{column|displayHeaderNhaphang}} </th>
+                    <!-- <td mat-cell *matCellDef="let element" ngIf="column=='date'"> {{element[column]|date:'dd/mm/yyyy'}} </td> -->
+                    <td mat-cell *matCellDef="let element" > {{element[column]}} </td>
+                    
+                </ng-container>
+                <ng-container matColumnDef="expand">
+                    <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+                    <td mat-cell *matCellDef="let element">
+                        <button mat-icon-button aria-label="expand row"
+                            (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+                            <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+                            <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
             
-        </ng-container>
-        <ng-container matColumnDef="expand">
-            <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
-            <td mat-cell *matCellDef="let element">
-                <button mat-icon-button aria-label="expand row"
-                    (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
-                    <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
-                    <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
-                </button>
-            </td>
-        </ng-container>
-    
-        <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-        <ng-container matColumnDef="expandedDetail">
-            <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
-                <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                    <div class="example-element-diagram" style="height: auto;width:100%">
-                        <table class="table-ngay" *ngIf="true">
-                            <thead style="position: sticky;">
-                                <th>No.</th>
-                                <th>Sản Phẩm</th>
-                                <th>Số Lượng</th>
-                                <th>ĐVT</th>
-                                <th>Giá Nhập</th>
-                                <th>Giá Bán</th>
-                                <th>Thanh Toán</th>
-                            </thead>
-                            <tbody style="max-height: 300px;">
-                                <tr *ngFor="let row of element?.nhaphang">
-                                    <td [innerText]="row.index" style="text-align: right;"></td>
-                                    <td [innerText]="row['Tên sản phẩm']"></td>
-                                    <td [innerText]="row['Số Lượng']|number" style="text-align: right;"></td>
-                                    <td [innerText]="row['Đơn Vị Tính']" style="text-align: right;"></td>
-                                    <td [innerText]="row['Giá Nhập']|number" style="text-align: right;"></td>
-                                    <td [innerText]="row['Giá Bán']|number" style="text-align: right;"></td>
-                                    <td [innerText]="row['Thành tiền']|number" style="text-align: right;"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="flex" style="justify-content: right;margin-top:8px">
-                            <button mat-stroked-button color="primary" (click)="onUpdate(element)">Cập Nhật</button>
-                            <button mat-stroked-button color="accent" (click)="onDelete(element)">Xóa</button>
+                <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+                <ng-container matColumnDef="expandedDetail">
+                    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+                        <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                            <div class="example-element-diagram" style="height: auto;width:100%">
+                                <table class="table-ngay" *ngIf="true">
+                                    <thead style="position: sticky;">
+                                        <th>No.</th>
+                                        <th>Sản Phẩm</th>
+                                        <th>Số Lượng</th>
+                                        <th>ĐVT</th>
+                                        <th>Giá Nhập</th>
+                                        <th>Giá Bán</th>
+                                        <th>Thanh Toán</th>
+                                    </thead>
+                                    <tbody style="max-height: 300px;">
+                                        <tr *ngFor="let row of element?.nhaphang">
+                                            <td [innerText]="row.index" style="text-align: right;"></td>
+                                            <td [innerText]="row['Tên sản phẩm']"></td>
+                                            <td [innerText]="row['Số Lượng']|number" style="text-align: right;"></td>
+                                            <td [innerText]="row['Đơn Vị Tính']" style="text-align: right;"></td>
+                                            <td [innerText]="row['Giá Nhập']|number" style="text-align: right;"></td>
+                                            <td [innerText]="row['Giá Bán']|number" style="text-align: right;"></td>
+                                            <td [innerText]="row['Thành tiền']|number" style="text-align: right;"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="flex" style="justify-content: right;margin-top:8px">
+                                    <button mat-stroked-button color="primary" (click)="onUpdate(element)">Cập Nhật</button>
+                                    <button mat-stroked-button color="accent" (click)="onDelete(element)">Xóa</button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </td>
-        </ng-container>
-    
-        <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand; sticky: true"></tr>
-        <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
-            [class.example-expanded-row]="expandedElement === element"
-            (click)="expandedElement = expandedElement === element ? null : element">
-        </tr>
-        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-    </table>
-    <div class="bt-sti">
-        <button mat-fab (click)="onUpdate()">
-            <mat-icon mat-icon-button>edit</mat-icon>
-        </button>
-    
-    </div>
-    
+                    </td>
+                </ng-container>
+            
+                <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand; sticky: true"></tr>
+                <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row"
+                    [class.example-expanded-row]="expandedElement === element"
+                    (click)="expandedElement = expandedElement === element ? null : element">
+                </tr>
+                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+            </table>
+        </div>
+    </mat-tab>
+    <mat-tab label="Tồn Kho">Content 2</mat-tab>
+  </mat-tab-group>
+
+  <div class="bt-sti">
+    <button mat-fab (click)="onUpdate()">
+        <mat-icon mat-icon-button>edit</mat-icon>
+    </button>
 </div>

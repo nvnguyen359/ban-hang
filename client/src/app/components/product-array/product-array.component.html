@@ -26,7 +26,7 @@ Tên Khách Hàng
     <div class="customer">
       <mat-form-field appearance="outline">
         <mat-label>Danh Sách KH</mat-label>
-        <input list="dsKhachHang" matInput placeholder="Chọn Khách Hàng" formControlName="Tên Khách Hàng" [(ngModel)]="defaultKh['Tên Khách Hàng']"
+        <input list="dsKhachHang" matInput placeholder="Chọn Khách Hàng" formControlName="Tên Khách Hàng" [(ngModel)]="defaultKh"
           (change)="onKeyUpCustomer($event.target)">
 
         <datalist id="dsKhachHang">

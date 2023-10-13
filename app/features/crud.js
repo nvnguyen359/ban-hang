@@ -5,7 +5,7 @@ const lib = require("./../shares/lib");
 const moment = require("moment");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const { JWT } = require("google-auth-library");
-
+const {uid} = require('uid');
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
 const SHEET_ID = process.env.SHEET_ID;
@@ -123,7 +123,7 @@ class CRUD {
       const count = rows.length;
 
       const newRows = values.map((x, index) => {
-        const id = lib.createIdRow(count + index, this.nameSheet);
+        const id = uid();
 
         if (x["Id"] == ""|| x['Id']== null ) {
           x["Id"] = id;
