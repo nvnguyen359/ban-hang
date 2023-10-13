@@ -36,10 +36,10 @@ export class AutocompleteComponent {
   }
   private _filter(value: string): any {
     if (!value) {
-      return this.data;
+      return Array.from(this.data);
     } else {
       const filterValue = `${value}`.toLowerCase();
-      return this.data.filter((option: any) =>
+      return Array.from(this.data).reverse().filter((option: any) =>
         removeAccents(option[this.options.showtext])
           .toLowerCase()
           .includes(removeAccents(filterValue))

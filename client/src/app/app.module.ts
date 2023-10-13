@@ -70,6 +70,7 @@ import{NgApexchartsModule} from 'ng-apexcharts';
 import { ChartOrderComponent } from './components/chart-order/chart-order.component';
 import { NumberRoundPipe } from './pipes/number-round.pipe'
 import { MatTabsModule } from "@angular/material/tabs";
+import { TonKhosComponent } from './components/ton-khos/ton-khos.component';
 
 
 

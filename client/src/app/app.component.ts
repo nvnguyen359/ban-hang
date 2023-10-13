@@ -9,6 +9,9 @@ import { DataService } from "./services/data.service";
 import { async } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { BaseApiUrl } from "./general";
+import { SanPham } from "./Models/sanPham";
+import { ChiTietDonHang } from "./Models/chiTietDonHang";
+import { NhapHang } from "./Models/nhapHang";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -97,7 +100,52 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.router.navigate([`/${BaseApiUrl.BaoCaos}`]);
     }, 500);
     this.french();
-    this.socket.getMessage('all').subscribe((data:any)=>localStorage.setItem('all',JSON.stringify(data)))
+    this.socket
+      .getMessage("all")
+      .subscribe((data: any) =>
+        localStorage.setItem("all", JSON.stringify(data))
+      );
+    this.socket
+      .getMessage("tonkho")
+      .subscribe((data: any) =>
+        localStorage.setItem("tonkho", JSON.stringify(data))
+      );
+    this.tonKho();
+  }
+  tonKho() {
+    let tonkho = JSON.parse(`${localStorage.getItem("tonkho")}`) as any;
+    const nhahangs = tonkho["nhaphangs"] as NhapHang[];
+    console.log(nhahangs);
+    const all = JSON.parse(`${localStorage.getItem("all")}`);
+    let tonkhos: any[] = [];
+    Array.from(all["sanphams"] as SanPham[]).forEach((sanpham: SanPham) => {
+      const chitiets = Array.from(
+        tonkho["chitiets"] as ChiTietDonHang[]
+      ).filter((x: ChiTietDonHang) => x["Sản Phẩm"] == sanpham.Id);
+      const slChiTiet = chitiets
+        .map((x: any) => parseInt(x["Số Lượng"]))
+        .reduce((a: any, b: any) => a + b, 0);
+      const nhs = nhahangs.filter((x: NhapHang) => x["Sản Phẩm"] == sanpham.Id);
+      const slNhs = nhs
+        .map((x: any) => parseInt(x["Số Lượng"]))
+        .reduce((a: any, b: any) => a + b, 0);
+      const moneyNhaphangs = nhs
+        .map((x: any) => parseInt(x["Số Lượng"]) * parseInt(x["Giá Nhập"]))
+        .reduce((a: any, b: any) => a + b, 0);
+      const moneyChititets = chitiets
+        .map((x: any) => parseInt(x["Số Lượng"]) * parseInt(x["Giá Bán"]))
+        .reduce((a: any, b: any) => a + b, 0);
+      const item = {
+        Tên: sanpham["Name"],
+        "Nhập Hàng": slNhs,
+        "Xuất Hàng": slChiTiet,
+        "Tồn Kho": slNhs - slChiTiet,
+        "Giá Trị": moneyNhaphangs - moneyChititets,
+      };
+      tonkhos.push(item);
+    });
+    tonkho["ton"] = tonkhos;
+    localStorage.setItem("sumTk", JSON.stringify(tonkhos));
   }
   ngAfterViewInit() {}
 }

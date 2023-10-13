@@ -41,7 +41,7 @@ export class ProductArrayComponent {
   sanphams: any[] = [];
   initSanpham?: SanPham;
   donhang: any;
-
+listKhs?:any;
   khachhangs?: any;
   formGroup?: any = this.fb.group({
     Id: "",
@@ -109,9 +109,10 @@ export class ProductArrayComponent {
     if (this.khachhangs == undefined) {
       // this.getDataService();
       this.khachhangs = this.dataAll["khachhangs"];
+      this.listKhs = this.khachhangs.reverse()
       this.defaultKh= this.khachhangs.find((x:any)=>x['selected']==true);
    
-      this.sanphams = this.dataAll["sanphams"];
+      this.sanphams = this.dataAll["sanphams"].reverse();
       this.onAdd();
       this.onAdd();
       this.onAdd();
@@ -125,7 +126,7 @@ export class ProductArrayComponent {
         let result: any = await this.serviceApi.get(BaseApiUrl.All);
         console.log(result);
         this.sanphams = Array.from(result["sanphams"]);
-        this.khachhangs = Array.from(result["khachhangs"]) as KhachHang[];
+        this.khachhangs = Array.from(result["khachhangs"]).reverse() as KhachHang[];
         res(result);
       } catch (error) {
         res(null);

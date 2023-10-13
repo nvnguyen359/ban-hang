@@ -29,9 +29,7 @@ Tên Khách Hàng
         <input list="dsKhachHang" matInput placeholder="Chọn Khách Hàng" formControlName="Tên Khách Hàng" [(ngModel)]="defaultKh"
           (change)="onKeyUpCustomer($event.target)">
 
-        <datalist id="dsKhachHang">
-          <option *ngFor="let khach of khachhangs" [value]="khach['Tên Khách Hàng']">{{khach['Phone']}}</option>
-        </datalist>
+       
       </mat-form-field>
       <button mat-icon-button type="button" color="primary" class="add-button">
         <mat-icon>add</mat-icon>
@@ -142,3 +140,7 @@ Tên Khách Hàng
     <button mat-flat-button color="warn" type="button" mat-dialog-close>Đóng &nbsp;<mat-icon>close</mat-icon></button>
   </div>
 </form>
+
+<datalist id="dsKhachHang">
+  <option *ngFor="let khach of listKhs" [value]="khach['Tên Khách Hàng']">{{khach['Phone']}}</option>
+</datalist>

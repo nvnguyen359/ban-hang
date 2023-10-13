@@ -71,6 +71,7 @@ export class NhaphangComponent {
         this.loadData(true);
       }
     });
+ 
   }
   async refeshTable() {
     let nhs = (await this.apiService.get(BaseApiUrl.NhapHangs)) as NhapHang[];

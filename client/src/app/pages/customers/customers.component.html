@@ -3,7 +3,7 @@
         <mat-label>Tìm Kiếm Tên Khách Hàng, Số Điện Thoại...</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
     </mat-form-field>
-    <div class="mat-elevation-z8">
+    <div class="mat-mdc-table-v">
         <table mat-table *ngIf="dataSource" [dataSource]="dataSource">
 
             <!-- Position Column -->
@@ -28,7 +28,8 @@
             <!-- Name Column -->
             <ng-container matColumnDef="Phone">
                 <th mat-header-cell *matHeaderCellDef> Điện Thoại </th>
-                <td mat-cell *matCellDef="let element"> <a href="tel:{{element['Phone']}}">{{element['Phone']}}</a> </td>
+                <td mat-cell *matCellDef="let element"> <a href="tel:{{element['Phone']}}">{{element['Phone']}}</a>
+                </td>
             </ng-container>
 
 
@@ -39,14 +40,14 @@
                 <td mat-cell *matCellDef="let element">
                     <div class="flex" style="justify-items: center;">
                         <div style="flex-grow: 1;">{{element['Địa Chỉ']}}</div>
-                        <div> <button mat-mini-fab (click)="onDialogDh(element)"  matTooltip="tạo đơn hàng mới">
+                        <div> <button mat-mini-fab color="warn" (click)="onDialogDh(element)" matTooltip="tạo đơn hàng mới">
                                 <mat-icon>add</mat-icon>
                             </button></div>
                     </div>
                 </td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
             <!-- Row shown when there is no matching data. -->
@@ -54,8 +55,9 @@
                 <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
             </tr>
         </table>
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+
     </div>
+    <mat-paginator [pageSizeOptions]="[10, 25, 100]" aria-label="Select page of users"></mat-paginator>
     <div class="bt-sti">
         <button mat-fab (click)="onDialog()">
             <mat-icon mat-icon-button>edit</mat-icon>

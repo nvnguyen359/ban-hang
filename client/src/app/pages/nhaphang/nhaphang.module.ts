@@ -12,10 +12,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { DisplayHeaderNhaphangPipe } from 'src/app/pipes/display-header-nhaphang.pipe';
 import { MatTabsModule } from '@angular/material/tabs';
+import { TonKhosComponent } from 'src/app/components/ton-khos/ton-khos.component';
 
 @NgModule({
   declarations: [
-    NhaphangComponent, DisplayHeaderNhaphangPipe
+    NhaphangComponent, DisplayHeaderNhaphangPipe,TonKhosComponent
   ],
   imports: [
     CommonModule,
