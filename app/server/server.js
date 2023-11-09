@@ -4,7 +4,7 @@ var bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
 const apis = require("./apis/apiCrud");
-// const { apisSqlite } = require("./apis/apiSqlite");
+const { apisSqlite } = require("./apis/apiSqlite");
 const express = require("express");
 
 const app = express();
@@ -73,7 +73,7 @@ app.use(
 // inside public directory.
 app.use(express.static("public"));
 apis.callApis(app);
-// apisSqlite(app);
+ apisSqlite(app);
 app.use("/uploads", express.static("uploads"));
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/imgs", express.static(path.join(__dirname, "imgs")));

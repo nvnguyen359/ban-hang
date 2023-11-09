@@ -12,7 +12,7 @@ class CRUDKNEX {
     this.table = table;
   }
   async initTable() {
-    await initTable(knex);
+   return await initTable(knex);
   }
   set setTable(table) {
     this.table = table;
@@ -60,8 +60,8 @@ class CRUDKNEX {
     return result;
   }
 }
-(async()=>{
-  let crud = new CRUDKNEX('Đơn Hàng');
-  await crud.getAll()
-})()
+// (async()=>{
+//   let crud = new CRUDKNEX('Đơn Hàng');
+//   await crud.getAll()
+// })()
 module.exports = { CRUDKNEX };
