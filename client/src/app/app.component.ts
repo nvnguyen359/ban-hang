@@ -46,7 +46,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     private router: Router
   ) {
     this.getVersion();
-    // this.getAllData();
   }
 
   async getAllData() {
@@ -90,9 +89,19 @@ export class AppComponent implements OnInit, AfterViewInit {
         window.location.href = this.baseServer + this.url;
     });
   }
+
   french() {
     this._locale = "vi";
     this._adapter.setLocale(this._locale);
+  }
+  dem = 0;
+  asyncGetAll() {
+    this.socket.getMessage("all").subscribe((data: any) => {
+      console.log(data['sanphams'])
+      if (data && data["sanphams"].length > 0) {
+        localStorage.setItem("all", JSON.stringify(data));
+      }
+    });
   }
   ngOnInit(): void {
     setTimeout(() => {
@@ -100,11 +109,12 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.router.navigate([`/${BaseApiUrl.BaoCaos}`]);
     }, 500);
     this.french();
-    this.socket
-      .getMessage("all")
-      .subscribe((data: any) =>
-        localStorage.setItem("all", JSON.stringify(data))
-      );
+    this.asyncGetAll();
+    setInterval(() => {
+      // console.log(this.dem++)
+      this.asyncGetAll();
+      // console.log(localStorage.getItem('all'))
+    }, 30000);
     this.socket
       .getMessage("tonkho")
       .subscribe((data: any) =>

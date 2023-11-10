@@ -1,6 +1,5 @@
 const { exec } = require("child_process");
 const fs = require("fs");
-const puppeteer = require("puppeteer");
 const path = require("path");
 
 Date.prototype.addHours = function (h) {
@@ -125,34 +124,7 @@ function writeFileSync(filePath, data) {
     return error;
   }
 }
-const exportPdfFromPupetteerSync = async (
-  html,
-  idDonHang,
-  pageSize = "A6",
-  rootPathExport = "D:/Don-Hang"
-) => {
-  console.log(new Date().toISOString());
-  const date = new Date().toISOString().split("T")[0];
-  const pathFile = `${idDonHang}_${date}.pdf`;
-  //${rootPathExport}/
-  createFolder(rootPathExport);
-  const browser = await puppeteer.launch({ headless: true });
-  const page = await browser.newPage();
-  await page.setContent(html);
 
-  await page.pdf({
-    path: pathFile,
-    format: pageSize,
-    margin: {
-      top: "20px",
-      left: "20px",
-      right: "20px",
-      bottom: "20px",
-    },
-  });
-  await browser.close();
-  return { data: pathFile };
-};
 //moves the $file to $dir2
 var moveFile = (file, dir2) => {
   //include the fs, path modules
@@ -187,7 +159,6 @@ module.exports = {
   createIdRow,
   createFolder,
   writeFileSync,
-  exportPdfFromPupetteerSync,
   delay,
   moveFile,
 };

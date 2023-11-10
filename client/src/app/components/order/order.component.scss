@@ -90,11 +90,10 @@ table {
 }
 
 .main .center {
-    max-height: $height;
+    max-height: 452px;
     overflow-y: auto;
     display: flex;
     flex-flow: wrap;
-    height: 100%;
     width: 520px;
     justify-content: flex-start;
     align-content: flex-start;
@@ -102,11 +101,11 @@ table {
 
 .btn-center {
     width: 120px;
-    height: 120px;
-    margin: 4px;
+    height: 106px;
+    margin: 3px;
     cursor: pointer;
     text-transform: uppercase;
-    padding: 4px;
+    padding: 2px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
 

@@ -213,22 +213,30 @@ export class DonhangsComponent {
     const data = (await this.service.get(BaseApiUrl.Orders)) as any;
     const all = JSON.parse(`${localStorage.getItem("all")}`);
     this.all = all;
-    this.khachhangs = all["khachhangs"];
-    this.sanphams = all["sanphams"];
+    this.khachhangs =
+      all["khachhangs"].length > 0
+        ? all["khachhangs"]
+        : ((await this.service.get(BaseApiUrl.KhachHangs)) as any);
+    this.sanphams =
+      all["sanphams"].length > 0
+        ? all["sanphams"]
+        : ((await this.service.get(BaseApiUrl.SanpPhams)) as any);
     this.donhangs = data;
   }
+
   onDialog() {
     const dialogRef = this.dialog.open(OrdersComponent, { data: this.all });
-    dialogRef.afterClosed().subscribe((d: any) => {
-    });
+    dialogRef.afterClosed().subscribe((d: any) => {});
   }
 
   eventClickButton(item: any) {
     console.log(item);
-    const kh = this.khachhangs.find((x:KhachHang)=>x['Id']==item['Khách Hàng']);
-   if(kh['Phone']){
-    window.open('tel:'+kh['Phone'])
-   }
+    const kh = this.khachhangs.find(
+      (x: KhachHang) => x["Id"] == item["Khách Hàng"]
+    );
+    if (kh["Phone"]) {
+      window.open("tel:" + kh["Phone"]);
+    }
   }
 
   onPrint(item: any) {
@@ -263,10 +271,13 @@ export class DonhangsComponent {
         const ids = item.donhang["chitiets"].map(
           (x: ChiTietDonHang) => x["Id"]
         );
-        if(ids.length>0)
-         this.service.bulkDelete(BaseApiUrl.ChiTietDonHangs, ids);
-         this.service.destroy(BaseApiUrl.DonHangs, item.donhang["Id"]);
-        this.dataService.sendMessage({status:Status.Refesh, id:item.donhang["Id"]});
+        if (ids.length > 0)
+          this.service.bulkDelete(BaseApiUrl.ChiTietDonHangs, ids);
+        this.service.destroy(BaseApiUrl.DonHangs, item.donhang["Id"]);
+        this.dataService.sendMessage({
+          status: Status.Refesh,
+          id: item.donhang["Id"],
+        });
       }
     });
   }
