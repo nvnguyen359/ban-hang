@@ -69,7 +69,7 @@ const createTableCustomer = async (knex) => {
         notNullable: true,
       });
       table.string("customerName", 250);
-      table.string("Phone");
+      table.string("phone");
       table.string("address");
       table.string("email");
       exoend(table);
@@ -91,7 +91,7 @@ const createTableProduct = async (knex) => {
         primaryKey: true,
         notNullable: true,
       });
-      table.string("Name", 250);
+      table.string("name", 250);
       table.integer("importPrice");
       table.integer("price");
       table.string("unit");
