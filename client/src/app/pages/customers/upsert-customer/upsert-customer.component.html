@@ -1,0 +1,30 @@
+<h4 class="text-center">{{infor}}</h4>
+<form [formGroup]="form">
+    <div formArrayName="customers" *ngFor="let item of form.controls.customers?.value; index as i;trackBy: trackByFn">
+        <ng-container [formGroupName]="i">
+            <input placeholder="id" type="hidden" formControlName="id" />
+            <input placeholder="id" type="hidden" formControlName="createdAt" />
+            <input placeholder="id" type="hidden" formControlName="updatedAt" />
+            <mat-form-field appearance="outline">
+                <mat-label>Tên Khách Hàng</mat-label>
+                <input matInput placeholder="Tên Khách" type="text" required  formControlName="name"
+                    autocomplete="off" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Điện Thoại</mat-label>
+                <input matInput placeholder="Điện Thoại" type="phone" required formControlName="phone"
+                    autocomplete="off" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Địa Chỉ</mat-label>
+                <input matInput placeholder="Địa Chỉ" type="phone" required formControlName="address"
+                    autocomplete="off" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput placeholder="Email" type="email"  formControlName="email"
+                    autocomplete="off" />
+            </mat-form-field>
+        </ng-container>
+    </div>
+</form>

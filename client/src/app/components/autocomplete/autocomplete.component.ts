@@ -1,12 +1,32 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
+
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Observable, map, startWith } from "rxjs";
+import { CommonModule, NgFor } from "@angular/common";
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  EventEmitter,
+  Input,
+  NO_ERRORS_SCHEMA,
+  Output
+} from "@angular/core";
+import { MatOptionModule } from "@angular/material/core";
+import { MatIconModule } from "@angular/material/icon";
+import { MatSelectModule } from "@angular/material/select";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatButtonModule } from "@angular/material/button";
+
 declare var removeAccents: any;
 @Component({
   selector: "app-autocomplete",
   templateUrl: "./autocomplete.component.html",
   styleUrls: ["./autocomplete.component.scss"],
-  standalone: false
+  imports:[MatSelectModule, MatIconModule, MatOptionModule, NgFor,MatAutocompleteModule,CommonModule ,ReactiveFormsModule,MatFormFieldModule,
+    MatInputModule,MatButtonModule],
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class AutocompleteComponent {
   filteredOptions?: Observable<any[]>;
@@ -14,8 +34,8 @@ export class AutocompleteComponent {
   @Input() default: any=null;
   @Input() required: any = false;
   @Input() options: any = {
-    name: "Name",
-    showtext: "Name",
+    name: "name",
+    showtext: "name",
     label: "Sản Phẩm",
     placeholder: "Tìm Sản Phẩm",
   };
@@ -24,11 +44,9 @@ export class AutocompleteComponent {
   myControl = new FormControl("");
 
   constructor() {
-   
+  // console.log(this.options)
   }
   ngOnInit() {
-    
-    //console.log(this.options);
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(""),
       map((value: any) => this._filter(value || ""))
@@ -40,7 +58,7 @@ export class AutocompleteComponent {
     } else {
       const filterValue = `${value}`.toLowerCase();
       return Array.from(this.data).reverse().filter((option: any) =>
-        removeAccents(option[this.options.showtext])
+        removeAccents(option[this.options.name])
           .toLowerCase()
           .includes(removeAccents(filterValue))
       );

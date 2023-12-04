@@ -3,19 +3,187 @@ export enum Status {
   Add,
   LoadOrder,
   isDonhang,
+  resultDelete = "resultDelete",
 }
+export enum groupItem {
+  IsumImport = "sumImport",
+  ISumSales = "sumSales",
+  ISumQuantity = "sumQuantity",
+  ISumExpense = "sumExpense",
+  sumImport = "sumImport",
+  sumSale = "sumSale",
+}
+
 export enum BaseApiUrl {
-  NhapHangs = "nhaphang",
-  ChiTietDonHangs = "chitietdonhang",
-  SanpPhams = "sanpham",
-  DonHangs = "donhang",
-  ChiPhis = "chiphi",
-  KhachHangs = "khachhang",
+  NhapHangs = "importGoods",
+  ChiTietDonHangs = "orderDetails",
+  SanpPhams = "product",
+  DonHangs = "orders",
+  ChiPhis = "expense",
+  KhachHangs = "customer",
   All = "all",
   CongNos = "congnos",
-  BaoCaos = "baocao",
+  BaoCaos = "reports",
   Orders = "orders",
-  listOrders="listOrders"
+  Order = "order",
+  listOrders = "listOrders",
+  Printers = "printers",
+}
+export enum fieldData {
+  importPrice = "importPrice",
+  price = "price",
+  intoMoney='intoMoney'
+}
+export function links() {
+  return [
+    {
+      text: "Trang Chủ",
+      link: `/${BaseApiUrl.BaoCaos}`,
+      icon: "home",
+    },
+    {
+      text: "Đơn Hàng",
+      link: `/${BaseApiUrl.DonHangs}`,
+      icon: "shopping_basket",
+    },
+    {
+      text: "Sản Phẩm",
+      link: `/${BaseApiUrl.SanpPhams}`,
+      icon: "spa",
+    },
+    {
+      text: "Nhập  - Tồn Kho",
+      link: `/${BaseApiUrl.NhapHangs}`,
+      icon: "credit_card",
+    },
+    {
+      text: "Khách Hàng",
+      link: `/${BaseApiUrl.KhachHangs}`,
+      icon: "account_box",
+    },
+    {
+      text: "Chi Phí",
+      link: `/${BaseApiUrl.ChiPhis}`,
+      icon: "money",
+    },
+    {
+      text: "Công Nợ",
+      link: `/${BaseApiUrl.CongNos}`,
+      icon: "monetization_on",
+    },
+    {
+      text: "Cài Dặt",
+      link: "/settings",
+      icon: "settings",
+    },
+  ];
+}
+
+export function fields() {
+  const data = [
+    {
+      field: "name",
+      type: "text",
+      text: "Tên",
+      require: true,
+    },
+    {
+      field: "quantity",
+      type: "number",
+      text: "Số Lượng",
+      step: 1,
+      require: true,
+    },
+    {
+      field: "phone",
+      type: "phone",
+      text: "Điện Thoại",
+      require: true,
+    },
+    {
+      field: "address",
+      type: "text",
+      text: "Địa Chỉ",
+      require: false,
+    },
+    {
+      field: "email",
+      type: "email",
+      text: "Email",
+      require: false,
+    },
+    {
+      field: "createdAt",
+      type: "date",
+      text: "Ngày Tạo",
+    },
+    {
+      field: "updatedAt",
+      type: "date",
+      text: "Ngày Cập Nhật",
+    },
+    {
+      field: "price",
+      type: "number",
+      text: "Đơn Giá",
+      step: 500,
+      require: true,
+    },
+    {
+      field: "importPrice",
+      type: "number",
+      text: "Giá Nhập",
+      step: 500,
+      require: true,
+    },
+    {
+      field: "pay",
+      type: "number",
+      text: "Thanh Toán",
+    },
+    {
+      field: "unit",
+      type: "text",
+      text: "Đơn Vị",
+    },
+    {
+      field: "money",
+      type: "number",
+      text: "Số Tiền",
+      require: true,
+    },
+    {
+      field: "note",
+      type: "text",
+      text: "Ghi Chú",
+      step: 500,
+      require: true,
+    },
+    {
+      field: groupItem.IsumImport,
+      text: "Tổng Nhập",
+    },
+    {
+      field: groupItem.ISumSales,
+      text: "Tổng Doanh Thu",
+    },
+    {
+      field: groupItem.ISumQuantity,
+      text: "Tổng Số Lượng",
+    },
+    {
+      field: groupItem.ISumExpense,
+      text: "Tổng Chi",
+    },
+    {
+      field: groupItem.sumSale,
+      text: "Tổng Bán",
+    }, {
+      field: groupItem.sumImport,
+      text: "Tiền Nhập",
+    },
+  ];
+  return data;
 }
 /**default @param [ms=1000]  */
 export function delay(ms: number = 1000) {
@@ -80,6 +248,10 @@ export function getStarEndDateInQuarter(quarter = 1, y: number) {
   const fl = firstlastMonth(y, startMonth - 1);
   const fl1 = firstlastMonth(y, endMonth - 1);
   return { firstDate: fl.firstDay, lastDate: fl1.lastDay };
+}
+export function getLocalStorage(key: any = "print") {
+  const local = JSON.parse(`${localStorage.getItem(key)}`);
+  return local;
 }
 var ChuSo = new Array(
   " không ",

@@ -24,18 +24,23 @@ function jsRun() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  const menus = document.querySelectorAll('.menu  a.menu-item');
-  
-if(menus){
-  menus[0].classList.add('active')
-  menus.forEach((a,index)=>{
-    a.addEventListener('click',(event)=>{
-      menus.forEach((x)=>x.classList.remove('active'));
-      a.classList.add('active');
+  const menus = document.querySelectorAll(".menu  a.menu-item");
+  const url = this.location.pathname.split(';')[0];
+  if (menus) {
+    if (url == "/") menus[0].classList.add("active");
+    menus.forEach((a) => {
+      if (a.getAttribute("href").includes(url)) {
+        a.classList.add("active");
+      }
     });
-  });
-  // setTimeout(() => {
-  //   menus[0].click()
-  // }, 800);
-}
+    menus.forEach((a, index) => {
+      a.addEventListener("click", (event) => {
+        menus.forEach((x) => x.classList.remove("active"));
+        a.classList.add("active");
+      });
+    });
+    // setTimeout(() => {
+    //   menus[0].click()
+    // }, 800);
+  }
 });

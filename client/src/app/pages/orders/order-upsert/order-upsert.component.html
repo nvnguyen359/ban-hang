@@ -1,0 +1,33 @@
+<div class="flex">
+    <div style="flex-grow: 1;">
+        <mat-tab-group>
+            <mat-tab [label]="first">
+                <app-order-grid [inputData]="data" (selectOrder)="onOrder($event)"></app-order-grid>
+            </mat-tab>
+            <mat-tab [label]="second">
+                <app-order-list-view [inputData]="data"></app-order-list-view> </mat-tab>
+        </mat-tab-group>
+    </div>
+    <div class="view-order">
+        <div class="infor-store">
+            <div class="block text-center" style="height: 48px;">HÓA ĐƠN BÁN HÀNG</div>
+            <app-infor-customer-in-order [data]="data" ></app-infor-customer-in-order>
+            <!-- <small class="block text-center">donhang["Ngày Bán"]</small>
+            <p></p>
+            <div class="flex">
+                <div class="left">
+                    <b class="block">LK PIN HIỆU NGÂN</b>
+                    <div>
+                        <div>Chuyên: Máy pin - cung cấp linh kiện ngành pin</div>
+                        <div> Địa chỉ: TDP Hữu Lộc, P.Trúc Lâm, Nghi Sơn, Thanh Hóa</div>
+                    </div>
+                    <b class="block"> ĐT: 0988.114.714 - 0842.399.889</b>
+                    <div>TK: Do Van Hieu (0041000171668-VietComBank)</div>
+                </div>
+                <div class="qr">
+                    <img id="qrViet" width='150' height='150' src="" alt="" style="opacity: 0;">
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>

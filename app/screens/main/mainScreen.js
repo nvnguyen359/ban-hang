@@ -1,7 +1,4 @@
 const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
-const url = require('url');
-
-//console.log('tin nhan nhan duoc',socket.getMessage())
 const path = require("path");
 
 class MainScreen {
@@ -17,14 +14,15 @@ class MainScreen {
     this.window = new BrowserWindow({
       width: this.position.width,
       height: this.position.height,
-      title: "Ứng Dụng Quản Lý Bán Hàng",
-      show: true,
+      title: "This is a test application",
+      show: false,
       removeMenu: true,
       acceptFirstMouse: true,
       autoHideMenuBar: true,
       webPreferences: {
         contextIsolation: true,
-        devTools: false,
+        devTools:false,
+        webSecurity: false,
         preload: path.join(__dirname, "./mainPreload.js"),
       },
     });
@@ -40,36 +38,15 @@ class MainScreen {
     this.handleMessages();
 
     let wc = this.window.webContents;
-   //wc.openDevTools();
-    //this.window.loadFile("./screens/main/dist/index.html");
-this.window.loadURL(`file://${__dirname}/dist/index.html`)
-    //this.window.webContents.openDevTools();
-   // const fileHtml=`file://${__dirname}/dist/index.html`;
-    // this.window.loadURL(
-    //   url.format({
-    //     pathname: path.join(__dirname, `/dist/index.html`),
-    //     protocol: "file:",
-    //     slashes: true
-    //   })
-    // );
+    wc.openDevTools({ mode: "undocked" });
+
+    this.window.loadFile("./screens/main/dist/index.html");
   }
 
   showMessage(message) {
     console.log("showMessage trapped");
     console.log(message);
-
     this.window.webContents.send("updateMessage", message);
-  }
-  upData(message) {
-    this.window.webContents.send("upData", message);
-   
-  }
- async nhanData(){
-    return new Promise((res,rej)=>{
-      ipcMain.once('sendData',(e,item)=>{
-        res(item)
-      })
-    })
   }
 
   close() {
@@ -83,7 +60,6 @@ this.window.loadURL(`file://${__dirname}/dist/index.html`)
 
   handleMessages() {
     //Ipc functions go here.
-   
   }
 }
 

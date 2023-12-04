@@ -1,11 +1,8 @@
-
-require("dotenv").config({ path: "../.env" });
+//require("dotenv").config({ path: "../.env" });
 require("dotenv").config();
 const lib = require("./../shares/lib");
-const moment = require("moment");
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 const { JWT } = require("google-auth-library");
-const {uid} = require('uid');
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
 const SHEET_ID = process.env.SHEET_ID;
@@ -72,14 +69,17 @@ class CRUD {
       return error;
     }
   }
-  async getDonHangs(){
-    this.initLoad('donhang');
-    const donhangs= await await this.getAll();
-    this.initLoad('chitietdonhang');
-    const chitiets= await await this.getAll();
-    const data = donhangs.map((x)=>{
-      x['Ngày Bán']=`${x['Ngày Bán']}`.DateFormatDDMMYYY();
-      x['chitiets']= chitiets.filter(c=>{c['Đơn Hàng']==x['Id']; c['Ngày'] =`${c['Ngày']}`.DateFormatDDMMYYY()});
+  async getDonHangs() {
+    this.initLoad("order");
+    const donhangs = await await this.getAll();
+    this.initLoad("orderDetails");
+    const chitiets = await await this.getAll();
+    const data = donhangs.map((x) => {
+      x["createdAt"] = `${x["createdAt"]}`.DateFormatDDMMYYY();
+      x["orderDetails"] = chitiets.filter((c) => {
+        c["order"] == x["Id"];
+        c["createdAt"] = `${c["createdAt"]}`.DateFormatDDMMYYY();
+      });
       return x;
     });
     return data;
@@ -121,15 +121,10 @@ class CRUD {
       const rows = Array.from(await sheet.getRows());
       //const keys = Object.keys(values[0]);
       const count = rows.length;
-
+      // console.log(values);
       const newRows = values.map((x, index) => {
-        const id = uid();
-
-        if (x["Id"] == ""|| x['Id']== null ) {
-          x["Id"] = id;
-        }
-        if (x["id"] == "") {
-          x["id"] = id;
+        if (x["id"] == "" || x["id"] == null) {
+          x["id"] = count + index;
         }
         return x;
       });
@@ -146,7 +141,7 @@ class CRUD {
       const sheet = this.doc.sheetsByTitle[this.nameSheet];
       const array = await sheet.getRows();
       const keys = Object.keys(values[0]);
-      const keyId = "Id" || "id";
+      const keyId = "id";
 
       return new Promise(async (res, rej) => {
         array.forEach(async (row) => {
@@ -154,7 +149,7 @@ class CRUD {
             return v[keyId] == row.get(keyId);
           });
           keys.forEach((key) => {
-            if (key.includes("Ngày") || key.includes("Thời gian")) {
+            if (key.includes("updatedAt") || key.includes("Thời gian")) {
               // rowExist[key] =  rowExist[key].convertStringVNToDateISO();
             }
           });
@@ -179,15 +174,15 @@ class CRUD {
     });
 
     if (row) {
-      console.log("Delete ", id);
+     // console.log("Delete ", id);
       row.delete();
-      return { mes: "success", data: await this.getAll() };
+      return { mes: "success"  };
     } else {
       return { mes: `${id} does not exist` };
     }
   }
   async bulkDelete(ids) {
-  //  console.log('bulkDelete ',ids)
+    //  console.log('bulkDelete ',ids)
     await this.initLoad(this.nameSheet);
     const sheet = this.doc.sheetsByTitle[this.nameSheet];
     const rows = Array.from(await sheet.getRows());

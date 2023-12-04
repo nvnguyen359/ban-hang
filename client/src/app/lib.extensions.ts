@@ -9,15 +9,141 @@ interface String {
   capitalizeFirstLetter(): string;
 }
 interface Array<T> {
-  convertDateVNView(): any[];
+  convertDateVNView(): any;
+}
+interface Number {
+  convertMoneyIntoWords(): string;
 }
 
+//1. Hàm đọc số có ba chữ số;
+function DocSo3ChuSo(baso: any) {
+  let ChuSo = new Array(
+    " không",
+    " một",
+    " hai",
+    " ba",
+    " bốn",
+    " năm",
+    " sáu",
+    " bảy",
+    " tám",
+    " chín"
+  );
+  var tram;
+  var chuc;
+  var donvi;
+  var KetQua = "";
+  tram = parseInt(`${baso / 100}`);
+  chuc = parseInt(`${(baso % 100) / 10}`);
+  donvi = baso % 10;
+  if (tram == 0 && chuc == 0 && donvi == 0) return "";
+  if (tram != 0) {
+    KetQua += ChuSo[tram] + " trăm";
+    if (chuc == 0 && donvi != 0) KetQua += " linh ";
+  }
+  if (chuc != 0 && chuc != 1) {
+    KetQua += ChuSo[chuc] + " mươi";
+    if (chuc == 0 && donvi != 0) KetQua = KetQua + " linh ";
+  }
+  if (chuc == 1) KetQua += " mười";
+  switch (donvi) {
+    case 1:
+      if (chuc != 0 && chuc != 1) {
+        KetQua += " mốt";
+      } else {
+        KetQua += ChuSo[donvi];
+      }
+      break;
+    case 5:
+      if (chuc == 0) {
+        KetQua += ChuSo[donvi];
+      } else {
+        KetQua += " lăm";
+      }
+      break;
+    default:
+      if (donvi != 0) {
+        KetQua += ChuSo[donvi];
+      }
+      break;
+  }
+  return KetQua;
+}
+Number.prototype.convertMoneyIntoWords = function () {
+  const SoTien = this as number;
+  const Tien = new Array(
+    "",
+    " nghìn",
+    " triệu",
+    " tỷ",
+    " nghìn tỷ",
+    " triệu tỷ"
+  );
+  var lan = 0;
+  var i = 0;
+  var so = 0;
+  var KetQua = "";
+  var tmp = "";
+  var ViTri = new Array();
+  if (SoTien < 0) return "Số tiền âm !";
+  if (SoTien == 0) return "Không đồng !";
+  if (SoTien > 0) {
+    so = SoTien;
+  } else {
+    so = -SoTien;
+  }
+  if (SoTien > 8999999999999999) {
+    //SoTien = 0;
+    return "Số quá lớn!";
+  }
+  ViTri[5] = Math.floor(so / 1000000000000000);
+  if (isNaN(ViTri[5])) ViTri[5] = "0";
+  so = so - parseFloat(ViTri[5].toString()) * 1000000000000000;
+  ViTri[4] = Math.floor(so / 1000000000000);
+  if (isNaN(ViTri[4])) ViTri[4] = "0";
+  so = so - parseFloat(ViTri[4].toString()) * 1000000000000;
+  ViTri[3] = Math.floor(so / 1000000000);
+  if (isNaN(ViTri[3])) ViTri[3] = "0";
+  so = so - parseFloat(ViTri[3].toString()) * 1000000000;
+  ViTri[2] = parseInt(`${so / 1000000}`);
+  if (isNaN(ViTri[2])) ViTri[2] = "0";
+  ViTri[1] = parseInt(`${(so % 1000000) / 1000}`);
+  if (isNaN(ViTri[1])) ViTri[1] = "0";
+  ViTri[0] = parseInt(`${so % 1000}`);
+  if (isNaN(ViTri[0])) ViTri[0] = "0";
+  if (ViTri[5] > 0) {
+    lan = 5;
+  } else if (ViTri[4] > 0) {
+    lan = 4;
+  } else if (ViTri[3] > 0) {
+    lan = 3;
+  } else if (ViTri[2] > 0) {
+    lan = 2;
+  } else if (ViTri[1] > 0) {
+    lan = 1;
+  } else {
+    lan = 0;
+  }
+  for (i = lan; i >= 0; i--) {
+    tmp = DocSo3ChuSo(ViTri[i]);
+    KetQua += tmp;
+    if (ViTri[i] > 0) KetQua += Tien[i];
+    if (i > 0 && tmp.length > 0) KetQua += ","; //&& (!string.IsNullOrEmpty(tmp))
+  }
+  if (KetQua.substring(KetQua.length - 1) == ",") {
+    KetQua = KetQua.substring(0, KetQua.length - 1);
+  }
+  KetQua = KetQua.substring(1, 2).toUpperCase() + KetQua.substring(2);
+  return KetQua;
+};
 interface Date {
   addHours(h: any): Date;
   addDays(d: any): Date;
   firstLastDate(): any;
   firstlastMonth(y: number, m: number): any;
   firstLastYear(): any;
+  startDay(): Date;
+  endDay(): Date;
 }
 Date.prototype.addHours = function (h: any) {
   this.setTime(this.getTime() + h * 60 * 60 * 1000);
@@ -27,10 +153,14 @@ Date.prototype.addDays = function (d = 0) {
   this.setTime(this.getTime() + 24 * 60 * 60 * 1000 * d);
   return this;
 };
-
+Date.prototype.startDay = function () {
+  return new Date(this.setHours(0, 0, 0, 0));
+};
+Date.prototype.endDay = function () {
+  return new Date(this.setHours(23, 59, 59, 999));
+};
 Date.prototype.firstLastDate = () => {
-  const date = new Date();
-  const d = new Date(date);
+  const d = new Date();
   return {
     firstDate: new Date(d.setHours(0, 0, 0, 0)),
     lastDate: new Date(d.setHours(23, 59, 59, 999)),
@@ -118,13 +248,18 @@ String.prototype.capitalizeFirstLetter = function () {
 };
 
 Array.prototype.convertDateVNView = function () {
-  let array = this as any[];
-  array = array.map((x: any) => {
-    let ngays = ["Ngày", "Ngày Bán"];
-    ngays.forEach((ngay: any) => {
-      if (x[ngay]) x[ngay] = `${x[ngay]}`.DateFormatDDMMYYY();
+  try {
+    //console.log(this)
+    let array = this as any[];
+    array = array.map((x: any) => {
+      let ngays = ["createdAt", "updatedAt"];
+      ngays.forEach((ngay: any) => {
+        if (x[ngay]) x[ngay] = `${x[ngay]}`.DateFormatDDMMYYY();
+      });
+      return x;
     });
-    return x;
-  });
-  return array;
+    return array;
+  } catch (error) {
+    return this;
+  }
 };

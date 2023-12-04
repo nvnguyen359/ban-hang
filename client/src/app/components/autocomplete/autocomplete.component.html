@@ -1,11 +1,13 @@
-<mat-form-field class="full-width" *ngIf="data" >
+<mat-form-field class="full-width" *ngIf="data" appearance="outline">
     <mat-label>{{options.label}}</mat-label>
-    <input type="text" placeholder="{{options.placeholder}}" [required]="required" aria-label="Sản Phẩm" matInput [(ngModel)]="default"
-        [matAutocomplete]="auto" (keyup)="onKeyup($event)" [formControl]="myControl">
+    <input type="text" placeholder="{{options.placeholder}}" [required]="required" aria-label="Sản Phẩm" matInput
+        [(ngModel)]="default" [matAutocomplete]="auto" (keyup)="onKeyup($event)" [formControl]="myControl">
+        <button matSuffix mat-icon-button aria-label="Clear" (click)="default=''" *ngIf="default">
+            <mat-icon>close</mat-icon>
+          </button>
     <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let item of filteredOptions| async" [value]="item|showText:options.showtext"
-            (onSelectionChange)="onSelection(item)">
-            {{item|showText:options.showtext}}
+        <mat-option *ngFor="let item of filteredOptions| async" [value]="item[options.name]" (onSelectionChange)="onSelection(item)">
+            {{item[options.name]}}
         </mat-option>
     </mat-autocomplete>
 </mat-form-field>

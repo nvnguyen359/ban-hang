@@ -1,18 +1,27 @@
-document.addEventListener("DOMContentLoaded", function () {
-  window.bridge.updateMessage(updateMessage);
-  window.bridge.upData(getPrinters);
 
-});
-document.querySelector(".refesh").addEventListener("click", () => {
-  window.bridge.sendData("install");
-});
-function updateMessage(event, message) {
-  console.log("message logged in view");
-  let elemE = document.getElementById("message");
-  if (`${message}`.includes("Khởi động lại")) {
-    document.querySelector(".refesh").classList.add("show");
-  } else {
-    document.querySelector(".refesh").classList.remove("show");
+try {
+  document.getElementById("btPrintPos").addEventListener("click", () => {
+ 
+    sendTestPrint()
+  });
+  function sendTestPrint() {
+    window.bridge.send('test-print',{a:1})
   }
-  elemE.innerHTML = message;
+  document.addEventListener("DOMContentLoaded", function () {
+    window.bridge.updateMessage(updateMessage);
+    window.bridge.upData(upData)
+  });
+  
+  function updateMessage(event, message) {
+    console.log("message logged in view");
+    let elemE = document.getElementById("message");
+    elemE.innerHTML = message;
+  }
+  function upData(event,data){
+    document.getElementById('updata').innerHTML = 'data '+JSON.stringify(data)
+  }
+  
+} catch (error) {
+  
 }
+

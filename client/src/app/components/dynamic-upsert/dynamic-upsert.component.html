@@ -1,0 +1,74 @@
+<h2 class="text-center">{{infor}}</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="max-height" id="scrollTop" style="    padding-top: 16px;">
+        <ng-container *ngIf="data.obj">
+            <div class="flex full-width" style="justify-content: flex-end;">
+                <mat-form-field>
+                    <mat-label>Ngày Tạo</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="createdAt">
+                    <mat-hint>DD/MM/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </ng-container>
+        <div formArrayName="formArray"
+            *ngFor="let item of form.controls.formArray?.value; index as i;trackBy: trackByFn">
+            <ng-container [formGroupName]="i">
+                <div class="flex center" style="margin-bottom: -12px;margin-right:8px">
+                    <input type="hidden" formControlName="id">
+                    <input placeholder="id" type="hidden" [formControlName]="item.field"
+                        *ngFor="let item of fieldsHidden" />
+                    <button mat-mini-fab disabled style="margin-top: -21px;margin-right: 5px;">
+                        {{i+1}}
+                    </button>
+
+                    <mat-form-field appearance="outline" *ngFor="let item of fieldsShow" class="{{max50(item)}}">
+                        <mat-label>{{item.text}}</mat-label>
+                        <div [ngSwitch]="item.field">
+                            <div *ngSwitchCase="'unit'">
+                                <input (keyup)="onKeyUpUnit($event)" matInput [placeholder]="item.text"
+                                    [type]="item.type" [required]="item.required" [step]="item.step"
+                                    [formControlName]="item.field" [matAutocomplete]="auto" />
+                                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                                    <mat-option *ngFor="let item of filteredOptionsUnit;"
+                                        [value]="item">{{item}}</mat-option>
+                                </mat-autocomplete>
+                            </div>
+                            <div *ngSwitchCase="'name'">
+                                <input (keyup)="onKeyUpName($event)" matInput [placeholder]="item.text"
+                                    [type]="item.type" required="{{item.required}}" [step]="item.step"
+                                    [formControlName]="item.field" [matAutocomplete]="auto1" />
+                                <mat-autocomplete autoActiveFirstOption #auto1="matAutocomplete"
+                                    (optionSelected)="optionSelectedProductName($event,i)">
+                                    <mat-option *ngFor="let item of filteredOptionsNames;"
+                                        [value]="item.name">{{item.name}}</mat-option>
+                                </mat-autocomplete>
+                            </div>
+                            <div *ngSwitchDefault>
+                                <input matInput [placeholder]="item.text" [type]="item.type" [step]="item.step"
+                                    [formControlName]="item.field" autocomplete="off" />
+                            </div>
+                        </div>
+
+
+
+
+                    </mat-form-field>
+                    <mat-icon color="warn" class="delete" (click)="onDelete(i)">delete</mat-icon>
+                </div>
+            </ng-container>
+
+        </div>
+        <div class="flex center full-width" style="justify-content: center;" *ngIf="data.obj">
+            <button mat-flat-button color="primary" type="button" (click)="onAdd()">Thêm
+                Mới<mat-icon>add</mat-icon></button>
+        </div>
+    </div>
+    <div class="full-width flex center" style="justify-content: flex-end;">
+        <button mat-flat-button color="primary" [disabled]="!form.valid" mat-dialog-close type="submit"
+            style="margin-right: 4px;">Lưu
+            &nbsp;<mat-icon>save</mat-icon></button>
+
+    </div>
+</form>

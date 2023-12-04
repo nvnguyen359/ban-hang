@@ -1,9 +1,11 @@
-.menu {
+.example-spacer {
+    flex: 1 1 auto;
+    align-items: center;
+  }
+  .menu {
     display: inline-flex;
     flex-direction: column;
-    padding: 6px 0;
     width: 100%;
-    margin-top: 63px;
 }
 
 .menu-item {
@@ -14,8 +16,7 @@
     user-select: none;
     min-width: 64px;
     line-height: 36px;
-    padding: 0 16px;
-   // color: whitesmoke;
+    padding-left: 8px;
     display: flex;
     align-items: center;
     flex-direction: row;

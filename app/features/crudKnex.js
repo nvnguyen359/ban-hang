@@ -1,18 +1,25 @@
-require("dotenv").config({ path: "../.env" });
+const path = require("path");
+require("dotenv").config();
+const lib = require("./../shares/lib");
 const { initTable } = require("./createTable");
-const knex = require("knex")({
-  client: "sqlite",
-  connection: {
-    filename: process.env.SQLITE_FILENAME,
-  },
-  useNullAsDefault: true,
-});
 class CRUDKNEX {
+  knex;
   constructor(table = null) {
     this.table = table;
+    const localDatabase =
+      process.env.EVN_NODE != "production"
+        ? path.join(__dirname, process.env.SQLITE_FILENAME)
+        : path.join(process.env.localDatabase, process.env.SQLITE_FILENAME);
+    this.knex = require("knex")({
+      client: "sqlite",
+      connection: {
+        filename: localDatabase,
+      },
+      useNullAsDefault: true,
+    });
   }
   async initTable() {
-   return await initTable(knex);
+    return await initTable(this.knex);
   }
   set setTable(table) {
     this.table = table;
@@ -21,41 +28,106 @@ class CRUDKNEX {
     return this.table;
   }
   async create(data) {
-    data.createdAt = new Date().addHours(12).toISOString();
-    data.updatedAt = new Date().addHours(12).toISOString();
-    const result = await knex(this.table).insert([data]);
-
-    return result;
+    if (!Array.isArray(data)) {
+      data = [data];
+    }
+    if (data.lenght < 1) return { result: [] };
+    let data1 = Array.from(data).map((x) => {
+      if (!x.createdAt) x.createdAt = new Date().toISOString();
+      if (!x.updatedAt) x.updatedAt = new Date().toISOString();
+      return x;
+    });
+    try {
+      const result = await this.knex(this.table).insert(data1).returning("*");
+      return result;
+    } catch (error) {
+      console.log(error);
+      return { error };
+    }
   }
   async update(data) {
-    const Id = data?.Id;
-    data.updatedAt = new Date().addHours(12).toISOString();
-    const result = await knex(this.table).where({ Id }).update(data);
-
-    return result;
+    const id = data?.id;
+    data.updatedAt = new Date().toISOString();
+    try {
+      const result = await this.knex(this.table)
+        .where({ id })
+        .update(data)
+        .returning("*");
+      return result;
+    } catch (error) {
+      return { error };
+    }
   }
   async upsert(data) {
-    return !data.Id ? await this.create(data) : await this.update(data);
+    let id = null;
+    if (Array.isArray(data)) {
+      id = Array.from(data)[0];
+    } else {
+      id = data.id;
+    }
+    return id ? await this.update(data) : await this.create(data);
   }
   async destroy(id) {
-    return await knex(this.table).where({ Id: id }).delete();
-  }
-  async getAll(limit = 100, offset = 0, query = "") {
-    const result =
-      query == ""
-        ? await knex(this.table).select("*").limit(limit).offset(offset)
-        : await knex.raw(query);
-    console.log("result", result);
+    const result = await this.knex(this.table)
+      .del()
+      .where({ id })
+      .returning("*");
+    // console.log("id ", id, this.table, result);
     return result;
   }
+  async findAll(
+    query = "",
+    column = null,
+    limit,
+    offset = 0,
+    startDay,
+    endDay
+  ) {
+    if (!column) column = "*";
+    return new Promise(async (res, rej) => {
+     // console.log(new Date(startDay).toISOString(),new Date(endDay).toLocaleDateString('vi'))
+      const orderBy = "id";
+      let qr = !startDay
+        ? await this.knex
+            .columns(column)
+            .select()
+            .limit(limit)
+            .offset(offset)
+            .from(this.table)
+            .orderBy(orderBy, "desc")
+        : await this.knex(this.table)
+            .whereBetween("createdAt", [new Date(startDay).toISOString(), new Date(endDay).toISOString()])
+            .columns(column)
+            .select()
+            .limit(limit)
+            .offset(offset)
+            .orderBy(orderBy, "desc");
+      const result =
+        query == ""
+          ? qr
+          : !offset
+          ? await this.knex
+              .raw(query + ` limit ${limit} offset ${offset}`)
+              .orderBy(orderBy, "desc")
+          : await knex.raw(query);
+      this.knex(this.table)
+        .count("id as CNT")
+        .then((total) => {
+          res({ items: result, count: total[0].CNT });
+        });
+    });
+  }
   async findId(id) {
-    return await knex(this.table).where({ Id: id }).first();
+    return await this.knex(this.table).where({ id }).first();
+  }
+  async filterWithObj(obj) {
+    return await this.knex(this.table).where(obj);
   }
   async findOne(obj) {
-    return await knex(this.table).where(obj).first();
+    return await this.knex(this.table).where(obj).first();
   }
   async filterQuery(query) {
-    const result = await knex.raw(query);
+    const result = await this.knex.raw(query);
     //console.log(result)
     return result;
   }

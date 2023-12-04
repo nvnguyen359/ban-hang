@@ -1,169 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
-$height:500px;
-$width150:150px;
+
 html,
 body {
     height: 100%;
-    width: 100%;
- 
 }
-option{max-height: 300px;overflow-y: auto;}
+
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
-    background-color: #f4f4f4;
-    overflow: hidden;
 }
 
-.app-root {
-    height: 100% !important;
-}
-
-.full-width {
-    width: 100%;
-}
-
-.flex {
-    display: flex;
-}
-
-.flex button {
-    // margin-left: 8px;
-}
-
-.bt-sti {
-    display: block;
-
-    position: fixed;
-    bottom: 10px;
-    right: 15px;
-    z-index: 1000;
-}
-
-.name {
-    display: flex;
-    cursor: pointer;
-    background: #3f51b5;
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid #3f51b5;
-    color: aliceblue;
-    transition: 0.5s all;
-    align-items: center;
-}
-
-.name:hover {
-    background: #e2e3e6;
-    color: #3f51b5;
-}
-
-.mes {
-    position: fixed;
-    z-index: 1000000;
-    bottom: 5px;
-    left: 200px;
-    opacity: 0.75;
-    display: flex;
-}
-@keyframes rotating {
-    from{
-        -webkit-transform: rotate(0deg);
-    }
-    to{
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-.rotating {
-    -webkit-animation: rotating 2s linear infinite;
-}
-@keyframes example {
-    from {transform: rotate(0deg);}
-    to {transform: rotate(360deg);}
-  }
-.refesh{
-    animation: rotating 2s linear infinite;
-    width: 24px;
-    height: 24px;
-   
-    align-items: center;
-    cursor: pointer;
-    display: none;
-}
-.refesh.show{
-    display: flex;
-}
-.delete {
-    color: var(--mat-stepper-header-error-state-label-text-color);
-    cursor: pointer;
-    transition: 0.2s all;
-    transform: scale(1.1);
-}
-
-.delete:hover {
-    opacity: 0.85;
-    color: #3f51b5;
-
-}
-
-.flex {
-    display: flex;
-}
-
-.docs-component-category-list-card {
-    border: 1px solid rgba(0, 0, 0, .12);
-    border-radius: 4px;
-    background: white;
+.padding-4 {
     padding: 4px;
 }
 
-.mat-drawer-inner-container {
-    overflow-x: hidden !important;
-}
-
-.spin-1 {
+.flex {
     display: flex;
-    width: 100%;
-    height: 100%;
+}
+
+.fixed.bottom {
     position: fixed;
-    z-index: 100000000;
-    background: #2c2c2c1f;
-    align-items: center;
-    justify-content: center;
-    top: 0;
-    left: 0;
+    bottom: 45px;
+    right: 5px;
+    z-index: 100000;
 }
 
-.spin-1.hide {
-    display: none;
-    width: 0;
-    height: 0;
-}
 
-.drawer-content-1 {
-    position: absolute;
-}
-
-a {
-    transition: cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s all;
-}
-
-.active {
-    background-color: var(--mat-stepper-header-selected-state-icon-background-color) !important;
-    color: whitesmoke;
-}
-
-.center {
-    padding-left: 8px;
-}
-
-.cdk-overlay-pane {
-    margin-top: 20px;
-}
-
-.max-height {
-    max-height: 650px;
-    overflow: auto;
+.text-center {
+    text-align: center;
 }
 
 .text-align {
@@ -197,47 +61,125 @@ a {
     padding: 16px;
 }
 
-.btns-bottom {
-    justify-items: flex-end;
-    margin-top: 16px;
-    justify-content: flex-end;
-    margin-right: 16px;
+.full-width {
+    width: 100%;
+}
 
-    button {
-        margin-left: 8px;
+.active {
+    background-color: var(--mat-stepper-header-selected-state-icon-background-color) !important;
+    color: whitesmoke !important;
+}
+
+.name {
+    display: flex;
+    cursor: pointer;
+    background: #3f51b5;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #3f51b5;
+    color: aliceblue;
+    transition: 0.5s all;
+    align-items: center;
+}
+
+.name:hover {
+    background: #e2e3e6;
+    color: #3f51b5;
+}
+
+.mes {
+    position: fixed;
+    z-index: 1000000;
+    bottom: 5px;
+    left: 200px;
+    opacity: 0.75;
+    display: flex;
+}
+
+@keyframes rotating {
+    from {
+        -webkit-transform: rotate(0deg);
     }
 
+    to {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
-.margin-right-8 {
-    margin-right: 8px;
+.rotating {
+    -webkit-animation: rotating 2s linear infinite;
 }
 
-.mat-mdc-form-field-subscript-wrapper {
-    height: 8px;
+@keyframes example {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.table-ngay {
-    border-collapse: collapse;
-    width: 100%;
+.refesh {
+    animation: rotating 2s linear infinite;
+    width: 24px;
+    height: 24px;
+
+    align-items: center;
+    cursor: pointer;
+    display: none;
 }
 
-.table-ngay th {
-    color: rgb(41, 23, 23);
+.refesh.show {
+    display: flex;
 }
 
-.table-ngay thead {
-    background: cadetblue;
+.delete {
+    color: var(--mat-stepper-header-error-state-label-text-color);
+    cursor: pointer;
+    transition: 0.2s all;
+    transform: scale(1.1);
 }
 
-.table-ngay,
-.table-ngay td,
-.table-ngay th {
-    border: 1px solid rgba(56, 56, 56, 0.116);
-    padding: 8px;
+.delete:hover {
+    opacity: 0.85;
+    color: #3f51b5;
 
 }
-app-baocao{
-    width: 100%;
-    height: 100%;
-  }
+
+.flex.center {
+    display: flex;
+    align-items: center;
+}
+
+.iconAction {
+    cursor: pointer;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+button {
+    transition: 0.4s all;
+}
+
+.disabled {
+    transition: 0.4s all;
+    cursor: not-allowed;
+    pointer-events: none;
+
+    /*Button disabled - CSS color class*/
+    color: #ffffff !important;
+    background-color: #d6d4d4 !important;
+}
+
+.max-height {
+    min-height: 200px;
+    height: 620px;
+    overflow: auto;
+}

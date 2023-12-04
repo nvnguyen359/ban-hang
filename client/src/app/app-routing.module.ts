@@ -1,50 +1,33 @@
-import { LocationStrategy, HashLocationStrategy } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { BaseApiUrl } from "./general";
 
 const routes: Routes = [
-  { path: '', loadChildren: () =>  import("./pages/donhangs/donhangs.module").then((m) => m.DonhangsModule)},
+  { path: '',   redirectTo: `/${BaseApiUrl.BaoCaos}`, pathMatch: 'full' }, // redirect to ,
+  {
+    path: BaseApiUrl.Orders,
+    loadChildren: () =>
+      import("./Pages/orders/orders.module").then((m) => m.OrdersModule),
+  },
+  {
+    path: BaseApiUrl.BaoCaos,
+    loadChildren: () =>
+      import("./Pages/reports/reports.module").then((m) => m.ReportsModule),
+  },
   {
     path: BaseApiUrl.KhachHangs,
     loadChildren: () =>
-      import("./pages/customers/customers.module").then(
+      import("./Pages/customers/customers.module").then(
         (m) => m.CustomersModule
       ),
   },
-  {
-    path: "settings",
-    loadChildren: () =>
-      import("./pages/settings/settings.module").then((m) => m.SettingsModule),
-  },
-  {
-    path: BaseApiUrl.NhapHangs,
-    loadChildren: () =>
-      import("./pages/nhaphang/nhaphang.module").then((m) => m.NhaphangModule),
-  },
-  {
-    path: BaseApiUrl.SanpPhams,
-    loadChildren: () =>
-      import("./pages/sanphams/sanphams.module").then((m) => m.SanphamsModule),
-  },
-  {
-    path: BaseApiUrl.DonHangs,
-    loadChildren: () =>
-      import("./pages/donhangs/donhangs.module").then((m) => m.DonhangsModule),
-  },
-  {
-    path: BaseApiUrl.ChiPhis,
-    loadChildren: () =>
-      import("./pages/chiphis/chiphis.module").then((m) => m.ChiphisModule),
-  },
-  { path:BaseApiUrl.CongNos, loadChildren: () => import('./pages/congnos/congnos.module').then(m => m.CongnosModule) },
-  { path: BaseApiUrl.BaoCaos, loadChildren: () => import('./pages/baocao/baocao.module').then(m => m.BaocaoModule) },
-  { path: BaseApiUrl.listOrders, loadChildren: () => import('./pages/list-orders/list-orders.module').then(m => m.ListOrdersModule) }
+  { path: BaseApiUrl.SanpPhams, loadChildren: () => import('./Pages/products/products.module').then(m => m.ProductsModule) },
+  { path: BaseApiUrl.ChiPhis, loadChildren: () => import('./Pages/expense/expense.module').then(m => m.ExpenseModule) },
+  { path: 'importGoods', loadChildren: () => import('./Pages/import-goods/import-goods.module').then(m => m.ImportGoodsModule) },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: false })],
-  providers: [],
+  imports: [RouterModule.forRoot(routes,{onSameUrlNavigation:'reload'})],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

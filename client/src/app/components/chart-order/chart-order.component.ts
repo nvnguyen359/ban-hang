@@ -1,4 +1,5 @@
 import { Component, ViewChild } from "@angular/core";
+import { async } from "@angular/core/testing";
 
 import {
   ChartComponent,
@@ -11,8 +12,8 @@ import {
   ApexXAxis,
   ApexPlotOptions,
 } from "ng-apexcharts";
-import { ChiTietDonHang } from "src/app/Models/chiTietDonHang";
-import { DonHang } from "src/app/Models/donHang";
+import { Order } from "src/app/Models/order";
+import { delay } from "src/app/general";
 import { DataService } from "src/app/services/data.service";
 
 export type ChartOptions = {
@@ -63,13 +64,26 @@ export class ChartOrderComponent {
     curve: "smooth",
   };
   constructor(private dataService: DataService) {
-    const widthScreen = window.outerWidth-50;
+    const widthScreen = window.outerWidth - 50;
+    const labels = [
+      "01/01/2003",
+      "02/01/2003",
+      "03/01/2003",
+      "04/01/2003",
+      "05/01/2003",
+      "06/01/2003",
+      "07/01/2003",
+      "08/01/2003",
+      "09/01/2003",
+      "10/01/2003",
+      "11/01/2003",
+    ];
     this.chartOptions = {
       series: this.ininitData,
       chart: {
         height: 200,
         type: "line",
-        width: '100%',
+        width: "100%",
         stacked: false,
       },
       stroke: this.initStroke,
@@ -90,19 +104,7 @@ export class ChartOrderComponent {
           stops: [0, 100, 100, 100],
         },
       },
-      labels: [
-        "01/01/2003",
-        "02/01/2003",
-        "03/01/2003",
-        "04/01/2003",
-        "05/01/2003",
-        "06/01/2003",
-        "07/01/2003",
-        "08/01/2003",
-        "09/01/2003",
-        "10/01/2003",
-        "11/01/2003",
-      ],
+      labels: labels,
       markers: {
         size: 0,
       },
@@ -126,51 +128,56 @@ export class ChartOrderComponent {
         },
       },
     };
+    this.chartOptions.labels = labels;
   }
 
   ngOnInit() {
-    this.dataService.currentMessage.subscribe((result: any) => {
+    this.dataService.currentMessage.subscribe(async (result: any) => {
+      await delay(2000);
       if (result.donhangs) {
+        result.donhangs = result.donhangs.reverse();
         this.columnsDoanhThu = [];
         this.columnsOrders = [];
         this.columnsLoiNhuan = [];
         const donhangs = Array.from(result.donhangs).map((x: any) => {
-          //console.log( x["Ngày Bán"],new Date( x["Ngày Bán"]).toLocaleDateString())
-        x["Ngày Bán"] = new Date( x["Ngày Bán"]).toLocaleDateString();
+          x.createdAt = new Date(x.createdAt).toLocaleDateString("vi");
           return x;
         });
-    
-        if (donhangs.length < 1) {
-          this.chartOptions.labels = [];
-         this.ininitData[0].data = [];
-        };
-        const dates = [...new Set(donhangs.map((x: any) => x["Ngày Bán"]))];
+
+        // if (donhangs.length < 1) {
+        //   this.chartOptions.labels = [];
+        //   this.ininitData[0].data = [];
+        // }
+        const dates = [...new Set(donhangs.map((x: any) => x.createdAt))];
+        if (dates.length < 1) return;
         dates.forEach((date: any) => {
           const dhs = donhangs.filter(
-            (x: any) => x["Ngày Bán"] == date
-          ) as DonHang[];
+            (x: any) => x.createdAt == date
+          ) as Order[];
           this.columnsOrders.push(dhs.length);
           const dts = dhs
-            .map((x: DonHang) => x["Thanh Toán"])
+            .map((x: any) => x["pay"])
             .reduce((a: number, b: number) => a + b, 0);
           this.columnsDoanhThu.push(dts);
           let sum = 0;
-          const chitiets = dhs.map((x: DonHang) => x["chitiets"]);
+          const chitiets = dhs.map((x: any) => x.details);
           chitiets.forEach((chitiet: any) => {
             const sumChitiet = chitiet
-              .map(
-                (x: any) => parseInt(x["Số Lượng"]) * parseInt(x["Giá Nhập"])
-              )
+              .map((x: any) => parseInt(x.quantity) * parseInt(x.importPrice))
               .reduce((a: number, b: number) => a + b, 0);
             sum += sumChitiet;
           });
 
           this.columnsLoiNhuan.push(sum);
         });
-        this.labels = [...new Set(dates)].map((x:any)=>x.replace(`/${new Date().getFullYear()}`,''));
+        this.labels = dates.map((x: any) => {
+          const year = x.split("/")[2].toString(); //.slice(0, 2);
+          const t = x.replace(`/${year}`, "");
+          return t;
+        });
         this.chartOptions.labels = this.labels;
-         this.ininitData[0].data = this.columnsOrders;
-      //  this.ininitData[0].data = this.columnsDoanhThu;
+        this.ininitData[0].data = this.columnsOrders;
+        //  this.ininitData[0].data = this.columnsDoanhThu;
         // this.ininitData[2].data = this.columnsLoiNhuan;
         this.chartOptions.series = this.ininitData;
       }

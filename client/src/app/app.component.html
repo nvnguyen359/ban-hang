@@ -1,31 +1,29 @@
-<mat-toolbar color="primary" style="position: fixed;z-index:99999">
-  <mat-toolbar-row>
-    <button mat-icon-button class="example-icon" (click)="drawer.toggle()"
-      aria-label="Example icon-button with menu icon">
-      <mat-icon>menu</mat-icon>
+<mat-toolbar color="primary" style="position: fixed;
+z-index: 1000000;">
+    <button mat-icon-button (click)="drawer.toggle()">
+        <mat-icon>menu</mat-icon>
     </button>
-    <span></span>
-    <span class="example-spacer"> {{ver}}</span>
-
-  </mat-toolbar-row>
+    <span >{{pageName||'Trang Chủ'}}</span>
+    <button class="mat-icon-button" mat-icon-button (click)="onRefesh()">
+        <mat-icon>update</mat-icon>
+      </button>
+      
+    <span class="example-spacer"></span>
+    <!-- <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+        <mat-icon>favorite</mat-icon>
+    </button>
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+        <mat-icon>share</mat-icon>
+    </button> -->
 </mat-toolbar>
-<mat-drawer-container class="drawer-container" style="height: 100%;padding-top:64px" autosize>
-  <mat-drawer #drawer mode="side" opened>
-    <app-menu-left style="padding-top: 64px;"></app-menu-left>
+<mat-drawer-container class="example-container" autosize>
+    <mat-drawer #drawer class="example-sidenav margin-top64" mode="side" opened >
+        <app-menu-left></app-menu-left>
+    </mat-drawer>
 
-  </mat-drawer>
-  <mat-drawer-content class="drawer-content-1">
-    <div class="flex" style="width: 100%;margin:8px">
-      <app-spinner></app-spinner>
-      <router-outlet ></router-outlet>
+    <div class="example-sidenav-content margin-top64" style="overflow: hidden;">
+        <router-outlet></router-outlet>
+        <app-spinner> </app-spinner>
     </div>
-    <div class="flex" style="display: none;" color="primary"><i style="opacity: 0.75;margin-bottom: -2px">{{infor}}</i></div>
 
-  </mat-drawer-content>
 </mat-drawer-container>
-
-<div class="bt-sti1" [ngClass]="showBtDonHang?'show':'hide'">
-  <button mat-fab (click)="onOpenDialog()">
-    <mat-icon mat-icon-button>edit</mat-icon>
-  </button>
-</div>

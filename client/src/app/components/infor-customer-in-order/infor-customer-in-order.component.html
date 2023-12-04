@@ -1,0 +1,134 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
+    <input type="hidden" name="" formControlName="id">
+    <input type="hidden" name="" formControlName="shippingFee">
+    <input type="hidden" name="" formControlName="status" [value]="statusText">
+    <input type="hidden" name="" formControlName="customerId" required>
+    <input type="hidden" name="" formControlName="name" required>
+    <input type="hidden" name="" formControlName="details" required>
+    <input type="hidden" name="" formControlName="updatedAt">
+    <div style="width: 428px;">
+        <div class="full-width">
+            <div class="flex" style="margin-bottom: -16px;">
+                <app-autocomplete [data]="customers" [options]="optionsCustomer" [default]="data?.order?.name||''"
+                    [ariaDisabled]="true" [required]="true" (selectTed)="onSelecCustomer($event)"
+                    style="width: 212px;"></app-autocomplete>
+                <app-status (eventChange)="eventChangeStatus($event)" [statusText]="statusText"></app-status>
+
+            </div>
+            <div class="flex">
+                <app-discount (outPut)="onChangeDiscount($event)" [required]="false"></app-discount>
+                <mat-form-field class="example-form-field" style="width: 212px;" appearance="outline">
+                    <mat-label>Tiền Công</mat-label>
+                    <input matInput type="text" formControlName="wage" name="wage" #wage (keyup)="onCal()">
+                    <button matSuffix mat-icon-button aria-label="Clear" (click)="wage.value=''" *ngIf="wage.value">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <div class="flex" style="margin-top: -14px;">
+                <mat-form-field style="margin-right:4px" class="flex-2" appearance="outline">
+                    <mat-label>Chọn Đơn Vị</mat-label>
+                    <mat-select required value="{{selectDv}}" (selectionChange)="selectionChangeUnit($event)">
+                        <mat-option value="1000">1000đ</mat-option>
+                        <mat-option value="100">100đ</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="flex-2" appearance="outline">
+                    <mat-label>Ngày Tạo Đơn</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="createdAt" required>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="full-width">
+            <div class="show-table" style="flex-grow: 1;">
+                <table class="table-right" [hidden]="details?.length<1">
+                    <thead style="position: sticky;">
+                        <th>#</th>
+                        <th>Tên Hàng</th>
+                        <th>SL</th>
+                        <th>ĐV</th>
+                        <th>ĐG</th>
+                        <th>T. Tiền</th>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of details;let i= index">
+                            <td>
+                                <div class="detail-name">
+                                    <span>{{i+1}}</span>
+                                    <button mat-icon-button type="button" (click)="onDeleteDetail(item)" color="warn" *ngIf="item.quantity>0"
+                                        class="icon-delete">
+                                        <mat-icon>remove_circle</mat-icon>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <span>{{item['name']}}</span>
+                               
+                            </td>
+                            <td style="text-align: right;">
+                                <div class="edit"><input type="number" name="" id="" value="{{item.quantity}}"
+                                        style="max-width:40px" (change)="onKeyPressTable($event,item,'quantity')"
+                                        (keyup)="onKeyPressTable($event,item,'quantity')"></div>
+                            </td>
+                            <td style="text-align: right;"><span>{{item.unit}}</span></td>
+                            <td style="text-align: right;">
+                                <div class="edit"><input type="number" value="{{item.price}}" step="500" min="0"
+                                        style="max-width:60px" (change)="onKeyPressTable($event,item,'price')"
+                                        (keyup)="onKeyPressTable($event,item,'price')"></div>
+                            </td>
+                            <td style="text-align: right;">
+                                <span>{{item.quantity*item.price|number}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">Tổng</td>
+                            <td colspan="1" style="text-align: right;">
+                                <span>{{sumEnd.quantity}}</span>
+                            </td>
+                            <td colspan="2"></td>
+                            <td colspan="1" style="text-align: right;">
+                                <span>{{sumEnd.intoMney|number}}</span>
+                            </td>
+                        </tr>
+                        <tr *ngIf="sumEnd?.wage">
+                            <td colspan="5">Tiền Công</td>
+                            <td colspan="1" style="text-align: right;">
+                                <span>{{sumEnd.wage|number}}</span>
+                            </td>
+                        </tr>
+                        <tr *ngIf="sumEnd?.phiship">
+                            <td colspan="5">Phí Ship</td>
+                            <td colspan="1" style="text-align: right;">
+                                <span></span>
+                            </td>
+                        </tr>
+                        <tr *ngIf="sumEnd?.discount">
+                            <td colspan="5">Chiết Khấu</td>
+                            <td colspan="1" style="text-align: right;">
+                                <span>{{sumEnd?.discount|number}}</span>
+                            </td>
+                        </tr>
+                        <tr *ngIf="sumEnd?.pay">
+                            <td colspan="5">Thanh Toán</td>
+                            <td colspan="1" style="text-align: right;">
+                                <span>{{sumEnd?.pay|number}}</span>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="flex full-width" style="justify-content: flex-end;margin-top:8px">
+                <button mat-flat-button color="primary" mat-dialog-close="Status.Refesh" type="submit" style="margin-right: 8px;"
+                    [disabled]="!formGroup.valid">Lưu</button>
+                <button mat-flat-button color="accent" mat-dialog-close="true" type="button" (click)="saveAndPrinter()"
+                    [disabled]="!formGroup.valid">Lưu &
+                    In</button>
+                <!-- <button mat-flat-button color="warn" mat-dialog-close (click)="onReset()">Reset</button> -->
+            </div>
+        </div>
+    </div>
+</form>
