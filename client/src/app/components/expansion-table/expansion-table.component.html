@@ -4,36 +4,52 @@
         <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
             <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
                 <th mat-header-cell *matHeaderCellDef [class]="thTextAligh(column)">
-                    <div class="flex" *ngIf="column=='no'" style="align-items: center;">
-                        {{columnOrders(column)}}
-                        <mat-checkbox (change)="$event ? toggleAllRows() : null"
-                            [checked]="selection.hasValue() && isAllSelected()"
-                            [indeterminate]="selection.hasValue() && !isAllSelected()">
-                        </mat-checkbox>
+                    <div [ngSwitch]="column">
+                        <div *ngSwitchCase="'no'" class="flex" style="align-items: center;">
+                            {{columnOrders(column)}}
+                            <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                                [checked]="selection.hasValue() && isAllSelected()"
+                                [indeterminate]="selection.hasValue() && !isAllSelected()">
+                            </mat-checkbox>
 
-                        <mat-icon color="warn" *ngIf="selection.selected.length>0" class="iconAction"
-                            (click)="onbulkDelete()">delete</mat-icon>
-                    </div>
-                    <div *ngIf="column!='no'">
-                        {{columnOrders(column)}}
+                            <mat-icon color="warn" *ngIf="selection.selected.length>0" class="iconAction"
+                                (click)="onbulkDelete()">delete</mat-icon>
+                        </div>
 
+                        <div *ngSwitchDefault>{{columnOrders(column)}}</div>
                     </div>
                 </th>
                 <td mat-cell *matCellDef="let element">
                     <div class="flex center">
-                        <ng-container *ngIf="column=='no'">
-                            {{element[column]}}
-                            <mat-checkbox (click)="$event.stopPropagation()"
-                                (change)="$event ? selection.toggle(element) : null"
-                                [checked]="selection.isSelected(element)" [aria-label]="checkboxLabel(element)">
-                            </mat-checkbox>
-                        </ng-container>
-                        <ng-container *ngIf="column!='no'" style="width: 50px;">
-                            <div class=" full-width" style="width: 100%;">
-                                {{formatValue(element[column])}}</div>
-                            <button *ngIf="column=='email'" mat-icon-button color="accent" matTooltip="Tạo Đơn Hàng Mới"
-                                (click)="onAddNewOrder(element)"><mat-icon>add</mat-icon></button>
-                        </ng-container>
+                        <div [ngSwitch]="column">
+                            <div *ngSwitchCase="'no'">
+                                {{element[column]}}
+                                <mat-checkbox (click)="$event.stopPropagation()"
+                                    (change)="$event ? selection.toggle(element) : null"
+                                    [checked]="selection.isSelected(element)" [aria-label]="checkboxLabel(element)">
+                                </mat-checkbox>
+                            </div>
+                            <div *ngSwitchCase="'createdAt'">
+                                <mat-chip-listbox aria-label="Fish selection">
+                                    <mat-chip-option color="accent">
+                                        <div class=" full-width flex center chip" >
+                                            <mat-icon *ngIf="column=='createdAt'">date_range</mat-icon>
+                                           &nbsp; {{formatValue(element[column])}}
+                                        </div>
+                                    </mat-chip-option>
+                                </mat-chip-listbox>
+
+
+                            </div>
+                            <div *ngSwitchDefault>
+                                <div class="full-width flex center" style="width: 100%;">
+
+                                    {{formatValue(element[column])}}</div>
+                                <button *ngIf="column=='email'" mat-icon-button color="accent"
+                                    matTooltip="Tạo Đơn Hàng Mới"
+                                    (click)="onAddNewOrder(element)"><mat-icon>add</mat-icon></button>
+                            </div>
+                        </div>
 
                     </div>
                 </td>
@@ -66,7 +82,7 @@
                                 <tbody>
                                     <tr *ngFor="let item of element.details">
                                         <td *ngFor="let column of columnsChild">
-                                             {{formatValue(item[column])}}
+                                            {{formatValue(item[column])}}
                                         </td>
                                     </tr>
                                 </tbody>

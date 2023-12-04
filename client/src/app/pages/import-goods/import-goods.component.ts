@@ -12,7 +12,7 @@ import { DataService } from 'src/app/services/data.service';
   styleUrls: ['./import-goods.component.scss']
 })
 export class ImportGoodsComponent {
-  columns = ["name", "quantity", "unit","importPrice","price","intoMoney"];
+  columns = ["name", "quantity", "unit","importPrice","price"];
   columnDate = ["updatedAt"];
   options: any = {
     multi:true,

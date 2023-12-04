@@ -167,6 +167,7 @@ export class ExpansionTableComponent {
           this.options.displayedColumns.pop();
 
           if (this.router.url.includes(BaseApiUrl.NhapHangs)) {
+           
             this.columnsChild = [
               ...this.options.displayedColumns,
               groupItem.sumImport,
@@ -175,6 +176,7 @@ export class ExpansionTableComponent {
           } else {
             this.columnsChild = [...this.options.displayedColumns];
           }
+        
           this.columnsToDisplayWithExpand = [
             ...this.displayedColumns,
             "expand",

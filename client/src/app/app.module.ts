@@ -32,7 +32,7 @@ import { DialogConfirmComponent } from './Components/dialog-confirm/dialog-confi
 import { MatDialogModule } from "@angular/material/dialog";
 import { PrintersComponent } from "./Components/printers/printers.component";
 import { NgApexchartsModule } from "ng-apexcharts";
-
+import {MatChipsModule} from '@angular/material/chips';
 @NgModule({
   declarations: [AppComponent, SpinnerComponent, MenuLeftComponent, DialogConfirmComponent],
   imports: [
@@ -81,7 +81,8 @@ import { NgApexchartsModule } from "ng-apexcharts";
     MatSnackBarModule,
     MatTabsModule,
     MatDialogModule,PrintersComponent,
-    NgApexchartsModule
+    NgApexchartsModule,
+    MatChipsModule
   ],
   providers: [MatDatepickerModule, {
     provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true
