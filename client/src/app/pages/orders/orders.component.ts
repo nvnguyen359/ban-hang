@@ -108,7 +108,7 @@ export class OrdersComponent {
     });
   }
   openDialog(obj: any = null) {
-    console.log(obj)
+    console.log(obj);
     return new Promise((res: any, rej) => {
       this.products = this.products.map((x: any) => {
         x.quantity = 0;
@@ -188,7 +188,6 @@ export class OrdersComponent {
   }
   async updateOrCreateDetails(orderDetailsAfterUpdate: any[], orderId: any) {
     const ids = this.details.map((x: any) => parseInt(x.id)) as any[];
-    console.log(ids)
     const url = BaseApiUrl.ChiTietDonHangs;
     const oldDetails = orderDetailsAfterUpdate.filter((x: any) =>
       ids.includes(x.id)
@@ -198,11 +197,12 @@ export class OrdersComponent {
     );
     // console.log(oldDetails, newDetails);
     if (oldDetails) {
-      for (let index = 0; index < oldDetails.length; index++) {
-        const element = oldDetails[index];
-        await this.service.update(url, element);
-        await delay(100);
-      }
+      await this.service.update(url, oldDetails);
+      // for (let index = 0; index < oldDetails.length; index++) {
+      //   const element = oldDetails[index];
+
+      //   await delay(100);
+      // }
     }
     if (newDetails.length > 0) await this.service.create(url, newDetails);
   }
@@ -218,16 +218,10 @@ export class OrdersComponent {
     this.getOrders();
   }
   async onDelete(element: any) {
-  
     await this.service.destroy(BaseApiUrl.Order, element.id);
     const details = element["details"];
     if (details?.length > 0) {
-      for (let index = 0; index < details.length; index++) {
-        const element = details[index];
-        await this.service.destroy(BaseApiUrl.ChiTietDonHangs, element.id, false);
-        await delay(200);
-      }
-    
+      await this.service.bulkDelete(BaseApiUrl.ChiTietDonHangs, details.map((x:any)=>x.id), false);
     }
     this.getOrders();
   }
@@ -342,16 +336,11 @@ export class OrdersComponent {
         order.id,
         index == 0 ? true : false
       );
-
-      for (let index1 = 0; index1 < details?.length || 0; index1++) {
-        const element = details[index1];
-        await delay(200);
-        await this.service.destroy(
-          BaseApiUrl.ChiTietDonHangs,
-          element.id,
-          false
-        );
-      }
+      await this.service.bulkDelete(
+        BaseApiUrl.ChiTietDonHangs,
+        details.map((x: any) => x.id),
+        false
+      );
       await delay(90);
     }
     await delay(100);

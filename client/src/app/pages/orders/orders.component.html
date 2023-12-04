@@ -86,7 +86,7 @@
     </table>
   </div>
   <mat-paginator [length]="resultsLength" [pageSize]="pageSize" (page)="getServerData($event)"
-    [pageSizeOptions]="[9, 25, 100]" showFirstLastButtons="true">
+    [pageSizeOptions]="[9,10, 25, 100,1000,5000]" showFirstLastButtons="true">
   </mat-paginator>
   <div class="fixed bottom">
     <button mat-fab color="warn" aria-label="Example icon button with a home icon" (click)="onCreate()">

@@ -163,6 +163,7 @@ export class DynamicUpsertComponent {
     this.scrollTop();
   }
   async onSubmit() {
+
     const array = this.form.value?.formArray.map((x: any) => {
       x.updatedAt = new Date();
       if (this.data.obj) x.createdAt = new Date(this.form.value.createdAt);
@@ -171,25 +172,19 @@ export class DynamicUpsertComponent {
       if (x.id == null) x.id = "";
       return x;
     }) as any[];
-    console.log(array);
+
     const arrUpdate = array.filter((x: any) => x.id != "");
     const arrCreate = array.filter((x: any) => x.id == "");
 
     if (arrUpdate.length > 0) {
-      for (let index = 0; index < arrUpdate.length; index++) {
-        const element = arrUpdate[index];
-        //     console.log(element);
-        const result = await this.service.update(this.url, element);
+      const result = await this.service.update(this.url, arrUpdate);
         console.log(result);
-        await delay(200);
-      }
     }
     if (arrCreate.length > 0) {
-      console.log("create");
       await this.service.create(this.url, arrCreate);
     }
     if (this.itemsDelete.length > 0) {
-      this.service.bulkDelete(this.url, this.itemsDelete);
+      this.service.bulkDelete(this.url,this.itemsDelete.map((x:any)=>x.id));
     }
     this.dialogRef.close(true);
     this.dataService.sendMessage({ status: Status.Refesh });

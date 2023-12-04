@@ -75,6 +75,15 @@ class CRUDKNEX {
     // console.log("id ", id, this.table, result);
     return result;
   }
+  async bulkDelete(ids) {
+    return  new Promise(async(res,rej)=>{
+      const result = await this.knex(this.table)
+      .del()
+      .whereIn('id', ids)
+      .returning("*");
+      res(result)
+    });
+  }
   async findAll(
     query = "",
     column = null,

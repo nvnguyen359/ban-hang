@@ -33,6 +33,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { PrintersComponent } from "./Components/printers/printers.component";
 import { NgApexchartsModule } from "ng-apexcharts";
 import {MatChipsModule} from '@angular/material/chips';
+
 @NgModule({
   declarations: [AppComponent, SpinnerComponent, MenuLeftComponent, DialogConfirmComponent],
   imports: [

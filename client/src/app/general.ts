@@ -32,7 +32,7 @@ export enum BaseApiUrl {
 export enum fieldData {
   importPrice = "importPrice",
   price = "price",
-  intoMoney='intoMoney'
+  intoMoney = "intoMoney",
 }
 export function links() {
   return [
@@ -78,7 +78,7 @@ export function links() {
     },
   ];
 }
-
+const pageSizeOptions: any[] = [9, 10, 25, 100, 1000, 5000];
 export function fields() {
   const data = [
     {
@@ -178,7 +178,8 @@ export function fields() {
     {
       field: groupItem.sumSale,
       text: "Tổng Bán",
-    }, {
+    },
+    {
       field: groupItem.sumImport,
       text: "Tiền Nhập",
     },
@@ -370,3 +371,4 @@ export function DocTienBangChu(SoTien: any) {
   KetQua = KetQua.substring(1, 2).toUpperCase() + KetQua.substring(2);
   return KetQua; //.substring(0, 1);//.toUpperCase();// + KetQua.substring(1);
 }
+export { pageSizeOptions };

@@ -13,6 +13,7 @@ import { DialogConfirmComponent } from "../Components/dialog-confirm/dialog-conf
 import { DataService } from "./data.service";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { AnimationStyleMetadata } from "@angular/animations";
+import { SnackbarService } from "./snackbar.service";
 
 @Injectable({
   providedIn: "root",
@@ -45,7 +46,7 @@ export class ApiService {
     private http: HttpClient,
     private dialog: MatDialog,
     private dataService: DataService,
-    private snackBar: MatSnackBar
+    private snackBar:SnackbarService
   ) {
     this.baseServer = environment.baseUrl;
   }
@@ -181,18 +182,42 @@ export class ApiService {
     }
   }
   async bulkDelete(url: string, ids: any, showDialog = true) {
-    return new Promise(async (res, rej) => {
-      let data: any = [];
-      for (let index = 0; index < ids.length; index++) {
-        const id = ids[index];
-        // const pathUrl = `${this.baseServer}/${url}/${id}`;
-        let show = index == 0 ? true : false;
-        const result = await this.destroy(url, id, show);
-        data.push(result);
-        await delay(300);
-      }
-      res(data);
-    });
+    const pathUrl = `${this.baseServer}/${url}/${ids}`;
+    if (showDialog) {
+      const dialogRef = this.dialog.open(DialogConfirmComponent, {
+        data: { header: "Bạn chắc chắn muốn xóa!" },
+      });
+      return new Promise((res, rej) => {
+        dialogRef.afterClosed().subscribe((result: any) => {
+          if (result == true) {
+            this.http
+              .delete(pathUrl, this.httpOptions)
+              .pipe(
+                retry(3), // retry a failed request up to 3 times
+                catchError(this.handleError)
+              )
+              .subscribe((e) => {
+                this.snackBar.openSnackBar('done')
+                res(e);
+              });
+          }
+          this.dataService.sendMessage({ resultDelete: result });
+        });
+      });
+    } else {
+      return new Promise((res, rej) => {
+        this.http
+          .delete(pathUrl, this.httpOptions)
+          .pipe(
+            retry(3), // retry a failed request up to 3 times
+            catchError(this.handleError)
+          )
+          .subscribe((e) => {
+            this.snackBar.openSnackBar('done')
+            res(e);
+          });
+      });
+    }
   }
 
   dowloadfileTemplate() {

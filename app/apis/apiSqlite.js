@@ -10,9 +10,11 @@ const apisSqlite = async (app) => {
     findAll(element, app, crud);
     findId(element, app, crud);
     findOne(element, app, crud);
-    upsert(element, app, crud);
+    // upsert(element, app, crud);
     create(element, app, crud);
     destroy(element, app, crud);
+    bulkDelete(element, app, crud);
+    bulkUpdate(element, app, crud);
   });
   getAllOrders(app);
 
@@ -68,6 +70,26 @@ const upsert = (element, app, crud) => {
     gg.put(row);
   });
 };
+const bulkUpdate = (element, app, crud) => {
+  app.put(`/api/${element}`, async (req, res, next) => {
+    let rows = req.body ? req.body : null;
+    if (!Array.isArray(rows)) rows = [rows];
+    const result = [];
+    for (let index = 0; index < rows.length; index++) {
+      const row = rows[index];
+      result.push(await crud.upsert(row));
+      await lib.delay(100);
+    }
+    res.send({ result });
+    next();
+    const gg = new CRUD(element);
+    for (let index = 0; index < rows.length; index++) {
+      const row = rows[index];
+      await gg.put(row);
+      await lib.delay(15000);
+    }
+  });
+};
 const create = (element, app, crud) => {
   app.post(`/api/${element}`, async (req, res, next) => {
     let row = req.body ? req.body : null;
@@ -75,7 +97,7 @@ const create = (element, app, crud) => {
     res.send({ result });
     next();
     const gg = new CRUD(element);
-    gg.post(result);
+    await gg.post(result);
   });
 };
 
@@ -115,7 +137,23 @@ const destroy = (element, app, crud) => {
     await gg.deleteId(id);
   });
 };
-
+const bulkDelete = (element, app, crud) => {
+  app.delete(`/api/${element}/:ids`, async (req, res, next) => {
+    const ids = req.params.ids.split(",");
+    console.log("ids", ids);
+    const result = await crud.bulkDelete(ids);
+    console.log("bulkDelete", result);
+    res.send(result);
+    next();
+    const gg = new CRUD(element);
+    for (let index = 0; index < ids.length; index++) {
+      const id = ids[index];
+      console.log("delete gg", element, id);
+      await gg.deleteId(id);
+      await lib.delay(15000);
+    }
+  });
+};
 const getAllTables = async () => {
   return new Promise(async (res, rej) => {
     let crud = new CRUDKNEX();

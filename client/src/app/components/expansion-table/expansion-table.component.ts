@@ -1,4 +1,4 @@
-import { CommonModule, NgFor, NgIf, formatNumber } from "@angular/common";
+import { CommonModule, NgFor, NgIf } from "@angular/common";
 import {
   ChangeDetectorRef,
   Component,
@@ -10,12 +10,8 @@ import {
   ViewChild,
 } from "@angular/core";
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
 } from "@angular/forms";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
@@ -33,20 +29,16 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatSort, MatSortModule } from "@angular/material/sort";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatTabsModule } from "@angular/material/tabs";
-import { ColumnOrdersPipe } from "src/app/Pipes/column-orders.pipe";
-import { FormatValuePipe } from "src/app/Pipes/format-value.pipe";
 import { AutocompleteComponent } from "../autocomplete/autocomplete.component";
 import { InforCustomerInOrderComponent } from "../infor-customer-in-order/infor-customer-in-order.component";
 import { StatusComponent } from "../status/status.component";
-import { BaseApiUrl, Status, fieldData, groupItem } from "src/app/general";
+import { BaseApiUrl, Status, groupItem } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 import { SelectionModel } from "@angular/cdk/collections";
 import { DataService } from "src/app/services/data.service";
 import { Router } from "@angular/router";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDialog } from "@angular/material/dialog";
-import { DynamicUpsertComponent } from "../dynamic-upsert/dynamic-upsert.component";
-import { OrderUpsertComponent } from "src/app/Pages/orders/order-upsert/order-upsert.component";
 import { GroupItems } from "./groupItems";
 import {
   trigger,
@@ -161,27 +153,27 @@ export class ExpansionTableComponent {
       .then((data: any) => {
         this.details = data.items;
         if (this.options.multi) {
-          const groupItems = new GroupItems(data.items);
-          const x = groupItems.groupItems;
-          this.displayedColumns = x?.columns;
-          this.options.displayedColumns.pop();
-
-          if (this.router.url.includes(BaseApiUrl.NhapHangs)) {
-           
-            this.columnsChild = [
-              ...this.options.displayedColumns,
-              groupItem.sumImport,
-              groupItem.sumSale,
+          if(data.count>0){
+            const groupItems = new GroupItems(data.items);
+            const x = groupItems.groupItems;
+            this.displayedColumns = x?.columns;
+            if (this.router.url.includes(BaseApiUrl.NhapHangs)) {
+              this.options.displayedColumns.pop();
+              this.columnsChild = [
+                ...this.options.displayedColumns,
+                groupItem.sumImport,
+                groupItem.sumSale,
+              ];
+            } else {
+              this.columnsChild = [...this.options.displayedColumns];
+            }
+  
+            this.columnsToDisplayWithExpand = [
+              ...this.displayedColumns,
+              "expand",
             ];
-          } else {
-            this.columnsChild = [...this.options.displayedColumns];
+            this.details = x.items;
           }
-        
-          this.columnsToDisplayWithExpand = [
-            ...this.displayedColumns,
-            "expand",
-          ];
-          this.details = x.items;
         }
 
         const items = Array.from(this.details).map((x: any, index: any) => {
@@ -229,7 +221,8 @@ export class ExpansionTableComponent {
   }
   async onbulkDelete() {
     if (this.selection.selected.length < 1) return;
-    const ids = (this.selection.selected as any[]).map((x: any) => x.id);
+    const data = !this.options.multi?this.selection.selected:this.selection.selected.map((x:any)=>x.details).flat()
+    const ids = (data as any[]).map((x: any) => x.id);
     const result = await this.service.bulkDelete(this.options.url, ids, true);
     if (result) {
       this.getData();
