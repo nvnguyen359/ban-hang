@@ -42,7 +42,7 @@ export class OrdersComponent {
   resultsLength = 0;
   isLoadingResults = false;
   isRateLimitReached = false;
-  pageSize = 10;
+  pageSize = 9;
   pageEvent?: PageEvent;
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
