@@ -123,6 +123,8 @@ export class InforCustomerInOrderComponent {
     this.formGroup.controls.pay.setValue(this.sumEnd.pay);
     this.formGroup.controls.quantity.setValue(this.sumEnd.quantity);
     const value = this.formGroup.value;
+    let createdAt = value.createdAt;
+    let updatedAt= value.id==null?createdAt:new Date()
     const orderId = value.id;
     const listDetails = Array.from(value.details).map((x: any) => {
       return {
@@ -135,8 +137,8 @@ export class InforCustomerInOrderComponent {
         intoMoney: x.quantity * x.price,
         importPrice: x.importPrice,
         orderId: orderId,
-        createdAt: new Date(x.createdAt),
-        updatedAt: new Date(x.updatedAt),
+        createdAt: new Date(createdAt),
+        updatedAt: new Date(updatedAt),
       };
     });
     delete value.details;

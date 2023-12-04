@@ -189,7 +189,7 @@ export class ApiService {
         let show = index == 0 ? true : false;
         const result = await this.destroy(url, id, show);
         data.push(result);
-        await delay(100);
+        await delay(300);
       }
       res(data);
     });

@@ -72,7 +72,6 @@ const create = (element, app, crud) => {
   app.post(`/api/${element}`, async (req, res, next) => {
     let row = req.body ? req.body : null;
     const result = await crud.create(row);
-    console.log(result);
     res.send({ result });
     next();
     const gg = new CRUD(element);
@@ -112,10 +111,8 @@ const destroy = (element, app, crud) => {
     const result = await crud.destroy(id);
     res.send({ result });
     next();
-    console.log("id", id);
     const gg = new CRUD(element);
-    const t = await gg.deleteId(id);
-    console.log(t);
+    await gg.deleteId(id);
   });
 };
 

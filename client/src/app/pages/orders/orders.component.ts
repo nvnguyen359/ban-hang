@@ -218,10 +218,16 @@ export class OrdersComponent {
     this.getOrders();
   }
   async onDelete(element: any) {
+  
     await this.service.destroy(BaseApiUrl.Order, element.id);
     const details = element["details"];
     if (details?.length > 0) {
-      await this.service.destroy(BaseApiUrl.ChiTietDonHangs, details, false);
+      for (let index = 0; index < details.length; index++) {
+        const element = details[index];
+        await this.service.destroy(BaseApiUrl.ChiTietDonHangs, element.id, false);
+        await delay(200);
+      }
+    
     }
     this.getOrders();
   }
@@ -339,7 +345,7 @@ export class OrdersComponent {
 
       for (let index1 = 0; index1 < details?.length || 0; index1++) {
         const element = details[index1];
-        await delay(20);
+        await delay(200);
         await this.service.destroy(
           BaseApiUrl.ChiTietDonHangs,
           element.id,
