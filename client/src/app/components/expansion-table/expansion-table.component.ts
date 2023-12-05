@@ -9,10 +9,7 @@ import {
   Output,
   ViewChild,
 } from "@angular/core";
-import {
-  FormsModule,
-  ReactiveFormsModule,
-} from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -117,6 +114,7 @@ export class ExpansionTableComponent {
   products: any = [];
   expandedElement: any | null;
   details: any[] = [];
+  dataResult: any;
   constructor(
     private service: ApiService,
     private changeDetectorRefs: ChangeDetectorRef,
@@ -135,54 +133,58 @@ export class ExpansionTableComponent {
       if (result.status == Status.Refesh) {
         this.getData();
       }
+      if (result.status == Status.Search) {
+        this.createTable(this.dataResult,result.value);
+      }
     });
   }
   ngAfterViewInit() {}
   ngDisabled() {
     return this.selection.selected.length < 1 ? "disabled" : "";
   }
-  getData() {
+  createTable(data: any, name = "") {
     this.selection.clear();
+    const pageIndex = this.pageEvent?.pageIndex || 0;
+    const pageSize = this.pageEvent?.pageSize || this.pageSize;
+    const filter= name=''?data.items:data.items.filter((x:any)=>`${x.name}`.toLowerCase().removeAccents().includes(name.toLowerCase().removeAccents()))
+    this.details = filter;
+    if (this.options.multi) {
+      if (data.count > 0) {
+        const groupItems = new GroupItems(filter);
+        const x = groupItems.groupItems;
+        this.displayedColumns = x?.columns;
+        if (this.router.url.includes(BaseApiUrl.NhapHangs)) {
+          this.options.displayedColumns.pop();
+          this.columnsChild = [
+            ...this.options.displayedColumns,
+            groupItem.sumImport,
+            groupItem.sumSale,
+          ];
+        } else {
+          this.columnsChild = [...this.options.displayedColumns];
+        }
+      }
+    }
+
+    const items = Array.from(this.details).map((x: any, index: any) => {
+      x.no = index + 1 + pageIndex * pageSize;
+      return x;
+    });
+    this.resultsLength = data.count;
+    this.dataSource.data = items;
+    this.changeDetectorRefs.detectChanges();
+  }
+  getData() {
     const pageIndex = this.pageEvent?.pageIndex || 0;
     const pageSize = this.pageEvent?.pageSize || this.pageSize;
     if (!this.options.url) {
       this.options.url = this.router.url.replace("/", "").trim();
     }
     this.service
-      .get(this.options.url, { page: pageIndex, pageSize })
+      .get(this.options.url, { page: pageIndex, pageSize, name })
       .then((data: any) => {
-        this.details = data.items;
-        if (this.options.multi) {
-          if(data.count>0){
-            const groupItems = new GroupItems(data.items);
-            const x = groupItems.groupItems;
-            this.displayedColumns = x?.columns;
-            if (this.router.url.includes(BaseApiUrl.NhapHangs)) {
-              this.options.displayedColumns.pop();
-              this.columnsChild = [
-                ...this.options.displayedColumns,
-                groupItem.sumImport,
-                groupItem.sumSale,
-              ];
-            } else {
-              this.columnsChild = [...this.options.displayedColumns];
-            }
-  
-            this.columnsToDisplayWithExpand = [
-              ...this.displayedColumns,
-              "expand",
-            ];
-            this.details = x.items;
-          }
-        }
-
-        const items = Array.from(this.details).map((x: any, index: any) => {
-          x.no = index + 1 + pageIndex * pageSize;
-          return x;
-        });
-        this.resultsLength = data.count;
-        this.dataSource.data = items;
-        this.changeDetectorRefs.detectChanges();
+        this.dataResult = data;
+        this.createTable(data);
       });
   }
   showImport() {
@@ -221,7 +223,9 @@ export class ExpansionTableComponent {
   }
   async onbulkDelete() {
     if (this.selection.selected.length < 1) return;
-    const data = !this.options.multi?this.selection.selected:this.selection.selected.map((x:any)=>x.details).flat()
+    const data = !this.options.multi
+      ? this.selection.selected
+      : this.selection.selected.map((x: any) => x.details).flat();
     const ids = (data as any[]).map((x: any) => x.id);
     const result = await this.service.bulkDelete(this.options.url, ids, true);
     if (result) {
@@ -287,8 +291,10 @@ export class ExpansionTableComponent {
     if (this.isNumeric(value)) {
       return parseInt(value).toLocaleString("vi");
     } else {
-  
-      if (!value.includes('/')&& new Date(value).toString() != "Invalid Date") {
+      if (
+        !value.includes("/") &&
+        new Date(value).toString() != "Invalid Date"
+      ) {
         return new Date(value).toLocaleDateString("vi");
       } else {
         return value;

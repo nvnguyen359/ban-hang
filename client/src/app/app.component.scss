@@ -18,8 +18,8 @@ transform: rotate(360deg);
     > input{
         border-radius: 10px;
         padding-left: 35px;
-        width: 0;
-        opacity: 0;
+        width: 100%;
+        opacity: 1;
         height:30px;
         transition: all 0.2s;
         font-size: 14px;
@@ -32,7 +32,7 @@ transform: rotate(360deg);
 }
 .search  mat-icon.left{
     position: absolute;
-    color: rgb(252, 251, 251);
+    color: blueviolet;
     font-size: 30px;
     cursor:pointer;
     pointer-events: all;

@@ -23,8 +23,8 @@ export class AppComponent {
     @Inject(MAT_DATE_LOCALE) private _locale: string,
     private router: Router,
     private http: HttpClient,
-    private dataService:DataService,
-    private service:ApiService
+    private dataService: DataService,
+    private service: ApiService
   ) {
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationStart) {
@@ -58,18 +58,16 @@ export class AppComponent {
       if (item) {
         item.style.width = "100%";
         item.style.opacity = "1";
-        item.focus()
+        item.focus();
       }
     }
-    this.service.get(this.router.url.replace('/','')).then((e:any)=>{
-      console.log(e)
-    })
-    this.dataService.sendMessage({value:this.search,status:Status.Search})
+    this.dataService.sendMessage({ value: this.search, status: Status.Search });
   }
   onShowSearch() {
     return this.search != "" ? "show" : "";
   }
-  onClose(){
-    this.search=''
+  onClose() {
+    this.search = "";
+    this.dataService.sendMessage({ value: '', status: Status.Search });
   }
 }

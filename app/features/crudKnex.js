@@ -76,36 +76,52 @@ class CRUDKNEX {
     return result;
   }
   async bulkDelete(ids) {
-    return  new Promise(async(res,rej)=>{
+    return new Promise(async (res, rej) => {
       const result = await this.knex(this.table)
-      .del()
-      .whereIn('id', ids)
-      .returning("*");
-      res(result)
+        .del()
+        .whereIn("id", ids)
+        .returning("*");
+      res(result);
     });
   }
-  async findAll(
-    query = "",
-    column = null,
-    limit,
-    offset = 0,
-    startDay,
-    endDay
-  ) {
-    if (!column) column = "*";
+  async findAll(obj = null) {
+    const {
+      query = "",
+      column,
+      limit = 100,
+      offset = 0,
+      startDay,
+      endDay,
+      name = "",
+    } = obj;
+    // if (!column) column = ["*"];
     return new Promise(async (res, rej) => {
-     // console.log(new Date(startDay).toISOString(),new Date(endDay).toLocaleDateString('vi'))
+      // console.log(new Date(startDay).toISOString(),new Date(endDay).toLocaleDateString('vi'))
       const orderBy = "id";
-      let qr = !startDay
-        ? await this.knex
+//.fromRaw('COLLATE [Vietnamese_CI_AI]')
+      const wherename = name
+        ? await this.knex(this.table)
+            
+            .columns(column)
+            .select()
+            .whereLike('name',`%${name}%`)
+            .limit(limit)
+            .offset(offset)
+            .orderBy(orderBy, "desc")
+        : await this.knex(this.table)
             .columns(column)
             .select()
             .limit(limit)
             .offset(offset)
-            .from(this.table)
-            .orderBy(orderBy, "desc")
+            .orderBy(orderBy, "desc");
+            console.log(this.table,'name',name,wherename.length)
+      let qr = !startDay
+        ? wherename
         : await this.knex(this.table)
-            .whereBetween("createdAt", [new Date(startDay).toISOString(), new Date(endDay).toISOString()])
+            .whereBetween("createdAt", [
+              new Date(startDay).toISOString(),
+              new Date(endDay).toISOString(),
+            ])
             .columns(column)
             .select()
             .limit(limit)
@@ -115,10 +131,12 @@ class CRUDKNEX {
         query == ""
           ? qr
           : !offset
-          ? await this.knex
-              .raw(query + ` limit ${limit} offset ${offset}`)
-              .orderBy(orderBy, "desc")
+          ? await this.knex.raw(
+              query +
+                ` limit ${limit} offset ${offset} ORDER BY ${orderBy} DESC`
+            )
           : await knex.raw(query);
+          //console.log(wherename)
       this.knex(this.table)
         .count("id as CNT")
         .then((total) => {

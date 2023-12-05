@@ -13,7 +13,13 @@ const asyncData = async () => {
       crud.nameSheet = listTable[i];
       const array = Array.from(await crud.getAll());
       const knexCrud = new CRUDKNEX(listTable[i]);
-      const knexAll = await knexCrud.findAll('','*',1000000,0);
+      const obj = {
+        query: "",
+        column: "*",
+        limit: 100000,
+        offset: 0,
+      };
+      const knexAll = await knexCrud.findAll(obj);
       if (array.length != knexAll.count) {
         for (let j = 0; j < array.length; j++) {
           const x = array[j];
@@ -24,10 +30,10 @@ const asyncData = async () => {
         }
         console.log(`===${listTable[i]}===`, "done!");
       }
-    }console.timeEnd()
+    }
+    console.timeEnd();
     res("done");
   });
-  
 };
 
 module.exports = { asyncData };

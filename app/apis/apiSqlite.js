@@ -38,16 +38,21 @@ const getAllOrders = (app) => {
     const startDay = q.startDay ? new Date(q.startDay).startDay() : null;
     const endDay = q.endDay ? new Date(q.endDay).endDay() : null;
     let crud = new CRUDKNEX("order");
+    let obj = {
+      query: q.query,
+      column,
+      limit,
+      offset: offset * limit,
+      name:q.name
+    };
+  
+    if (startDay) {
+      obj.startDay = startDay;
+      obj.endDay = endDay;
+    }
     let listOrders = !startDay
-      ? await crud.findAll(q.query, column, limit, offset * limit)
-      : await crud.findAll(
-          q.query,
-          column,
-          limit,
-          offset * limit,
-          startDay,
-          endDay
-        );
+      ? await crud.findAll(obj)
+      : await crud.findAll(obj);
 
     let crudDetails = new CRUDKNEX("orderDetails");
     let result = [];
@@ -86,7 +91,7 @@ const bulkUpdate = (element, app, crud) => {
     for (let index = 0; index < rows.length; index++) {
       const row = rows[index];
       await gg.put(row);
-      await lib.delay(100);
+      await lib.delay(1000);
     }
   });
 };
@@ -107,8 +112,14 @@ const findAll = (element, app, crud) => {
     const column = q.columns ? q.columns.split(",") : [];
     const limit = parseInt(q.pageSize) || parseInt(q.limit) || 100;
     const offset = parseInt(q.page) || 0;
-    // console.log(limit, offset)
-    res.send(await crud.findAll(q.query, column, limit, offset * limit));
+    const obj = {
+      query: q.query,
+      column,
+      limit,
+      offset: offset * limit,
+      name:q.name
+    };
+    res.send(await crud.findAll(obj));
     next();
   });
 };
@@ -148,7 +159,7 @@ const bulkDelete = (element, app, crud) => {
       const id = ids[index];
       console.log("delete gg", element, id);
       await gg.deleteId(id);
-      await lib.delay(100);
+      await lib.delay(1000);
     }
   });
 };
