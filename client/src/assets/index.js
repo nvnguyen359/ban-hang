@@ -25,7 +25,7 @@ function jsRun() {
 
 document.addEventListener("DOMContentLoaded", function () {
   const menus = document.querySelectorAll(".menu  a.menu-item");
-  const url = this.location.pathname.split(';')[0];
+  const url = this.location.pathname.split(";")[0];
   if (menus) {
     if (url == "/") menus[0].classList.add("active");
     menus.forEach((a) => {
@@ -39,8 +39,16 @@ document.addEventListener("DOMContentLoaded", function () {
         a.classList.add("active");
       });
     });
-    // setTimeout(() => {
-    //   menus[0].click()
-    // }, 800);
+    document.addEventListener("keyup", (event) => {
+      if (event.key === "Enter") {
+      const item = document.getElementById("id-input-search");
+        if (item) {
+          item.style.width = "100%";
+          item.style.opacity = "1";
+          item.focus()
+         document.getElementById('icon-search').classList.add('show')
+        }
+      }
+    });
   }
 });

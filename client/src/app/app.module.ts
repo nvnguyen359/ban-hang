@@ -33,6 +33,8 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { PrintersComponent } from "./Components/printers/printers.component";
 import { NgApexchartsModule } from "ng-apexcharts";
 import {MatChipsModule} from '@angular/material/chips';
+import { MatInputModule } from "@angular/material/input";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [AppComponent, SpinnerComponent, MenuLeftComponent, DialogConfirmComponent],
@@ -52,7 +54,6 @@ import {MatChipsModule} from '@angular/material/chips';
     MatIconModule,
     MatToolbarModule,
     MatButtonModule,
-    MatIconModule,
     BrowserAnimationsModule,
     MatSidenavModule,
     MatListModule,
@@ -63,8 +64,6 @@ import {MatChipsModule} from '@angular/material/chips';
     ReactiveFormsModule,
     HttpClientModule,
     MatFormFieldModule,
-    MatIconModule,
-    MatIconModule,
     MatProgressSpinnerModule,
     MatAutocompleteModule,
     MatRippleModule,
@@ -77,13 +76,13 @@ import {MatChipsModule} from '@angular/material/chips';
     MatTabsModule,
     NgFor,
     NgIf,
-    MatIconModule,
     MatCheckboxModule,
     MatSnackBarModule,
     MatTabsModule,
     MatDialogModule,PrintersComponent,
     NgApexchartsModule,
-    MatChipsModule
+    MatChipsModule,
+    MatInputModule,MatTooltipModule
   ],
   providers: [MatDatepickerModule, {
     provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true

@@ -2,9 +2,11 @@ import { Component, Inject } from "@angular/core";
 import { DateAdapter, MAT_DATE_LOCALE } from "@angular/material/core";
 import "./lib.extensions";
 import { NavigationStart, Router, RouterEvent } from "@angular/router";
-import { BaseApiUrl, links } from "./general";
+import { BaseApiUrl, Status, links } from "./general";
 import { filter } from "rxjs";
 import { HttpClient } from "@angular/common/http";
+import { DataService } from "./services/data.service";
+import { ApiService } from "./services/api.service";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -15,11 +17,14 @@ export class AppComponent {
   showFiller = false;
   pageName?: string = "Trang Chủ";
   url = "/";
+  search = "";
   constructor(
     private _adapter: DateAdapter<any>,
     @Inject(MAT_DATE_LOCALE) private _locale: string,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private dataService:DataService,
+    private service:ApiService
   ) {
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationStart) {
@@ -46,5 +51,25 @@ export class AppComponent {
   onRefesh() {
     // Refresh the page
     location.replace(location.href);
+  }
+  onSearch() {
+    if (this.search != "") {
+      const item = document.getElementById("id-input-search");
+      if (item) {
+        item.style.width = "100%";
+        item.style.opacity = "1";
+        item.focus()
+      }
+    }
+    this.service.get(this.router.url.replace('/','')).then((e:any)=>{
+      console.log(e)
+    })
+    this.dataService.sendMessage({value:this.search,status:Status.Search})
+  }
+  onShowSearch() {
+    return this.search != "" ? "show" : "";
+  }
+  onClose(){
+    this.search=''
   }
 }

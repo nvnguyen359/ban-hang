@@ -86,7 +86,7 @@ const bulkUpdate = (element, app, crud) => {
     for (let index = 0; index < rows.length; index++) {
       const row = rows[index];
       await gg.put(row);
-      await lib.delay(15000);
+      await lib.delay(100);
     }
   });
 };
@@ -140,9 +140,7 @@ const destroy = (element, app, crud) => {
 const bulkDelete = (element, app, crud) => {
   app.delete(`/api/${element}/:ids`, async (req, res, next) => {
     const ids = req.params.ids.split(",");
-    console.log("ids", ids);
     const result = await crud.bulkDelete(ids);
-    console.log("bulkDelete", result);
     res.send(result);
     next();
     const gg = new CRUD(element);
@@ -150,7 +148,7 @@ const bulkDelete = (element, app, crud) => {
       const id = ids[index];
       console.log("delete gg", element, id);
       await gg.deleteId(id);
-      await lib.delay(15000);
+      await lib.delay(100);
     }
   });
 };
