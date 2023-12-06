@@ -153,7 +153,7 @@ export class ExpansionTableComponent {
         const groupItems = new GroupItems(filter);
         const x = groupItems.groupItems;
         this.displayedColumns = x?.columns;
-        if (this.router.url.includes(BaseApiUrl.NhapHangs)) {
+        if (this.router.url.includes(BaseApiUrl.ImportGoods)) {
           this.options.displayedColumns.pop();
           this.columnsChild = [
             ...this.options.displayedColumns,

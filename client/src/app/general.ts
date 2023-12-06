@@ -16,7 +16,7 @@ export enum groupItem {
 }
 
 export enum BaseApiUrl {
-  NhapHangs = "importGoods",
+  ImportGoods = "importGoods",
   ChiTietDonHangs = "orderDetails",
   SanpPhams = "product",
   DonHangs = "orders",
@@ -29,6 +29,8 @@ export enum BaseApiUrl {
   Order = "order",
   listOrders = "listOrders",
   Printers = "printers",
+  Setting = "setting",
+  Debt='debt'
 }
 export enum fieldData {
   importPrice = "importPrice",
@@ -54,7 +56,7 @@ export function links() {
     },
     {
       text: "Nhập  - Tồn Kho",
-      link: `/${BaseApiUrl.NhapHangs}`,
+      link: `/${BaseApiUrl.ImportGoods}`,
       icon: "credit_card",
     },
     {
@@ -69,14 +71,14 @@ export function links() {
     },
     {
       text: "Công Nợ",
-      link: `/${BaseApiUrl.CongNos}`,
+      link: `/${BaseApiUrl.Debt}`,
       icon: "monetization_on",
     },
     {
       text: "Cài Dặt",
-      link: "/settings",
-      icon: "settings",
-    },
+      link: `/${BaseApiUrl.Setting}`,
+      icon: `${BaseApiUrl.Setting}s`,
+    }
   ];
 }
 const pageSizeOptions: any[] = [9, 10, 25, 100, 1000, 5000];

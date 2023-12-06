@@ -87,7 +87,7 @@ export class DynamicUpsertComponent {
       });
     }
     this.initForm();
-    if (this.url == BaseApiUrl.SanpPhams || this.url == BaseApiUrl.NhapHangs) {
+    if (this.url == BaseApiUrl.SanpPhams || this.url == BaseApiUrl.ImportGoods) {
       this.service.get(BaseApiUrl.SanpPhams).then((e: any) => {
         this.products = e.items;
         this.units = [
@@ -232,7 +232,7 @@ export class DynamicUpsertComponent {
     return item.field == field;
   }
   onShowName(item: any): boolean {
-    return this.url == BaseApiUrl.NhapHangs ;
+    return this.url == BaseApiUrl.ImportGoods ;
   }
   ngAfterViewInit() {
     this.cdr.detectChanges();

@@ -1,11 +1,11 @@
-<div class="padding-4" style="min-width: 250px;overflow-x: hidden;">
+<div class="padding-4" style="width: 200px;overflow-x: hidden;">
   <div class="menu" cdkMenu>
     <a *ngFor="let item of links; let i= index" routerLink="{{item.link}}" [data-id]="item.link" class="menu-item"
       id="id-{{i}}" cdkMenuItem>
       <mat-icon>{{item.icon}}</mat-icon>&nbsp;<span>{{item.text}}</span></a>
   </div>
   <div class="docs-component-category-list-card">
-    <app-printers></app-printers>
+    
     <div>Thông Tin Hệ Thống</div>
     <table>
       <tbody>
