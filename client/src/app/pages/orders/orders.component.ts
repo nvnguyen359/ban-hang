@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { OrderUpsertComponent } from "./order-upsert/order-upsert.component";
 import { ApiService } from "src/app/services/api.service";
-import { BaseApiUrl, delay, getLocalStorage } from "src/app/general";
+import { BaseApiUrl, Status, delay, getLocalStorage } from "src/app/general";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
@@ -19,7 +19,7 @@ import { SelectionModel } from "@angular/cdk/collections";
 import { PrintHtmlService } from "src/app/services/print-html.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute } from "@angular/router";
-import { async } from "rxjs";
+
 @Component({
   selector: "app-orders",
   templateUrl: "./orders.component.html",
@@ -98,6 +98,32 @@ export class OrdersComponent {
         order.details = data.saveOrPrint.details;
         await this.startPrinter(order);
       }
+      if (data.status == Status.Search) {
+        console.log(data);
+        const pageIndex = this.pageEvent?.pageIndex || 0;
+        const pageSize = this.pageEvent?.pageSize || 10;
+        const items = Array.from(
+          this.details.filter((x: any) =>
+            `${x.name}`
+              .toLowerCase()
+              .removeAccents()
+              .includes(data.value.toLowerCase().removeAccents())
+          )
+        ).map((x: any, index: any) => {
+          x.no = index + 1 + pageIndex * pageSize;
+          const details = Array.from(this.details).map(
+            (a: any, index: number) => {
+              a.no = index + 1;
+              return a;
+            }
+          );
+          x.details = details;
+          return x;
+        });
+        this.resultsLength = data.count;
+        this.dataSource.data = items;
+        this.changeDetectorRefs.detectChanges();
+      }
     });
     this.activatedRoute.params.subscribe(async (obj: any) => {
       if (!obj.name) return;
@@ -132,7 +158,7 @@ export class OrdersComponent {
     this.service
       .get(BaseApiUrl.Orders, { page: pageIndex, pageSize })
       .then((data: any) => {
-        // this.details = data.items[0].details;
+        this.details = data.items;
         const items = Array.from(data.items).map((x: any, index: any) => {
           x.no = index + 1 + pageIndex * pageSize;
           const details = Array.from(x.details).map((a: any, index: number) => {
@@ -221,7 +247,11 @@ export class OrdersComponent {
     await this.service.destroy(BaseApiUrl.Order, element.id);
     const details = element["details"];
     if (details?.length > 0) {
-      await this.service.bulkDelete(BaseApiUrl.ChiTietDonHangs, details.map((x:any)=>x.id), false);
+      await this.service.bulkDelete(
+        BaseApiUrl.ChiTietDonHangs,
+        details.map((x: any) => x.id),
+        false
+      );
     }
     this.getOrders();
   }
