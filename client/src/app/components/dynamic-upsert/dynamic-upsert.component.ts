@@ -34,6 +34,7 @@ import { DataService } from "src/app/services/data.service";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { Observable, map, startWith } from "rxjs";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 declare var removeAccents: any;
 @Component({
   selector: "app-dynamic-upsert",
@@ -54,7 +55,8 @@ declare var removeAccents: any;
     MatAutocompleteModule,
     AsyncPipe,
     NgForOf,
-    CommonModule
+    CommonModule,
+    MatButtonToggleModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
@@ -100,6 +102,12 @@ export class DynamicUpsertComponent {
           ),
         ];
         this.filteredOptionsUnit = this.units;
+        this.filteredOptionsNames = this.products;
+      });
+    }
+    if(this.url==BaseApiUrl.Debt){
+      this.service.get(BaseApiUrl.Debt).then((e: any) => {
+        this.products = e.items;
         this.filteredOptionsNames = this.products;
       });
     }

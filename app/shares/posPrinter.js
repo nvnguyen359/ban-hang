@@ -1,7 +1,7 @@
 const { PosPrinter } = require("electron-pos-printer");
 
 function posPrintThermal(order) {
-  let urlImg = `https://img.vietqr.io/image/VCB-0041000171668-compact2.jpg?amount=890000&amp;accountName=DO%20VAN%20HIEU&addInfo=ok`;
+  let urlImg = `https://img.vietqr.io/image/VCB-0041000171668-qr_only.jpg?amount=${order.pay}&amp;accountName=DO%20VAN%20HIEU&addInfo=DH${order.id} thanh toán`;
   const options = {
     preview: order.isPreview, //  width of content body
     margin: "0", // margin of content body
@@ -13,11 +13,11 @@ function posPrintThermal(order) {
   const qrCode={
     type: "image",
     url: urlImg, // file path
-    position: "right", // position of image: 'left' | 'center' | 'right'
-    width: "160px", // width of image in px; default: auto
-    height: "160px", // width of image in px; default: 50 or '50px'
+    position: "center", // position of image: 'left' | 'center' | 'right'
+    width: "120px", // width of image in px; default: auto
+    height: "120px", // width of image in px; default: 50 or '50px'
   }
-  const data = [
+  let data = [
     {
       type: "table",
       style: { border: "0px solid #ddd"}, // style the table
@@ -33,9 +33,11 @@ function posPrintThermal(order) {
       tableBodyStyle: { border: "0px solid #ddd" },
       // custom style for the table footer
       tableFooterStyle: { backgroundColor: "#000", color: "white" },
-    },
+    }
   ];
- 
+ if(order.isPay){
+  data.push(qrCode)
+ }
   try {
     return new Promise((res, rej) => {
       PosPrinter.print(data, options)

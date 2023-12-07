@@ -163,6 +163,26 @@ export function fields() {
       require: true,
     },
     {
+      field: "kh_ncc",
+      type: "text",
+      text: "Khách Hàng-NCC",
+    },
+    {
+      field: "status",
+      type: "text",
+      text: "Trạng Thái",
+    },
+    {
+      field: "loanDate",
+      type: "date",
+      text: "Ngày Tạo",
+    },
+    {
+      field: "payDate",
+      type: "date",
+      text: "Ngày T.Toán",
+    },
+    {
       field: groupItem.IsumImport,
       text: "Tổng Nhập",
     },

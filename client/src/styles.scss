@@ -151,6 +151,10 @@ a {
     display: flex;
     align-items: center;
 }
+.flex.column{
+    flex-direction: column;
+    flex-wrap: wrap;
+}
 
 .iconAction {
     cursor: pointer;

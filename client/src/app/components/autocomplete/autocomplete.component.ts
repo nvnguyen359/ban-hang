@@ -38,15 +38,18 @@ export class AutocompleteComponent {
     showtext: "name",
     label: "Sản Phẩm",
     placeholder: "Tìm Sản Phẩm",
+    banks:''
   };
   @Output() selectTed = new EventEmitter<string>();
   @Output() nameText = new EventEmitter<string>();
   myControl = new FormControl("");
 
   constructor() {
-  // console.log(this.options)
+  
   }
   ngOnInit() {
+    console.log(this.options)
+    //console.log(this.data)
     this.filteredOptions = this.myControl.valueChanges.pipe(
       startWith(""),
       map((value: any) => this._filter(value || ""))

@@ -5,9 +5,23 @@
         <button matSuffix mat-icon-button aria-label="Clear" (click)="default=''" *ngIf="default">
             <mat-icon>close</mat-icon>
           </button>
-    <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let item of filteredOptions| async" [value]="item[options.name]" (onSelectionChange)="onSelection(item)">
-            {{item[options.name]}}
-        </mat-option>
-    </mat-autocomplete>
+          <mat-autocomplete #auto="matAutocomplete">
+            <div [ngSwitch]="options.banks">
+                <div *ngSwitchCase="true">
+                    <mat-option *ngFor="let item of filteredOptions| async" [value]="item['shortName']" (onSelectionChange)="onSelection(item)">
+                        <b style="color: brown;">({{item['bin']}})</b>&nbsp; {{item['shortName']}} 
+                    </mat-option>
+                    
+                </div>
+                <div *ngSwitchDefault>
+                    <mat-option *ngFor="let item of filteredOptions| async" [value]="item['name']" (onSelectionChange)="onSelection(item)">
+                        {{item[options.name]}}
+                    </mat-option>
+                   
+                </div>
+              </div>
+           
+        </mat-autocomplete>
+          
+    
 </mat-form-field>

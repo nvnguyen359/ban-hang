@@ -134,7 +134,7 @@ export class ExpansionTableComponent {
         this.getData();
       }
       if (result.status == Status.Search) {
-        this.createTable(this.dataResult,result.value);
+        this.createTable(this.dataResult, result.value);
       }
     });
   }
@@ -143,15 +143,25 @@ export class ExpansionTableComponent {
     return this.selection.selected.length < 1 ? "disabled" : "";
   }
   createTable(data: any, name = "") {
+    const oldData = data;
     this.selection.clear();
     const pageIndex = this.pageEvent?.pageIndex || 0;
     const pageSize = this.pageEvent?.pageSize || this.pageSize;
-    const filter= name=''?data.items:data.items.filter((x:any)=>`${x.name}`.toLowerCase().removeAccents().includes(name.toLowerCase().removeAccents()))
+    const filter =
+      name == ""
+        ? oldData.items
+        : data.items.filter((x: any) =>
+            `${x.name}`
+              .toLowerCase()
+              .removeAccents()
+              .includes(name.toLowerCase().removeAccents())
+          );
     this.details = filter;
     if (this.options.multi) {
       if (data.count > 0) {
         const groupItems = new GroupItems(filter);
         const x = groupItems.groupItems;
+        this.details = x?.items || [];
         this.displayedColumns = x?.columns;
         if (this.router.url.includes(BaseApiUrl.ImportGoods)) {
           this.options.displayedColumns.pop();
@@ -175,16 +185,46 @@ export class ExpansionTableComponent {
     this.changeDetectorRefs.detectChanges();
   }
   getData() {
+    this.selection.clear();
     const pageIndex = this.pageEvent?.pageIndex || 0;
     const pageSize = this.pageEvent?.pageSize || this.pageSize;
     if (!this.options.url) {
       this.options.url = this.router.url.replace("/", "").trim();
     }
     this.service
-      .get(this.options.url, { page: pageIndex, pageSize, name })
+      .get(this.options.url, { page: pageIndex, pageSize })
       .then((data: any) => {
         this.dataResult = data;
-        this.createTable(data);
+        this.details = data.items;
+        if (this.options.multi) {
+          const groupItems = new GroupItems(data.items);
+          const x = groupItems.groupItems;
+          this.displayedColumns = x?.columns;
+          this.options.displayedColumns.pop();
+
+          if (this.router.url.includes(BaseApiUrl.ImportGoods)) {
+            this.columnsChild = [
+              ...this.options.displayedColumns,
+              groupItem.sumImport,
+              groupItem.sumSale,
+            ];
+          } else {
+            this.columnsChild = [...this.options.displayedColumns];
+          }
+          this.columnsToDisplayWithExpand = [
+            ...this.displayedColumns,
+            "expand",
+          ];
+          this.details = x.items;
+        }
+
+        const items = Array.from(this.details).map((x: any, index: any) => {
+          x.no = index + 1 + pageIndex * pageSize;
+          return x;
+        });
+        this.resultsLength = data.count;
+        this.dataSource.data = items;
+        this.changeDetectorRefs.detectChanges();
       });
   }
   showImport() {
@@ -286,20 +326,26 @@ export class ExpansionTableComponent {
     const name = columnsToDisplay.find((x: any) => x.key == key)?.value;
     return name;
   }
-  formatValue(value: any) {
+  formatValue(value: any, column = "") {
+    let result = value;
     if (value == undefined) return value;
-    if (this.isNumeric(value)) {
-      return parseInt(value).toLocaleString("vi");
+
+    if (column == "phone") {
+      return `<a href="tel:${value}">${value}</a>`;
     } else {
-      if (
-        !value.includes("/") &&
-        new Date(value).toString() != "Invalid Date"
-      ) {
-        return new Date(value).toLocaleDateString("vi");
+      if (this.isNumeric(value)) {
+        result = parseInt(value).toLocaleString("vi");
       } else {
-        return value;
+        result = value;
+        if (
+          (`${column}`.includes("createdAt") && value.includes("T")) ||
+          value.includes("Z")
+        ) {
+          result = new Date(value).toLocaleDateString("vi");
+        }
       }
     }
+    return `${result}`;
   }
   isNumeric(str: any) {
     return /^-?\d+$/.test(str);

@@ -2,6 +2,7 @@ setTimeout(() => {
   jsRun();
   window.addEventListener("hashchange", (event) => {
     console.log(`should render page: ${window.location.hash}`);
+    getMenu(window.location.hash);
   });
 }, 500);
 function jsRun() {
@@ -22,14 +23,16 @@ function jsRun() {
     }
   });
 }
-
-document.addEventListener("DOMContentLoaded", function () {
+function getMenu(hash) {
+  console.log("hash", hash, this.location.href.split(";")[0]);
   const menus = document.querySelectorAll(".menu  a.menu-item");
-  const url = this.location.pathname.split(";")[0];
+  const urlM = this.location.href.split(";")[0].split("#");
+  const url = hash ? hash : urlM[urlM.length - 1].replace("/", "");
   if (menus) {
     if (url == "/") menus[0].classList.add("active");
     menus.forEach((a) => {
-      if (a.getAttribute("href").includes(url)) {
+      console.log(url , a.getAttribute("href").replace("#/", ""),url == a.getAttribute("href").replace("#/", ""));
+      if (url.replace("#/", "")== a.getAttribute("href").replace("#/", "")) {
         a.classList.add("active");
       }
     });
@@ -41,14 +44,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     document.addEventListener("keyup", (event) => {
       if (event.key === "Enter") {
-      const item = document.getElementById("id-input-search");
+        const item = document.getElementById("id-input-search");
         if (item) {
           item.style.width = "100%";
           item.style.opacity = "1";
-          item.focus()
-         document.getElementById('icon-search').classList.add('show')
+          item.focus();
+          document.getElementById("icon-search").classList.add("show");
         }
       }
     });
   }
+}
+document.addEventListener("DOMContentLoaded", function () {
+  getMenu();
 });

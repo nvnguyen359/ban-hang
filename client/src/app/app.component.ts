@@ -50,7 +50,7 @@ export class AppComponent {
   }
   onRefesh() {
     // Refresh the page
-    location.replace(location.href);
+    location.reload();
   }
   onSearch() {
     if (this.search != "") {

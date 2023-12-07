@@ -172,6 +172,8 @@ const createCongNoKh = async (knex) => {
     const hasTable = await knex.schema.hasTable(tbl);
     if (hasTable) {
       console.log(tbl, "already exist!");
+      console.log("tao column");
+
       return tbl;
     }
     await knex.schema.createTable(tbl, (table) => {
@@ -184,9 +186,10 @@ const createCongNoKh = async (knex) => {
       table.integer("money").notNullable();
       table.string("status").notNullable();
       table.datetime("loanDate").notNullable();
-      table.datetime("payDay");
+      table.datetime("payDate");
       exoend(table);
     });
+
     console.log(tbl, "successfully created");
     return tbl;
   } catch (error) {
@@ -198,7 +201,7 @@ const initTable = async (knex) => {
   return new Promise(async (res, rej) => {
     let tables = [];
     // await createUsersTable(knex);
-    let tb = await createTableOrders(knex); 
+    let tb = await createTableOrders(knex);
     tables.push(tb);
     tb = await createTableDetailsOrders(knex);
     tables.push(tb);
@@ -212,7 +215,23 @@ const initTable = async (knex) => {
     tables.push(tb);
     tb = await createCongNoKh(knex);
     tables.push(tb);
+    await afterTableDebt(knex);
     res(tables);
+  });
+};
+const afterTableDebt = async (knex) => {
+  await knex.schema.alterTable("debt", async (table) => {
+    knex.schema.hasColumn("debt", "payDay").then((exists) => {
+      if (exists) {
+        table.dropColumn("payDay");
+        table.string("payDate");
+      }
+    });
+    knex.schema.hasColumn("debt", "kh_ncc").then((exists) => {
+      if (exists) {
+        table.string("kh_ncc");
+      }
+    });
   });
 };
 module.exports = { initTable };

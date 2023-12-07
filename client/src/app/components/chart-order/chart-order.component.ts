@@ -140,7 +140,8 @@ export class ChartOrderComponent {
         this.columnsOrders = [];
         this.columnsLoiNhuan = [];
         const donhangs = Array.from(result.donhangs).map((x: any) => {
-          x.createdAt = new Date(x.createdAt).toLocaleDateString("vi");
+
+          x.createdAt = `${new Date(x.createdAt).toLocaleDateString("vi")}`;
           return x;
         });
 
@@ -149,6 +150,7 @@ export class ChartOrderComponent {
         //   this.ininitData[0].data = [];
         // }
         const dates = [...new Set(donhangs.map((x: any) => x.createdAt))];
+        console.log(dates)
         if (dates.length < 1) return;
         dates.forEach((date: any) => {
           const dhs = donhangs.filter(
@@ -173,7 +175,7 @@ export class ChartOrderComponent {
         this.labels = dates.map((x: any) => {
           const year = x.split("/")[2].toString(); //.slice(0, 2);
           const t = x.replace(`/${year}`, "");
-          return t;
+          return t.toString();
         });
         this.chartOptions.labels = this.labels;
         this.ininitData[0].data = this.columnsOrders;
@@ -183,20 +185,5 @@ export class ChartOrderComponent {
       }
     });
   }
-  public generateData(count: any, yrange: any) {
-    var i = 0;
-    var series = [];
-    while (i < count) {
-      var x = "w" + (i + 1).toString();
-      var y =
-        Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
 
-      series.push({
-        x: x,
-        y: y,
-      });
-      i++;
-    }
-    return series;
-  }
 }

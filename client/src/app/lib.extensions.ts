@@ -207,7 +207,7 @@ String.prototype.removeAccents = function () {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/đ/g, "d")
     .replace(/Đ/g, "D");
-  return result.toString();
+  return result.toString().toLowerCase();
 };
 String.prototype.isValidDate = function () {
   return new Date(this.toString()).toString() !== "Invalid Date";

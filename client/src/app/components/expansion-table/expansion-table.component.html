@@ -1,5 +1,4 @@
 <div class="mat-elevation-z8" *ngIf="dataSource">
-
     <div class="max-height">
         <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
             <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumns">
@@ -34,17 +33,16 @@
                                     <mat-chip-option color="accent">
                                         <div class=" full-width flex center chip" >
                                             <mat-icon *ngIf="column=='createdAt'">date_range</mat-icon>
-                                           &nbsp; {{formatValue(element[column])}}
+                                           &nbsp;   <div [innerHTML]="formatValue(element[column],column)"></div>
                                         </div>
                                     </mat-chip-option>
                                 </mat-chip-listbox>
-
-
                             </div>
+                            
                             <div *ngSwitchDefault>
                                 <div class="full-width flex center" style="width: 100%;">
 
-                                    {{formatValue(element[column])}}</div>
+                                    <div [innerHTML]="formatValue(element[column],column)"></div></div>
                                 <button *ngIf="column=='email'" mat-icon-button color="accent"
                                     matTooltip="Tạo Đơn Hàng Mới"
                                     (click)="onAddNewOrder(element)"><mat-icon>add</mat-icon></button>
@@ -82,7 +80,8 @@
                                 <tbody>
                                     <tr *ngFor="let item of element.details">
                                         <td *ngFor="let column of columnsChild">
-                                            {{formatValue(item[column])}}
+                                            
+                                           <div [innerHTML]="formatValue(item[column],column)"></div>
                                         </td>
                                     </tr>
                                 </tbody>

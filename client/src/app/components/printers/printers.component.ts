@@ -36,7 +36,6 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
     MatSlideToggleModule,
     MatCardModule,
     MatCheckboxModule,
-  
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
@@ -46,7 +45,7 @@ export class PrintersComponent {
   choise = "Máy In Nhiệt";
   isPreview = false;
   isThermal: boolean = true;
-
+  isPay = false;
   pageSizes = [
     {
       key: "A4",
@@ -87,6 +86,7 @@ export class PrintersComponent {
         this.selected.page = this.pageSizes[1];
         this.selected.isThermal = this.isThermal;
         this.selected.isPreview = this.isPreview;
+        this.selected.isPay = this.isPay;
         localStorage.setItem(this.key, JSON.stringify(this.selected));
       } else {
         this.printDefault = this.array.find(
@@ -97,6 +97,7 @@ export class PrintersComponent {
         );
         this.isThermal = check.isThermal;
         this.isPreview = check.isPreview;
+        this.isPay = check.isPay;
       }
       this.doiText();
     });
@@ -133,6 +134,11 @@ export class PrintersComponent {
   checkPreview(event: any) {
     this.selected = JSON.parse(`${localStorage.getItem(this.key)}`);
     this.selected.isPreview = event.checked;
+    localStorage.setItem(this.key, JSON.stringify(this.selected));
+  }
+  checkQrPay(event: any) {
+    this.selected = JSON.parse(`${localStorage.getItem(this.key)}`);
+    this.selected.isPay = event.checked;
     localStorage.setItem(this.key, JSON.stringify(this.selected));
   }
 }

@@ -5,6 +5,7 @@ const lib = require("../shares/lib");
 const apisSqlite = async (app) => {
   createDatabase(app);
   const array = await getAllTables();
+  console.log(array)
   array.forEach((element) => {
     let crud = new CRUDKNEX(element);
     findAll(element, app, crud);

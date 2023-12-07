@@ -1,2 +1,67 @@
-
-<app-printers></app-printers>
+<div class="flex">
+  <mat-card>
+    <mat-card-content><app-printers></app-printers></mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="formBank" (ngSubmit)="onSubmitBank()" (blur)="onSubmitBank()">
+        <fieldset class="flex column">
+          <legend>Thông Tin Ngân Hàng</legend>
+          <app-autocomplete [options]="optionsBanhks" [data]="banks" *ngIf="banks.length>0"
+            (selectTed)="onSelectBank($event)" required></app-autocomplete>
+            <input type="hidden"  formControlName="bin" >
+          <mat-form-field>
+            <mat-label>Số Tài Khoản</mat-label>
+            <input matInput type="number" minlength="6" required maxlength="19" (keyup)="onSubmitBank($event)" formControlName="accountNumber">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Tên Tài Khoản</mat-label>
+            <input matInput type="text" formControlName="accountName">
+          </mat-form-field>
+        </fieldset>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-content>
+      <fieldset class="flex column">
+        <legend>Thông Tin GHN</legend>
+        <mat-form-field>
+          <mat-label>Token</mat-label>
+          <input matInput>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Client_id</mat-label>
+          <input matInput>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>ShopID</mat-label>
+          <input matInput>
+        </mat-form-field>
+      </fieldset>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-content>
+      <fieldset class="flex column">
+        <legend>Thông Tin Cửa Hàng</legend>
+        <mat-form-field>
+          <mat-label>Tên Cửa Hàng</mat-label>
+          <input matInput>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Phone</mat-label>
+          <input matInput>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Địa Chỉ</mat-label>
+          <input matInput>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Thông Tin Khác</mat-label>
+          <textarea matInput></textarea>
+        </mat-form-field>
+      </fieldset>
+    </mat-card-content>
+  </mat-card>
+</div>

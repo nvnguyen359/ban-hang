@@ -46,11 +46,33 @@ export class ApiService {
     private http: HttpClient,
     private dialog: MatDialog,
     private dataService: DataService,
-    private snackBar:SnackbarService
+    private snackBar: SnackbarService
   ) {
     this.baseServer = environment.baseUrl;
   }
+  async getBanks(){
+   return new Promise(async(res,rej)=>{
+    this.http.get('https://api.vietqr.io/v2/banks').subscribe((e:any)=>{res(e)});
+   })
+  }
+  async lookupBank(data:any){
+    const pathUrl = `https://api.vietqr.io/v2/lookup`;
+    return new Promise((res, rej) => {
+      this.http
+        .put(pathUrl, data, this.httpOptions)
+        .pipe(
+          retry(3), // retry a failed request up to 3 times
+          catchError(this.handleError)
+        )
+        .subscribe((data) => {
+          return res(data);
+        });
+    });
+  }
   async postPrinters(order: any) {
+    if (localStorage.getItem("print")) {
+      order.isPay = JSON.parse(localStorage.getItem("print") + "").isPay;
+    }
     const pathUrl = `${this.baseServer}/printers`;
     return new Promise((res, rej) => {
       this.http
@@ -109,7 +131,6 @@ export class ApiService {
   }
   async update(url: string, data: any) {
     const pathUrl = `${this.baseServer}/${url}`;
-
     return new Promise((res, rej) => {
       this.http
         .put(pathUrl, data, this.httpOptions)
@@ -197,7 +218,7 @@ export class ApiService {
                 catchError(this.handleError)
               )
               .subscribe((e) => {
-                this.snackBar.openSnackBar('done')
+                this.snackBar.openSnackBar("done");
                 res(e);
               });
           }
@@ -213,7 +234,7 @@ export class ApiService {
             catchError(this.handleError)
           )
           .subscribe((e) => {
-            this.snackBar.openSnackBar('done')
+            this.snackBar.openSnackBar("done");
             res(e);
           });
       });
