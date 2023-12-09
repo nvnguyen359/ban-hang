@@ -10,6 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AutocompleteComponent } from 'src/app/Components/autocomplete/autocomplete.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @NgModule({
@@ -23,7 +25,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     PrintersComponent,
     MatFormFieldModule, MatInputModule, MatSelectModule,AutocompleteComponent,
     NgFor,
-    FormsModule,ReactiveFormsModule
+    FormsModule,ReactiveFormsModule,MatIconModule,MatButtonModule
   ]
 })
 export class SettingModule { }

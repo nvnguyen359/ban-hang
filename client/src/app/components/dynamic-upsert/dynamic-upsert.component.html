@@ -22,9 +22,9 @@
                     <button mat-mini-fab disabled style="margin-top: -21px;margin-right: 5px;">
                         {{i+1}}
                     </button>
-                    <div *ngFor="let item of fieldsShow" class="{{max50(item)}}">
+                    <div *ngFor="let item of fieldsShow"  >
                         <div [ngSwitch]="item.field" >
-                            <mat-form-field appearance="outline" *ngSwitchCase="'unit'">
+                            <mat-form-field appearance="outline" *ngSwitchCase="'unit'" class="{{max50(item)}}" >
                                 <mat-label>{{item.text}}</mat-label>
                                 <input (keyup)="onKeyUpUnit($event)" matInput [placeholder]="item.text"
                                     [type]="item.type" [required]="item.required" [step]="item.step"
@@ -54,13 +54,13 @@
                                   <input type="hidden" [formControlName]="item.field">
                             </div>
                             <div *ngSwitchDefault [ngSwitch]="item.type">
-                                <mat-form-field appearance="outline" *ngSwitchCase="'date'" style="width: 160px;">
+                                <mat-form-field appearance="outline" *ngSwitchCase="'date'">
                                     <mat-label>{{item.text}}</mat-label>
                                     <input matInput [matDatepicker]="picker11" [formControlName]="item.field">
                                     <mat-datepicker-toggle matIconSuffix [for]="picker11"></mat-datepicker-toggle>
                                     <mat-datepicker #picker11></mat-datepicker>
                                 </mat-form-field>
-                                <mat-form-field appearance="outline" *ngSwitchDefault>
+                                <mat-form-field appearance="outline" *ngSwitchDefault  class="{{max50(item)}}" >
                                     <mat-label>{{item.text}}</mat-label>
                                     <input matInput [placeholder]="item.text" [type]="item.type" [step]="item.step"
                                     [formControlName]="item.field" autocomplete="off" />

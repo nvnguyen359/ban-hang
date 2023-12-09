@@ -26,6 +26,10 @@ export class ApiService {
       responseType: "blob",
     }),
   };
+  qrViet = {
+    Client_ID: "c3503c91-f295-4574-ab2a-206e7f58a334",
+    API_Key: "10a474b4-fc88-45ae-9bcd-18316d1ffe23",
+  };
   private async handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
       // A client-side or network error occurred. Handle it accordingly.
@@ -50,16 +54,24 @@ export class ApiService {
   ) {
     this.baseServer = environment.baseUrl;
   }
-  async getBanks(){
-   return new Promise(async(res,rej)=>{
-    this.http.get('https://api.vietqr.io/v2/banks').subscribe((e:any)=>{res(e)});
-   })
+  async getBanks() {
+    return new Promise(async (res, rej) => {
+      this.http.get("https://api.vietqr.io/v2/banks").subscribe((e: any) => {
+        res(e);
+      });
+    });
   }
-  async lookupBank(data:any){
+  async lookupBank(data: any) {
+    const headers = {
+      "x-client-id": this.qrViet.Client_ID,
+      "x-api-key": this.qrViet.API_Key,
+      "Content-Type": "application/json",
+    };
+    this.httpOptions.headers = new HttpHeaders(headers);
     const pathUrl = `https://api.vietqr.io/v2/lookup`;
     return new Promise((res, rej) => {
       this.http
-        .put(pathUrl, data, this.httpOptions)
+        .post(pathUrl, data, this.httpOptions)
         .pipe(
           retry(3), // retry a failed request up to 3 times
           catchError(this.handleError)
@@ -146,17 +158,14 @@ export class ApiService {
 
   async create(url: string, data: any) {
     let req = !Array.isArray(data) ? [data] : data;
-
-    req = Array.from(data).map((x: any) => {
+    req = Array.from(req).map((x: any) => {
       if (!x.id || x.id == "") x["id"] = null;
       return x;
     });
-    //console.log("data", data);
     const pathUrl = `${this.baseServer}/${url}`;
-    //onsole.log(pathUrl);
     return new Promise((res, rej) => {
       this.http
-        .post(pathUrl, data, this.httpOptions)
+        .post(pathUrl, req, this.httpOptions)
         .pipe(
           retry(3), // retry a failed request up to 3 times
           catchError(this.handleError)

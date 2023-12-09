@@ -196,7 +196,30 @@ const createCongNoKh = async (knex) => {
     console.error(error.message);
   }
 };
+const store = async (knex) => {
+  try {
+    const tbl = "store";
+    const hasTable = await knex.schema.hasTable(tbl);
+    if (hasTable) {
+      console.log(tbl, "already exist!");
+      return tbl;
+    }
+    await knex.schema.createTable(tbl, (table) => {
+      table.increments("id", {
+        primaryKey: true,
+        notNullable: true,
+      });
+      table.string("name");
+      table.string("jsonData");
+      exoend(table);
+    });
 
+    console.log(tbl, "successfully created");
+    return tbl;
+  } catch (error) {
+    console.error(error.message);
+  }
+};
 const initTable = async (knex) => {
   return new Promise(async (res, rej) => {
     let tables = [];
@@ -215,8 +238,10 @@ const initTable = async (knex) => {
     tables.push(tb);
     tb = await createCongNoKh(knex);
     tables.push(tb);
-    await afterTableDebt(knex);
+    tb = await store(knex);
+    tables.push(tb);
     res(tables);
+    await afterTableDebt(knex);
   });
 };
 const afterTableDebt = async (knex) => {
@@ -232,6 +257,11 @@ const afterTableDebt = async (knex) => {
         table.string("kh_ncc");
       }
     });
+    // knex.schema.hasColumn("store", "value").then((exists) => {
+    //   if (exists) {
+    //     table.string("value");
+    //   }
+    // });
   });
 };
 module.exports = { initTable };

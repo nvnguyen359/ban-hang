@@ -22,6 +22,7 @@ const allowedOrigins = [
   "http://localhost:3177",
   "http://localhost:3177/#/",
   " http://localhost:18092",
+  " http://localhost:8100",
 ];
 //require('./apis/apiExcute')
 

@@ -26,6 +26,7 @@ const routes: Routes = [
   { path:BaseApiUrl.ImportGoods, loadChildren: () => import('./Pages/import-goods/import-goods.module').then(m => m.ImportGoodsModule) },
   { path: BaseApiUrl.Setting, loadChildren: () => import('./Pages/setting/setting.module').then(m => m.SettingModule) },
   { path: 'debt', loadChildren: () => import('./Pages/debt/debt.module').then(m => m.DebtModule) },
+  { path: 'ghn', loadChildren: () => import('./Pages/ghn/ghn.module').then(m => m.GhnModule) },
 ];
 
 @NgModule({

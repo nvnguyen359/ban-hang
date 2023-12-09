@@ -1,0 +1,22 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Blank {{count}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Blank {{count}}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div id="container" *ngIf="data">
+    <strong>Ready to create an app?</strong>
+    <p>Start with Ionic ha <a target="_blank" rel="noopener noreferrer"
+        href="https://ionicframework.com/docs/components">UI Components</a></p>
+    {{data}}
+  </div>
+</ion-content>
