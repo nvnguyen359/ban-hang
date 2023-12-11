@@ -140,8 +140,9 @@ export class ChartOrderComponent {
         this.columnsOrders = [];
         this.columnsLoiNhuan = [];
         const donhangs = Array.from(result.donhangs).map((x: any) => {
-
-          x.createdAt = `${new Date(x.createdAt).toLocaleDateString("vi")}`;
+          if (x.createdAt.includes("T")) {
+            x.createdAt = `${new Date(x.createdAt).toLocaleDateString("vi")}`;
+          }
           return x;
         });
 
@@ -150,7 +151,6 @@ export class ChartOrderComponent {
         //   this.ininitData[0].data = [];
         // }
         const dates = [...new Set(donhangs.map((x: any) => x.createdAt))];
-        console.log(dates)
         if (dates.length < 1) return;
         dates.forEach((date: any) => {
           const dhs = donhangs.filter(
@@ -185,5 +185,4 @@ export class ChartOrderComponent {
       }
     });
   }
-
 }

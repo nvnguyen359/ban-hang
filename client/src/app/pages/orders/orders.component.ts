@@ -100,6 +100,7 @@ export class OrdersComponent {
       }
       if (data.status == Status.Search) {
         console.log(data);
+        if(!data) return;
         const pageIndex = this.pageEvent?.pageIndex || 0;
         const pageSize = this.pageEvent?.pageSize || 10;
         const items = Array.from(

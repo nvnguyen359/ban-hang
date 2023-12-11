@@ -5,13 +5,19 @@
     </div>
     <div class="main-center">
         <app-autocomplete [data]="categories" *ngIf="categories.length>0" class="max-width490"
-            (selectTed)="onSelected($event)"></app-autocomplete>
+            (selectTed)="onSelected($event)" (keyUp)="onKeyUpProduct($event)"></app-autocomplete>
         <div class="btns-center">
+            <div class="btn-center">
+                <button (click)="addNewProduct()" color="accent" mat-flat-button  class="flex center new-product">new
+                </button>
+
+            </div>
             <div class="btn-center" *ngFor="let item of filterProducts">
                 <button mat-flat-button class=" {{ngClassSelect(item.quantity)}}" style="height: 100%;width:100%"
                     color="primary" (click)="onClickCategory(item,$event)"
                     (keypress)="keyPressCategory($event,item)">{{item['name']}} </button>
-                <button mat-icon-button color="warn" *ngIf="item.quantity>0" class="icon-delete" (click)="onDeleteDetails(item)">
+                <button mat-icon-button color="warn" *ngIf="item.quantity>0" class="icon-delete"
+                    (click)="onDeleteDetails(item)">
                     <mat-icon>remove_circle</mat-icon>
                 </button>
             </div>

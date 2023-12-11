@@ -86,7 +86,7 @@ export class ReportsComponent {
       };
     this.service.get(BaseApiUrl.Orders, obj).then((e: any) => {
       this.donhangs = e.items;
-      //console.log(this.donhangs)
+      console.log(this.donhangs)
       this.filterOrders();
     });
   }

@@ -19,6 +19,9 @@
                     </mat-option>
                    
                 </div>
+                <div *ngIf="options.url!=''">
+                    <mat-option color="accent" (click)="onNewProduct()">New</mat-option>
+                </div>
               </div>
            
         </mat-autocomplete>

@@ -56,7 +56,7 @@ declare var removeAccents: any;
     AsyncPipe,
     NgForOf,
     CommonModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
@@ -82,14 +82,19 @@ export class DynamicUpsertComponent {
     private cdr: ChangeDetectorRef
   ) {}
   ngOnInit() {
-    this.url = this.router.url.replace("/", "").trim();
-    if (this.router.url.includes(BaseApiUrl.ChiPhis)) {
+    this.url = this.data.url
+      ? this.data.url
+      : this.router.url.replace("/", "").trim();
+    if (this.url.includes(BaseApiUrl.ChiPhis)) {
       this.service.get(BaseApiUrl.ChiPhis).then((e: any) => {
         this.filteredOptionsNames = e.items;
       });
     }
     this.initForm();
-    if (this.url == BaseApiUrl.SanpPhams || this.url == BaseApiUrl.ImportGoods) {
+    if (
+      this.url == BaseApiUrl.SanpPhams ||
+      this.url == BaseApiUrl.ImportGoods
+    ) {
       this.service.get(BaseApiUrl.SanpPhams).then((e: any) => {
         this.products = e.items;
         this.units = [
@@ -105,7 +110,7 @@ export class DynamicUpsertComponent {
         this.filteredOptionsNames = this.products;
       });
     }
-    if(this.url==BaseApiUrl.Debt){
+    if (this.url == BaseApiUrl.Debt) {
       this.service.get(BaseApiUrl.Debt).then((e: any) => {
         this.products = e.items;
         this.filteredOptionsNames = this.products;
@@ -141,7 +146,7 @@ export class DynamicUpsertComponent {
         ? Array.from(this.data.value)
         : [this.data.value];
       this.infor = `Cập Nhật ${
-        links().find((x: any) => x.link.includes(this.router.url))?.text
+        links().find((x: any) => x.link.includes(this.url))?.text
       }`;
       for (let index = 0; index < array.length; index++) {
         const customer = array[index];
@@ -152,15 +157,19 @@ export class DynamicUpsertComponent {
       });
     } else {
       this.infor = `Thêm Mới ${
-        links().find((x: any) => x.link.includes(this.router.url))?.text
+        links().find((x: any) => x.link.includes(this.url))?.text
       }`;
       this.form = this.fb.group({
         formArray: formArray,
         createdAt: [new Date(), Validators.required],
       });
-      this.onAdd();
-      this.onAdd();
-      this.onAdd();
+      if (this.data.numberRow == 1) {
+        this.onAdd();
+      } else {
+        this.onAdd();
+        this.onAdd();
+        this.onAdd();
+      }
     }
   }
   onAdd() {
@@ -171,7 +180,6 @@ export class DynamicUpsertComponent {
     this.scrollTop();
   }
   async onSubmit() {
-
     const array = this.form.value?.formArray.map((x: any) => {
       x.updatedAt = new Date();
       if (this.data.obj) x.createdAt = new Date(this.form.value.createdAt);
@@ -185,14 +193,19 @@ export class DynamicUpsertComponent {
     const arrCreate = array.filter((x: any) => x.id == "");
 
     if (arrUpdate.length > 0) {
-      const result = await this.service.update(this.url, arrUpdate);
-        console.log(result);
+      const resul = await this.service.update(this.url, arrUpdate);
     }
     if (arrCreate.length > 0) {
-      await this.service.create(this.url, arrCreate);
+      const t = await this.service.create(this.url, arrCreate);
+      if (this.data.url) {
+        this.dataService.sendMessage({ status: Status.Add, data: t,url:this.url });
+      }
     }
     if (this.itemsDelete.length > 0) {
-      this.service.bulkDelete(this.url,this.itemsDelete.map((x:any)=>x.id));
+      this.service.bulkDelete(
+        this.url,
+        this.itemsDelete.map((x: any) => x.id)
+      );
     }
     this.dialogRef.close(true);
     this.dataService.sendMessage({ status: Status.Refesh });
@@ -240,7 +253,7 @@ export class DynamicUpsertComponent {
     return item.field == field;
   }
   onShowName(item: any): boolean {
-    return this.url == BaseApiUrl.ImportGoods ;
+    return this.url == BaseApiUrl.ImportGoods;
   }
   ngAfterViewInit() {
     this.cdr.detectChanges();

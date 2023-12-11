@@ -19,6 +19,7 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { CommonModule } from "@angular/common";
 import { MatDialogRef } from "@angular/material/dialog";
 import { OrderUpsertComponent } from "src/app/Pages/orders/order-upsert/order-upsert.component";
+import { BaseApiUrl, Status } from "src/app/general";
 
 @Component({
   selector: "app-infor-customer-in-order",
@@ -52,6 +53,7 @@ export class InforCustomerInOrderComponent {
     name: "name",
     label: "Danh Bạ Khách Hàng",
     required: true,
+    url: BaseApiUrl.SanpPhams,
   };
   selectDv = "1000";
   sumEnd: any = {};
@@ -61,7 +63,7 @@ export class InforCustomerInOrderComponent {
   onUnit: any;
   onCustomer: any = {};
   statusText: any = "Đặt Hàng";
-  nameCustomer: any;
+  nameCustomer: any='';
   constructor(
     private dataService: DataService,
     private fb: FormBuilder,
@@ -84,6 +86,15 @@ export class InforCustomerInOrderComponent {
       }
     });
     this.initForm();
+    this.dataService.currentMessage.subscribe((e: any) => {
+      if ((e.status = Status.Add && e.url == BaseApiUrl.KhachHangs)) {
+        const el = e.data.result[0] as any;
+        this.customers= [el,...this.customers]
+        this.nameCustomer = el.name;
+        this.formGroup.controls.customerId.setValue(el.id);
+        this.formGroup.controls.name.setValue(el.name);
+      }
+    });
   }
   initForm() {
     // console.log('this.onCustomer',this.onCustomer)
@@ -124,7 +135,7 @@ export class InforCustomerInOrderComponent {
     this.formGroup.controls.quantity.setValue(this.sumEnd.quantity);
     const value = this.formGroup.value;
     let createdAt = value.createdAt;
-    let updatedAt= value.id==null?createdAt:new Date()
+    let updatedAt = value.id == null ? createdAt : new Date();
     const orderId = value.id;
     const listDetails = Array.from(value.details).map((x: any) => {
       return {
@@ -213,6 +224,9 @@ export class InforCustomerInOrderComponent {
     this.onCustomer = event;
     this.formGroup.controls.customerId.setValue(this.onCustomer.id);
     this.formGroup.controls.name.setValue(this.onCustomer.name);
+  }
+  onNewCustomer(event: any) {
+    console.log(event);
   }
   onDeleteDetail(item: any) {
     const id = item.detailsId;

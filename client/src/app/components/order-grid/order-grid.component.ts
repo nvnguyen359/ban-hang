@@ -1,8 +1,12 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { Product } from "src/app/Models/product";
-import { BaseApiUrl } from "src/app/general";
+import { BaseApiUrl, Status, fields } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 import { DataService } from "src/app/services/data.service";
+import { DynamicUpsertComponent } from "../dynamic-upsert/dynamic-upsert.component";
+import { Validators } from "@angular/forms";
+import { Fields } from "src/app/Models/field";
 
 declare var capitalizeFirstLetter: any;
 declare var removeAccents: any;
@@ -21,7 +25,7 @@ export class OrderGridComponent {
   filterProducts: any = [];
   obj?: Product;
   codeSp: any;
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService, private dialog: MatDialog) {}
   ngAfterViewInit(): void {
     this.jsRun();
   }
@@ -40,6 +44,7 @@ export class OrderGridComponent {
       ),
     ];
     this.groups = ["Tất Cả", ...groups.sort()];
+
     this.onShowUpdate();
     this.onOrder();
   }
@@ -55,17 +60,17 @@ export class OrderGridComponent {
     // console.log('details',details.map((x:any)=>x.productId))
     // console.log(this.categories.map((x:any)=>x.id))
     details.forEach((item: any) => {
-      console.log(item)
+      console.log(item);
       this.categories = this.categories.map((x: any) => {
         if (parseInt(x.id) == parseInt(item.productId)) {
           x.quantity = item.quantity;
           x.price = item.price;
-          x.detailsId= item.id;
+          x.detailsId = item.id;
         }
         return x;
       });
     });
-   
+
     //this.categories =Array.from(this.categories).sort((a:any,b:any)=>b.quantity-a.quantity)
     // console.log(this.categories.map((x: any) => x.quantity));
   }
@@ -138,6 +143,51 @@ export class OrderGridComponent {
       });
     this.onOrder();
   }
+  onKeyUpProduct(event: any) {
+    this.filterProducts = this.categories.filter((x: any) =>
+      `${x.name}`.removeAccents().includes(`${event}`.removeAccents())
+    );
+    if (this.filterProducts.length < 1) this.filterProducts = this.categories;
+    this.onOrder();
+  }
+  addNewProduct() {
+    const columns = ["name", "importPrice", "price", "unit"];
+    const obj = {
+      id: "",
+      name: ["", Validators.required],
+      importPrice: ["", Validators.required],
+      price: ["", Validators.required],
+      unit: ["", Validators.required],
+    };
+    const fieldFilter = (fields() as Fields[]).filter((x: any) =>
+      columns.includes(x.field)
+    );
+    const dialogRef = this.dialog.open(DynamicUpsertComponent, {
+      data: {
+        value: [],
+        fields: fieldFilter,
+        obj,
+        numberRow: 1,
+        url: BaseApiUrl.SanpPhams,
+      },
+    });
+    if (dialogRef.afterClosed()) {
+      this.dataService.currentMessage.subscribe((e: any) => {
+        if (Status.Add == e.status && e.url == BaseApiUrl.SanpPhams) {
+          const el = e.data.result[0];
+          this.categories = [el, ...this.categories];
+          this.categories = Array.from(this.categories).map((x: any) => {
+            if (x.id === el.id) {
+              x.quantity = 1;
+            }
+            return x;
+          });
+          this.filterProducts = this.categories;
+          this.onOrder();
+        }
+      });
+    }
+  }
   jsRun() {
     const els = `.groups .btn-left`;
     var btns = document.querySelectorAll(els);
@@ -163,7 +213,7 @@ export class OrderGridComponent {
 
   onDeleteDetails(item: any) {
     const id = item.detailsId;
-   this.dataService.sendMessage({ delDetails: id });
+    this.dataService.sendMessage({ delDetails: id });
     this.categories = this.categories.map((x: any) => {
       if (x.id == item.id) {
         x.quantity = 0;

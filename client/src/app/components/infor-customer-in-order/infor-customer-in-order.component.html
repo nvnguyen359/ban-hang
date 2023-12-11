@@ -9,8 +9,8 @@
     <div style="width: 428px;">
         <div class="full-width">
             <div class="flex" style="margin-bottom: -16px;">
-                <app-autocomplete [data]="customers" [options]="optionsCustomer" [default]="data?.order?.name||''"
-                    [ariaDisabled]="true" [required]="true" (selectTed)="onSelecCustomer($event)"
+                <app-autocomplete [data]="customers" [options]="optionsCustomer" [default]="data?.order?.name||nameCustomer"
+                    [ariaDisabled]="true" [required]="true" (selectTed)="onSelecCustomer($event)" 
                     style="width: 212px;"></app-autocomplete>
                 <app-status (eventChange)="eventChangeStatus($event)" [statusText]="statusText"></app-status>
 

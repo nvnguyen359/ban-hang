@@ -82,7 +82,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatDialogModule,PrintersComponent,
     NgApexchartsModule,
     MatChipsModule,
-    MatInputModule,MatTooltipModule
+    MatInputModule,MatTooltipModule,
   ],
   providers: [MatDatepickerModule, {
     provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true
