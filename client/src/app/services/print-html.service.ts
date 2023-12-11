@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { OrderDetails } from "../Models/orderDetails";
+import { InfoStore } from "../Models/inforStore";
 
 @Injectable({
   providedIn: "root",
@@ -22,13 +23,20 @@ export class PrintHtmlService {
     return this.pagesize;
   }
   get infoStore() {
-    return this.info
-      ? this.info
-      : `<div><b>MÁY PIN HIỆU NGÂN</b></div>
+    const infoStore = this.info as InfoStore;
+    const name = this.info ? infoStore.store.name : `MÁY PIN HIỆU NGÂN`;
+
+    const address = this.info
+      ? infoStore.store.address
+      : ` TDP Hữu Lộc, P.Trúc Lâm, Nghi Sơn, Thanh Hóa`;
+    const phone = this.info
+      ? infoStore.store.phone
+      : `<b>0988.114.714</b> - <b>0842.399.889</b>`;
+    return `<div><b>${name}</b></div>
     <div>
         Chuyên: máy pin - cung cấp linh kiện ngành pin <br>
-        Địa chỉ: TDP Hữu Lộc, P.Trúc Lâm, Nghi Sơn, Thanh Hóa <br>
-        ĐT: <b>0988.114.714</b> - <b>0842.399.889</b>
+        Địa chỉ:${address} <br>
+        ĐT: ${phone}
     </div>`;
   }
   private getStyleTbody(item: Details) {
@@ -258,6 +266,7 @@ export interface Bill {
   createdAt: any;
   details: Details[];
   text: string;
+  store: InfoStore;
 }
 export interface Details extends OrderDetails {
   no: any;

@@ -100,9 +100,7 @@ export class SettingComponent {
     const value = event.target.value;
     if (value.length >= 10 && value.length <= 19) {
       const formValue = this.formBank.value;
-      console.log(formValue);
       const result = (await this.service.lookupBank(formValue.banks)) as any;
-      console.log(result);
       if (result.code == "00") {
         this.formBank.controls["banks"].patchValue({
           accountName: result.data.accountName,
@@ -116,7 +114,6 @@ export class SettingComponent {
   }
   onFocus() {
     const formValue = this.formBank.value;
-
     console.log(formValue);
   }
   onSubmit() {

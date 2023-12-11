@@ -19,6 +19,7 @@ import { SelectionModel } from "@angular/cdk/collections";
 import { PrintHtmlService } from "src/app/services/print-html.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute } from "@angular/router";
+import { InfoStore } from "src/app/Models/inforStore";
 
 @Component({
   selector: "app-orders",
@@ -70,6 +71,7 @@ export class OrdersComponent {
   expandedElement: any | null;
   details: any = [];
   getCustomer: any;
+  getInfoStore?: InfoStore;
   constructor(
     private dialog: MatDialog,
     private service: ApiService,
@@ -83,6 +85,9 @@ export class OrdersComponent {
     this.getOrders();
     await this.getCustomers();
     await this.getProduct();
+    this.service.getId("store", "14").then((e: any) => {
+      this.getInfoStore = JSON.parse(e.jsonData);
+    });
   }
   ngAfterViewInit() {
     this.dataService.currentMessage.subscribe(async (data: any) => {
@@ -99,8 +104,7 @@ export class OrdersComponent {
         await this.startPrinter(order);
       }
       if (data.status == Status.Search) {
-        console.log(data);
-        if(!data) return;
+        if (!data) return;
         const pageIndex = this.pageEvent?.pageIndex || 0;
         const pageSize = this.pageEvent?.pageSize || 10;
         const items = Array.from(
@@ -276,7 +280,9 @@ export class OrdersComponent {
     order.text = order.pay.convertMoneyIntoWords();
     order.customer = cusomerx;
     this.printHtmt.order = order;
+    this.printHtmt.infoStore = this.getInfoStore;
     this.printHtmt.pageSize = !local.page.value ? "80mm" : local.page.value;
+    order.store = this.getInfoStore;
     if (local.isThermal == true) {
       const rawHtml = this.printHtmt.rawHtml();
       order.pageName = local.printer.name;
