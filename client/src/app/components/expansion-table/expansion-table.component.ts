@@ -174,8 +174,10 @@ export class ExpansionTableComponent {
           this.columnsChild = [...this.options.displayedColumns];
         }
       }
+    } else {
+      this.columnsChild = [...this.options.displayedColumns];
     }
-
+    console.log(this.columnsChild);
     const items = Array.from(this.details).map((x: any, index: any) => {
       x.no = index + 1 + pageIndex * pageSize;
       return x;
@@ -194,13 +196,18 @@ export class ExpansionTableComponent {
     this.service
       .get(this.options.url, { page: pageIndex, pageSize })
       .then((data: any) => {
+        if (data.count < 1) {
+          this.dataSource.data = [];
+          this.changeDetectorRefs.detectChanges();
+          return;
+        }
         this.dataResult = data;
         this.details = data.items;
         if (this.options.multi) {
           const groupItems = new GroupItems(data.items);
           const x = groupItems.groupItems;
           this.displayedColumns = x?.columns;
-          this.options.displayedColumns.pop();
+         // this.options.displayedColumns.pop();
 
           if (this.router.url.includes(BaseApiUrl.ImportGoods)) {
             this.columnsChild = [
@@ -217,7 +224,9 @@ export class ExpansionTableComponent {
           ];
           this.details = x.items;
         }
-
+        else {
+          this.columnsChild = [...this.options.displayedColumns];
+        }
         const items = Array.from(this.details).map((x: any, index: any) => {
           x.no = index + 1 + pageIndex * pageSize;
           return x;
@@ -268,6 +277,7 @@ export class ExpansionTableComponent {
       : this.selection.selected.map((x: any) => x.details).flat();
     const ids = (data as any[]).map((x: any) => x.id);
     const result = await this.service.bulkDelete(this.options.url, ids, true);
+
     if (result) {
       this.getData();
     }
@@ -322,6 +332,9 @@ export class ExpansionTableComponent {
       { key: groupItem.ISumExpense, value: "Tổng Chi" },
       { key: groupItem.sumSale, value: "Doanh Thu" },
       { key: groupItem.sumImport, value: "Tiền Nhập" },
+      { key: "kh_ncc", value: "Khách Hàng-NCC" },
+      { key: "loanDate", value: "Ngày Tạo" },
+      { key: "payDate", value: "Ngày T.Toán" },
     ];
     const name = columnsToDisplay.find((x: any) => x.key == key)?.value;
     return name;

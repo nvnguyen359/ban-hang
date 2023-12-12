@@ -6,7 +6,6 @@
     <input type="hidden" name="" formControlName="id">
     <mat-card formGroupName="banks">
       <mat-card-content>
-
         <fieldset class="flex column">
           <legend>Thông Tin Ngân Hàng</legend>
           <app-autocomplete [options]="optionsBanhks" [data]="banks" *ngIf="banks.length>0"

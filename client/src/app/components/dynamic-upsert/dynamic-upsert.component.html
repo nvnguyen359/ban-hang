@@ -22,9 +22,9 @@
                     <button mat-mini-fab disabled style="margin-top: -21px;margin-right: 5px;">
                         {{i+1}}
                     </button>
-                    <div *ngFor="let item of fieldsShow"  >
-                        <div [ngSwitch]="item.field" >
-                            <mat-form-field appearance="outline" *ngSwitchCase="'unit'" class="{{max50(item)}}" >
+                    <div *ngFor="let item of fieldsShow">
+                        <div [ngSwitch]="item.field">
+                            <mat-form-field appearance="outline" *ngSwitchCase="'unit'" class="{{max50(item)}}">
                                 <mat-label>{{item.text}}</mat-label>
                                 <input (keyup)="onKeyUpUnit($event)" matInput [placeholder]="item.text"
                                     [type]="item.type" [required]="item.required" [step]="item.step"
@@ -35,23 +35,25 @@
                                 </mat-autocomplete>
                             </mat-form-field>
 
-                            <mat-form-field appearance="outline" *ngSwitchCase="'name'">
+                            <mat-form-field appearance="outline" *ngSwitchCase="'name'" class="names">
                                 <mat-label>{{item.text}}</mat-label>
                                 <input (keyup)="onKeyUpName($event)" matInput [placeholder]="item.text"
                                     [type]="item.type" required="{{item.required}}" [step]="item.step"
                                     [formControlName]="item.field" [matAutocomplete]="auto1" />
-                                <mat-autocomplete autoActiveFirstOption #auto1="matAutocomplete"
+                                <mat-autocomplete autoActiveFirstOption #auto1="matAutocomplete" (focus)="onClickNames()"
                                     (optionSelected)="optionSelectedProductName($event,i)">
                                     <mat-option *ngFor="let item of filteredOptionsNames;"
                                         [value]="item.name">{{item.name}}</mat-option>
                                 </mat-autocomplete>
                             </mat-form-field>
-                            <div appearance="outline" *ngSwitchCase="'status'"  style="margin-top: -20px;margin-left:4px;margin-right:4px" >
-                                <mat-button-toggle-group    aria-label="Font Style">
+                            <div appearance="outline" *ngSwitchCase="'status'"
+                                style="margin-top: -20px;margin-left:4px;margin-right:4px">
+                                <mat-button-toggle-group [formControlName]="item.field" aria-label="Font Style" #group
+                                    (change)="onStatus($event)">
                                     <mat-button-toggle value="no" checked="true">Nợ</mat-button-toggle>
                                     <mat-button-toggle value="tra">Trả</mat-button-toggle>
-                                  </mat-button-toggle-group>
-                                  <input type="hidden" [formControlName]="item.field">
+                                </mat-button-toggle-group>
+
                             </div>
                             <div *ngSwitchDefault [ngSwitch]="item.type">
                                 <mat-form-field appearance="outline" *ngSwitchCase="'date'">
@@ -60,17 +62,17 @@
                                     <mat-datepicker-toggle matIconSuffix [for]="picker11"></mat-datepicker-toggle>
                                     <mat-datepicker #picker11></mat-datepicker>
                                 </mat-form-field>
-                                <mat-form-field appearance="outline" *ngSwitchDefault  class="{{max50(item)}}" >
+                                <mat-form-field appearance="outline" *ngSwitchDefault class="{{max50(item)}}">
                                     <mat-label>{{item.text}}</mat-label>
                                     <input matInput [placeholder]="item.text" [type]="item.type" [step]="item.step"
-                                    [formControlName]="item.field" autocomplete="off" />
-                                  
+                                        [formControlName]="item.field" autocomplete="off" />
+
                                 </mat-form-field>
                             </div>
                         </div>
-                      
+
                     </div>
-                  
+
                     <mat-icon color="warn" class="delete" (click)="onDelete(i)">delete</mat-icon>
                 </div>
             </ng-container>

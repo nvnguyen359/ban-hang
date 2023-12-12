@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ServiceApiService } from './service-api.service';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +6,5 @@ import { ServiceApiService } from './service-api.service';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor() {
-
-  }
+  constructor() {}
 }

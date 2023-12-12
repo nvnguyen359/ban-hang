@@ -1,5 +1,6 @@
 require("dotenv").config({ path: "./../.env" });
 const { getListPrinter, allApisPrinter } = require("./apis/apiInfo");
+require('./features/upsertGgsheet')
 
 var bodyParser = require("body-parser");
 const path = require("path");

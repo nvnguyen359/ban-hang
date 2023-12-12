@@ -196,9 +196,9 @@ const createCongNoKh = async (knex) => {
     console.error(error.message);
   }
 };
-const store = async (knex) => {
+const setting = async (knex) => {
   try {
-    const tbl = "store";
+    const tbl = "setting";
     const hasTable = await knex.schema.hasTable(tbl);
     if (hasTable) {
       console.log(tbl, "already exist!");
@@ -238,7 +238,7 @@ const initTable = async (knex) => {
     tables.push(tb);
     tb = await createCongNoKh(knex);
     tables.push(tb);
-    tb = await store(knex);
+    tb = await setting(knex);
     tables.push(tb);
     res(tables);
     await afterTableDebt(knex);

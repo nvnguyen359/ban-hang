@@ -94,11 +94,8 @@ class CRUDKNEX {
       endDay,
       name = "",
     } = obj;
-    // if (!column) column = ["*"];
     return new Promise(async (res, rej) => {
-      // console.log(new Date(startDay).toISOString(),new Date(endDay).toLocaleDateString('vi'))
       const orderBy = "id";
-//.fromRaw('COLLATE [Vietnamese_CI_AI]')
       const wherename = name
         ? await this.knex(this.table)
             

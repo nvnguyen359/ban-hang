@@ -8,7 +8,7 @@ const CLIENT_EMAIL = process.env.CLIENT_EMAIL;
 const SHEET_ID = process.env.SHEET_ID;
 class CRUD {
   doc = null;
-  constructor(nameSheet) {
+  constructor(nameSheet = null) {
     this.nameSheet = nameSheet;
   }
 
@@ -100,10 +100,11 @@ class CRUD {
       const sheet = this.doc.sheetsByTitle[this.nameSheet];
       const rows = Array.from(await sheet.getRows());
       const row = rows.find((x, index) => {
-        return rows[index].get("Id") == id;
+        return rows[index].get("id") == id;
       });
+    
       return new Promise(async (res, rej) => {
-        res({ data: await this.convertObject(row), mes: "success" });
+        res({ data: row? await this.convertObject(row):null, mes: "success" });
       });
     } catch (error) {
       return { mes: error };
@@ -174,9 +175,9 @@ class CRUD {
     });
 
     if (row) {
-     // console.log("Delete ", id);
+      // console.log("Delete ", id);
       row.delete();
-      return { mes: "success"  };
+      return { mes: "success" };
     } else {
       return { mes: `${id} does not exist` };
     }

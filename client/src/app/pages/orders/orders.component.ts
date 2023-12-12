@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { OrderUpsertComponent } from "./order-upsert/order-upsert.component";
 import { ApiService } from "src/app/services/api.service";
-import { BaseApiUrl, Status, delay, getLocalStorage } from "src/app/general";
+import { BaseApiUrl, IdsContant, Status, delay, getLocalStorage } from "src/app/general";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
@@ -85,7 +85,7 @@ export class OrdersComponent {
     this.getOrders();
     await this.getCustomers();
     await this.getProduct();
-    this.service.getId("store", "14").then((e: any) => {
+    this.service.getId(BaseApiUrl.Setting, IdsContant.idSetting).then((e: any) => {
       this.getInfoStore = JSON.parse(e.jsonData);
     });
   }

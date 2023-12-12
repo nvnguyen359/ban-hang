@@ -16,6 +16,7 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
+  MatDialog,
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
@@ -28,7 +29,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
 import { Router } from "@angular/router";
 import { Fields } from "src/app/Models/field";
-import { BaseApiUrl, Status, delay, links } from "src/app/general";
+import { BaseApiUrl, Status, delay, fields, links } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 import { DataService } from "src/app/services/data.service";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -79,7 +80,8 @@ export class DynamicUpsertComponent {
     private service: ApiService,
     private dialogRef: MatDialogRef<DynamicUpsertComponent>,
     private dataService: DataService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {}
   ngOnInit() {
     this.url = this.data.url
@@ -124,14 +126,21 @@ export class DynamicUpsertComponent {
       )
     );
   }
+  textName = "";
   onKeyUpName(event: any) {
+    this.textName = event.target.value;
     this.filteredOptionsNames = this.products.filter((option: any) =>
       removeAccents(option.name.toLowerCase()).includes(
         removeAccents(event.target.value.toLowerCase())
       )
     );
+    if (this.filteredOptionsNames.length == 0) {
+      this.filteredOptionsNames = this.products;
+    }
   }
-
+  onClickNames() {
+    console.log("focus");
+  }
   initForm() {
     let formArray = this.fb.array([]) as FormArray;
     let array: any = [];
@@ -180,7 +189,7 @@ export class DynamicUpsertComponent {
     this.scrollTop();
   }
   async onSubmit() {
-    const array = this.form.value?.formArray.map((x: any) => {
+    let array = this.form.value?.formArray.map((x: any) => {
       x.updatedAt = new Date();
       if (this.data.obj) x.createdAt = new Date(this.form.value.createdAt);
       if (x.productId)
@@ -188,7 +197,27 @@ export class DynamicUpsertComponent {
       if (x.id == null) x.id = "";
       return x;
     }) as any[];
-
+    if (this.url == BaseApiUrl.ImportGoods) {
+      for (let index = 0; index < array.length; index++) {
+        const element = array[index];
+        if (element.productId == "") {
+          const product = {
+            id: "",
+            name: element.name,
+            importPrice: element.importPrice,
+            price: element.price,
+            unit: element.unit,
+          };
+          const productResult = (await this.service.create(
+            BaseApiUrl.SanpPhams,
+            product
+          )) as any;
+          if (productResult) {
+            element.productId = productResult.result[0].id;
+          }
+        }
+      }
+    }
     const arrUpdate = array.filter((x: any) => x.id != "");
     const arrCreate = array.filter((x: any) => x.id == "");
 
@@ -198,7 +227,11 @@ export class DynamicUpsertComponent {
     if (arrCreate.length > 0) {
       const t = await this.service.create(this.url, arrCreate);
       if (this.data.url) {
-        this.dataService.sendMessage({ status: Status.Add, data: t,url:this.url });
+        this.dataService.sendMessage({
+          status: Status.Add,
+          data: t,
+          url: this.url,
+        });
       }
     }
     if (this.itemsDelete.length > 0) {
@@ -292,5 +325,37 @@ export class DynamicUpsertComponent {
   }
   onShowChiPhi(item: any) {
     return this.url == BaseApiUrl.ChiPhis;
+  }
+  onselectedStatus = "no";
+  onStatus(event: any) {
+    this.onselectedStatus = event.value;
+  }
+  async onNew(index: number, v: any = "") {
+    if (this.url == BaseApiUrl.ImportGoods) {
+      const listData = this.form.controls["formArray"].value;
+      console.log(listData, this.textName);
+      const columns = ["name", "importPrice", "price", "unit"];
+      const obj = {
+        id: "",
+        name: [this.textName, Validators.required],
+        importPrice: ["", Validators.required],
+        price: ["", Validators.required],
+        unit: ["", Validators.required],
+      };
+      const fieldFilter = (fields() as Fields[]).filter((x: any) =>
+        columns.includes(x.field)
+      );
+      const dialogRef = this.dialog.open(DynamicUpsertComponent, {
+        data: { value: [], fields: fieldFilter, obj, numberRow: 1 },
+      });
+      console.log(dialogRef.afterClosed());
+      if (dialogRef.afterClosed()) {
+        this.dataService.currentMessage.subscribe((r: any) => {
+          if (r.status == Status.Add) {
+            console.log(r);
+          }
+        });
+      }
+    }
   }
 }

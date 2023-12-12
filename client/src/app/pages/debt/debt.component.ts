@@ -15,7 +15,7 @@ export class DebtComponent {
   columns = ["name", "money", "status","loanDate","payDate"];
   columnDate = ["createdAt", "updatedAt"];
   options: any = {
-    url: BaseApiUrl.ChiPhis,
+    url: BaseApiUrl.Debt,
     displayedColumns: ["no", ...this.columns],
     multi:true
   };

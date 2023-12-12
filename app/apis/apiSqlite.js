@@ -5,7 +5,7 @@ const lib = require("../shares/lib");
 const apisSqlite = async (app) => {
   createDatabase(app);
   const array = await getAllTables();
-  console.log(array)
+  console.log(array);
   array.forEach((element) => {
     let crud = new CRUDKNEX(element);
     findAll(element, app, crud);
@@ -18,7 +18,7 @@ const apisSqlite = async (app) => {
     bulkUpdate(element, app, crud);
   });
   getAllOrders(app);
-
+  inventory(app);
   // let crud = new CRUDKNEX("Đơn Hàng");
   // getAll("donhang", app, crud);
   return app;
@@ -30,6 +30,7 @@ const createDatabase = (app) => {
     next();
   });
 };
+
 const getAllOrders = (app) => {
   app.get(`/api/orders`, async (req, res, next) => {
     const q = req.query;
@@ -44,9 +45,9 @@ const getAllOrders = (app) => {
       column,
       limit,
       offset: offset * limit,
-      name:q.name
+      name: q.name,
     };
-  
+
     if (startDay) {
       obj.startDay = startDay;
       obj.endDay = endDay;
@@ -63,6 +64,60 @@ const getAllOrders = (app) => {
       result.push(x);
     }
     res.send({ count: listOrders.count, items: result });
+    next();
+  });
+};
+const inventory = (app) => {
+  app.get(`/api/inventory`, async (req, res, next) => {
+    const limit = 100000;
+    const offset = 0;
+    let crud = new CRUDKNEX("orderDetails");
+    let obj = {
+      limit,
+      offset: offset * limit,
+    };
+    let getorderDetails = await crud.findAll(obj);
+
+    crud.setTable = "product";
+    let getproducts = await crud.findAll(obj);
+    crud.setTable = "importGoods";
+    let getimportGoods = await crud.findAll(obj);
+
+    let result = [];
+    for (let index = 0; index < getproducts.count; index++) {
+      const product = getproducts.items[index];
+      const filterDetails = getorderDetails.items.filter(
+        (x) => x.productId == product.id
+      );
+      const filterImport = getimportGoods.items.filter(
+        (x) => x.productId == product.id
+      );
+      const sumImport = Array.from(
+        filterImport.map((x) => parseInt(x.quantity))
+      ).reduce((a, b) => a + b, 0);
+      const sumOuput = Array.from(
+        filterDetails.map((x) => parseInt(x.quantity))
+      ).reduce((a, b) => a + b, 0);
+      const sumValueImprtPrice2=filterImport.map((x) => parseInt(x.quantity)*parseInt(x.importPrice))
+      .reduce((a, b) => a + b, 0);
+      const sumValueImprtPrice1=filterDetails.map((x) => parseInt(x.quantity)*parseInt(x.importPrice))
+      const sumValuePrice2=filterImport.map((x) => parseInt(x.quantity)*parseInt(x.price))
+      .reduce((a, b) => a + b, 0);
+      const sumValuePrice1=filterDetails.map((x) => parseInt(x.quantity)*parseInt(x.price))
+      .reduce((a, b) => a + b, 0);
+      const obj = {
+        name: product.name,
+        sumImport,
+        sumOuput,
+        inventory: sumImport - sumOuput,
+        valueImport:sumValueImprtPrice2-sumValueImprtPrice1,
+        valueOut:sumValuePrice2-sumValuePrice1,
+        profit: -(sumValueImprtPrice2-sumValueImprtPrice1)+(sumValuePrice2-sumValuePrice1)
+      };
+
+      result.push(obj);
+    }
+    res.send({ count: result.length, items: result });
     next();
   });
 };
@@ -118,7 +173,7 @@ const findAll = (element, app, crud) => {
       column,
       limit,
       offset: offset * limit,
-      name:q.name
+      name: q.name,
     };
     res.send(await crud.findAll(obj));
     next();

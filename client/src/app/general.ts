@@ -6,6 +6,9 @@ export enum Status {
   isDonhang,
   resultDelete = "resultDelete",
 }
+export enum IdsContant{
+  idSetting='14'
+}
 export enum groupItem {
   IsumImport = "sumImport",
   ISumSales = "sumSales",
@@ -55,7 +58,7 @@ export function links() {
       icon: "spa",
     },
     {
-      text: "Nhập  - Tồn Kho",
+      text: "Nhập Hàng",
       link: `/${BaseApiUrl.ImportGoods}`,
       icon: "credit_card",
     },
@@ -205,6 +208,10 @@ export function fields() {
     {
       field: groupItem.sumImport,
       text: "Tiền Nhập",
+    },
+    {
+      field: 'kh_ncc',
+      text: "K.Hàng-NCC",
     },
   ];
   return data;

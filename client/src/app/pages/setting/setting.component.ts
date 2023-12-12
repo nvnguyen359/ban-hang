@@ -1,6 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { FormBuilder, RequiredValidator, Validators } from "@angular/forms";
+import { InfoStore } from "src/app/Models/inforStore";
+import { BaseApiUrl, IdsContant } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 
 @Component({
@@ -9,6 +11,7 @@ import { ApiService } from "src/app/services/api.service";
   styleUrls: ["./setting.component.scss"],
 })
 export class SettingComponent {
+  url = BaseApiUrl.Setting;
   banks: any[] = [];
   formBank: any;
   optionsBanhks = {
@@ -35,12 +38,16 @@ export class SettingComponent {
     Client_ID: "c3503c91-f295-4574-ab2a-206e7f58a334",
     API_Key: "10a474b4-fc88-45ae-9bcd-18316d1ffe23",
   };
+  settingData: any;
   constructor(private service: ApiService, private fb: FormBuilder) {
     this.initFormBank();
+    service
+      .getId(this.url, IdsContant.idSetting)
+      .then((data: any) => (this.settingData = data));
   }
   async ngOnInit() {
     this.banks = ((await this.service.getBanks()) as any)?.data;
-    this.initFormBank();
+    this.initFormBank(this.settingData);
     console.log(this.formBank.controls["accountNumber"]);
     this.formBank.controls["banks"].patchValue(this.initBank.accountNumber);
     this.formBank.controls["banks"].patchValue({
@@ -58,35 +65,35 @@ export class SettingComponent {
       accountName: this.initBank.accountName,
     });
     this.formBank.controls["store"].patchValue(this.initStore);
-    // this.formBank.controls["store"].patchValue({ phone: this.initStore.phone });
-    // this.formBank.controls["store"].patchValue({ address: this.initStore.address });
-    // this.formBank.controls["store"].patchValue({ name: this.initStore.name });
   }
-  initFormBank(obj = null) {
+  initFormBank(obj: any = null) {
+    const obj1 = obj?.jsonData
+      ? (JSON.parse(obj?.jsonData) as InfoStore)
+      : null;
     this.formBank = this.fb.group({
-      id: "",
+      id: obj?.id || "",
       banks: this.fb.group({
-        bin: "",
+        bin: obj1?.banks.bin || "",
         accountNumber: [
-          null,
+          obj1?.banks?.accountNumber || null,
           [
             Validators.required,
             Validators.minLength(6),
             Validators.maxLength(19),
           ],
         ],
-        accountName: [""],
+        accountName: [obj1?.banks?.accountName || ""],
       }),
       ghn: this.fb.group({
-        token: "",
-        Client_id: "",
-        ShopID: "",
+        token: obj1?.ghn?.token || "",
+        Client_id: obj1?.ghn?.Client_id || "",
+        ShopID: obj1?.ghn?.ShopID || "",
       }),
       store: this.fb.group({
-        name: "",
-        phone: "",
-        address: "",
-        infoPlus: "",
+        name: obj1?.store?.name || "",
+        phone: obj1?.store?.phone || "",
+        address: obj1?.store?.address || "",
+        infoPlus: obj1?.store?.infoPlus || "",
       }),
     });
   }
@@ -116,21 +123,26 @@ export class SettingComponent {
     const formValue = this.formBank.value;
     console.log(formValue);
   }
-  onSubmit() {
+  async onSubmit() {
     const formValue = this.formBank.value;
     const id = formValue.id;
-    if (id == "") {
-      delete formValue.id;
-      const obj = {
-        name: 'name',
-        jsonData:JSON.stringify(formValue),
-        id,
-        createdAt:new Date(),
-        updatedAt: new Date()
-      };
-      this.service.create("store", obj).then((e: any) => {
-        console.log(e);
-      });
+    console.log("id", id);
+    delete formValue.id;
+    const obj = {
+      name: "name",
+      jsonData: JSON.stringify(formValue),
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    const result = !id
+      ? await this.service.create(this.url, obj)
+      : await this.service.update(this.url, obj);
+    if (result) {
+      this.service
+        .getId(this.url, IdsContant.idSetting)
+        .then((data: any) => (this.settingData = data));
+      this.initFormBank(this.settingData);
     }
   }
 }
