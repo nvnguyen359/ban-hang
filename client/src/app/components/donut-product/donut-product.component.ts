@@ -1,11 +1,6 @@
-import {
-  Component,
-  Input,
-  ViewChild,
-  CUSTOM_ELEMENTS_SCHEMA,
-  NO_ERRORS_SCHEMA,
-} from "@angular/core";
-import { async } from "@angular/core/testing";
+import { Component, ViewChild } from "@angular/core";
+import * as ApexCharts from "apexcharts";
+
 import {
   ApexNonAxisChartSeries,
   ApexResponsive,
@@ -35,16 +30,17 @@ export type ChartOptions = {
   styleUrls: ["./donut-product.component.scss"],
 })
 export class DonutProductComponent {
-  @ViewChild("chart") chart: ChartComponent | undefined;
-  public chartOptions: any;
+  @ViewChild("chart", { static: true }) chart!: ChartComponent;
+  public chartOptions!: Partial<ChartOptions>;
   labels: any[] = [];
   series: any[] = [];
   title: string = "";
   width = 600;
   constructor(private dataService: DataService) {
-   
+
+    this.onInitChart();
   }
-  ngOnInit() {
+  onInitChart() {
     this.chartOptions = {
       series: [44, 55, 41, 17, 15],
       chart: {
@@ -59,7 +55,7 @@ export class DonutProductComponent {
         type: "gradient",
       },
       legend: {
-        formatter: function (val:any, opts:any) {
+        formatter: function (val: any, opts: any) {
           return val + " - " + opts.w.globals.series[opts.seriesIndex];
         },
       },
@@ -77,6 +73,9 @@ export class DonutProductComponent {
         },
       ],
     };
+  }
+  async ngOnInit() {
+    await delay(2000);
     this.dataService.currentMessage.subscribe(async(result: any) => {
       if (result.donut) {
         const array = Array.from(result.donut) as any[];
@@ -91,10 +90,10 @@ export class DonutProductComponent {
               .reduce((a: number, b: number) => a + b, 0);
             this.series.push(t);
           });
-          this.chartOptions.chart.width= this.width;
+         // this.chartOptions.chart.width= this.width;
           this.chartOptions.labels = this.labels;
           this.chartOptions.series = this.series;
-          
+
         }
       }
     });

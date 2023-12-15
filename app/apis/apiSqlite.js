@@ -67,57 +67,72 @@ const getAllOrders = (app) => {
     next();
   });
 };
+const calInventory = async (offset = 0, limit = 100000) => {
+  let crud = new CRUDKNEX();
+  let obj = {
+    limit,
+    offset: offset * limit,
+  };
+
+  crud.setTable = "product";
+  let getproducts = await crud.findAll(obj);
+  const items = getproducts.items;
+  let result = [];
+  for (let index = 0; index < items.length; index++) {
+    const product = items[index];
+    const ob = { productId: product.id };
+    crud.setTable = "orderDetails";
+    let getorderDetails = await crud.filterWithObj(ob);
+    crud.setTable = "importGoods";
+    let getimportGoods = await crud.filterWithObj(ob);
+
+    const filterDetails = getorderDetails.filter(
+      (x) => x.productId == product.id
+    );
+    const filterImport = getimportGoods.filter(
+      (x) => x.productId == product.id
+    );
+    const sumImport = Array.from(
+      filterImport.map((x) => parseInt(x.quantity))
+    ).reduce((a, b) => a + b, 0);
+    const sumOuput = Array.from(
+      filterDetails.map((x) => parseInt(x.quantity))
+    ).reduce((a, b) => a + b, 0);
+    const sumValueImprtPrice2 = filterImport
+      .map((x) => parseInt(x.quantity) * parseInt(x.importPrice))
+      .reduce((a, b) => a + b, 0);
+    const sumValueImprtPrice1 = filterDetails.map(
+      (x) => parseInt(x.quantity) * parseInt(x.importPrice)
+    );
+    const sumValuePrice2 = filterImport
+      .map((x) => parseInt(x.quantity) * parseInt(x.price))
+      .reduce((a, b) => a + b, 0);
+    const sumValuePrice1 = filterDetails
+      .map((x) => parseInt(x.quantity) * parseInt(x.price))
+      .reduce((a, b) => a + b, 0);
+    const obj = {
+      id: product.id,
+      name: product.name,
+      sumImport,
+      sumOuput,
+      inventory: sumImport - sumOuput,
+      valueImport: sumValueImprtPrice2 - sumValueImprtPrice1,
+      valueOut: sumValuePrice2 - sumValuePrice1,
+      profit:
+        -(sumValueImprtPrice2 - sumValueImprtPrice1) +
+        (sumValuePrice2 - sumValuePrice1),
+    };
+    result.push(obj);
+  }
+  return { items: result, count: getproducts.count };
+};
 const inventory = (app) => {
   app.get(`/api/inventory`, async (req, res, next) => {
-    const limit = 100000;
-    const offset = 0;
-    let crud = new CRUDKNEX("orderDetails");
-    let obj = {
-      limit,
-      offset: offset * limit,
-    };
-    let getorderDetails = await crud.findAll(obj);
-
-    crud.setTable = "product";
-    let getproducts = await crud.findAll(obj);
-    crud.setTable = "importGoods";
-    let getimportGoods = await crud.findAll(obj);
-
-    let result = [];
-    for (let index = 0; index < getproducts.count; index++) {
-      const product = getproducts.items[index];
-      const filterDetails = getorderDetails.items.filter(
-        (x) => x.productId == product.id
-      );
-      const filterImport = getimportGoods.items.filter(
-        (x) => x.productId == product.id
-      );
-      const sumImport = Array.from(
-        filterImport.map((x) => parseInt(x.quantity))
-      ).reduce((a, b) => a + b, 0);
-      const sumOuput = Array.from(
-        filterDetails.map((x) => parseInt(x.quantity))
-      ).reduce((a, b) => a + b, 0);
-      const sumValueImprtPrice2=filterImport.map((x) => parseInt(x.quantity)*parseInt(x.importPrice))
-      .reduce((a, b) => a + b, 0);
-      const sumValueImprtPrice1=filterDetails.map((x) => parseInt(x.quantity)*parseInt(x.importPrice))
-      const sumValuePrice2=filterImport.map((x) => parseInt(x.quantity)*parseInt(x.price))
-      .reduce((a, b) => a + b, 0);
-      const sumValuePrice1=filterDetails.map((x) => parseInt(x.quantity)*parseInt(x.price))
-      .reduce((a, b) => a + b, 0);
-      const obj = {
-        name: product.name,
-        sumImport,
-        sumOuput,
-        inventory: sumImport - sumOuput,
-        valueImport:sumValueImprtPrice2-sumValueImprtPrice1,
-        valueOut:sumValuePrice2-sumValuePrice1,
-        profit: -(sumValueImprtPrice2-sumValueImprtPrice1)+(sumValuePrice2-sumValuePrice1)
-      };
-
-      result.push(obj);
-    }
-    res.send({ count: result.length, items: result });
+    const q = req.query;
+    const limit = parseInt(q.pageSize) || parseInt(q.limit) || 100;
+    const offset = parseInt(q.page) || 0;
+    const result = await calInventory(offset, limit);
+    res.send({ count: result.count, items: result.items });
     next();
   });
 };
@@ -175,7 +190,23 @@ const findAll = (element, app, crud) => {
       offset: offset * limit,
       name: q.name,
     };
-    res.send(await crud.findAll(obj));
+    if (element == "product") {
+      const getInventory = await calInventory();
+      const products = (await crud.findAll(obj)).items.map((x) => {
+        const findId = getInventory.items.find((y) => y.id == x.id);
+        if (findId) {
+          x.inventory = findId.inventory;
+        }
+        return x;
+      });
+      res.send({
+        count: getInventory.count,
+        items: products,
+      });
+    } else {
+      res.send(await crud.findAll(obj));
+    }
+
     next();
   });
 };

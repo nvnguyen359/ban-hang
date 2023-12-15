@@ -29,9 +29,10 @@ function getMenu(hash) {
   const urlM = this.location.href.split(";")[0].split("#");
   const url = hash ? hash : urlM[urlM.length - 1].replace("/", "");
   if (menus) {
+    
     if (url == "/") menus[0].classList.add("active");
     menus.forEach((a) => {
-      console.log(url , a.getAttribute("href").replace("#/", ""),url == a.getAttribute("href").replace("#/", ""));
+      //console.log(url , a.getAttribute("href").replace("#/", ""),url == a.getAttribute("href").replace("#/", ""));
       if (url.replace("#/", "")== a.getAttribute("href").replace("#/", "")) {
         a.classList.add("active");
       }

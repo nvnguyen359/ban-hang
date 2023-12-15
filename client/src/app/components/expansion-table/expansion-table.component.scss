@@ -94,5 +94,13 @@ tr.example-element-row:not(.example-expanded-row):active {
   color: white;
   font-weight: 500;
   font-size: 14px;
+}
+.mat-mdc-row .mat-mdc-cell {
+  border-bottom: 1px solid transparent;
+  border-top: 1px solid transparent;
+  cursor: pointer;
+}
 
+.mat-mdc-row:hover .mat-mdc-cell {
+  border-color: currentColor;
 }

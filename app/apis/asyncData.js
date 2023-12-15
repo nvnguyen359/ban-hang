@@ -11,26 +11,23 @@ const asyncData = async () => {
     for (let i = 0; i < listTable.length; i++) {
       const crud = new CRUD();
       crud.nameSheet = listTable[i];
-      const array = Array.from(await crud.getAll());
+      const arrayGgSheet = Array.from(await crud.getAll());
       const knexCrud = new CRUDKNEX(listTable[i]);
-      const obj = {
-        query: "",
-        column: "*",
-        limit: 100000,
-        offset: 0,
-      };
-      const knexAll = await knexCrud.findAll(obj);
-      if (array.length != knexAll.count) {
-        for (let j = 0; j < array.length; j++) {
-          const x = array[j];
-          const findId = await knexCrud.findId(x.id);
-          if (!findId) {
-            await knexCrud.create(x);
-          }
+      for (let index = 0; index < arrayGgSheet.length; index++) {
+        const element = arrayGgSheet[index];
+        const findId = await knexCrud.findId(element.id);
+        if (!findId) {
+          await knexCrud.create(element);
+        }else{
+          await knexCrud.update(element);
         }
-        console.log(`===${listTable[i]}===`, "done!");
+        await lib.delay(5000)
       }
+      console.log(`===${listTable[i]}===`, "done!");
+     
     }
+    console.log('dong bo tu gg sheet')
+
     console.timeEnd();
     res("done");
   });

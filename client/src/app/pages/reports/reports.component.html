@@ -1,3 +1,4 @@
+
 <div class="full-width">
   <div class="flex" style="align-items: center; padding:8px">
     <button mat-stroked-button extended color="accent" [matMenuTriggerFor]="menu">
@@ -21,12 +22,13 @@
     </mat-card>
   </div>
   <div>
-    <app-donut-product *ngIf="filterChiTiets"></app-donut-product>
+    <app-donut-product *ngIf="filterOrder" ></app-donut-product>
   </div>
 </div>
 <mat-card>
   <div class="full-width flex" style="margin-top: -0px;">
     <app-chart-order  style="width: 100%;"></app-chart-order>
+    <!-- <app-stacked-columns></app-stacked-columns> -->
   </div>
 </mat-card>
 <mat-menu #menu="matMenu">

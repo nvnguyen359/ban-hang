@@ -198,7 +198,7 @@ export class InforCustomerInOrderComponent {
     if (isNaN(parseInt(val))) event.preventDefault();
   }
   onCal() {
-    //console.log(this.details)
+    this.details= this.details.filter((x:any)=>x.quantity>0);
     this.sumEnd.quantity = Array.from(
       this.details.map((x: any) => parseInt(x.quantity))
     ).reduce((a: any, b: any) => a + b, 0);
@@ -216,8 +216,9 @@ export class InforCustomerInOrderComponent {
       this.sumEnd.intoMney - this.sumEnd.discount + this.sumEnd.wage;
     this.details = this.details?.map((x: any) => {
       x.updatedAt = new Date();
+      if(x.quantity>0)
       return x;
-    });
+    })
   }
   onSelecCustomer(event: any) {
     if (!event) return;

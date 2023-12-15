@@ -27,8 +27,9 @@
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
-            ],
-            "scripts": ["./src/assets/lib.js","node_modules/apexcharts/dist/apexcharts.min.js"]
+            ], 
+            "scripts": ["./src/assets/lib.js","node_modules/apexcharts/dist/apexcharts.min.js"],
+            "allowedCommonJsDependencies": ["morph","apexcharts","ng-apexcharts"]
           },
           "configurations": {
             "production": {

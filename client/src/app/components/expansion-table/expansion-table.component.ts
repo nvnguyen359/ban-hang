@@ -37,6 +37,7 @@ import { Router } from "@angular/router";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDialog } from "@angular/material/dialog";
 import { GroupItems } from "./groupItems";
+
 import {
   trigger,
   state,
@@ -77,7 +78,6 @@ import {
     MatRippleModule,
     MatCheckboxModule,
     MatSelectModule,
-    MatPaginatorModule,
     FormsModule,
     MatAutocompleteModule,
     StatusComponent,
@@ -85,6 +85,7 @@ import {
     MatFormFieldModule,
     ReactiveFormsModule,
     MatTooltipModule,
+    
   ],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
@@ -107,7 +108,7 @@ export class ExpansionTableComponent {
   pageSize = this.options.pageSize;
   pageEvent?: PageEvent;
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort!: MatSort;
+  @ViewChild(MatSort) sort!: MatSort;
   fieldFilter: any;
   disabled = "disabled";
   customers: any = [];
@@ -115,6 +116,7 @@ export class ExpansionTableComponent {
   expandedElement: any | null;
   details: any[] = [];
   dataResult: any;
+  url:any;
   constructor(
     private service: ApiService,
     private changeDetectorRefs: ChangeDetectorRef,
@@ -123,6 +125,7 @@ export class ExpansionTableComponent {
     private dialog: MatDialog
   ) {
     this.columnsToDisplayWithExpand = [...this.displayedColumns, "expand"];
+    this.url=router.url.replace('/','')
   }
   ngOnInit() {
     if (this.options.displayedColumns) {
@@ -138,7 +141,10 @@ export class ExpansionTableComponent {
       }
     });
   }
-  ngAfterViewInit() {}
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
   ngDisabled() {
     return this.selection.selected.length < 1 ? "disabled" : "";
   }
@@ -177,7 +183,6 @@ export class ExpansionTableComponent {
     } else {
       this.columnsChild = [...this.options.displayedColumns];
     }
-    console.log(this.columnsChild);
     const items = Array.from(this.details).map((x: any, index: any) => {
       x.no = index + 1 + pageIndex * pageSize;
       return x;
@@ -233,6 +238,8 @@ export class ExpansionTableComponent {
         });
         this.resultsLength = data.count;
         this.dataSource.data = items;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.changeDetectorRefs.detectChanges();
       });
   }
@@ -335,6 +342,11 @@ export class ExpansionTableComponent {
       { key: "kh_ncc", value: "Khách Hàng-NCC" },
       { key: "loanDate", value: "Ngày Tạo" },
       { key: "payDate", value: "Ngày T.Toán" },
+      {key:'sumOuput', value: "Tổng Xuất"},
+      {key:'inventory', value: "Tồn Kho"},
+      {key:'valueImport', value: "Tiền Nhập"},
+      {key:'valueOut', value: "Doanh Thu"},
+      {key:'profit', value: "Lợi Nhuận"},
     ];
     const name = columnsToDisplay.find((x: any) => x.key == key)?.value;
     return name;
@@ -351,8 +363,8 @@ export class ExpansionTableComponent {
       } else {
         result = value;
         if (
-          (`${column}`.includes("createdAt") && value.includes("T")) ||
-          value.includes("Z")
+          (`${column}`.includes("createdAt") && value.includes("T")) &&
+          value.includes("Z") &&value.includes("-")
         ) {
           result = new Date(value).toLocaleDateString("vi");
         }

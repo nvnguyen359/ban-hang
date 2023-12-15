@@ -13,9 +13,10 @@
 
             </div>
             <div class="btn-center" *ngFor="let item of filterProducts">
-                <button mat-flat-button class=" {{ngClassSelect(item.quantity)}}" style="height: 100%;width:100%"
+                <button mat-flat-button matTooltipPosition="right"  matTooltip="Hàng tồn kho : {{item.inventory}}" class=" {{ngClassSelect(item.quantity)}}" style="height: 100%;width:100%"
                     color="primary" (click)="onClickCategory(item,$event)"
                     (keypress)="keyPressCategory($event,item)">{{item['name']}} </button>
+                    <span class="inventory" *ngIf="item.inventory>0">{{item.inventory}}</span>
                 <button mat-icon-button color="warn" *ngIf="item.quantity>0" class="icon-delete"
                     (click)="onDeleteDetails(item)">
                     <mat-icon>remove_circle</mat-icon>

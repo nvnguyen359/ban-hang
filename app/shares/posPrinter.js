@@ -48,7 +48,7 @@ async function posPrintThermal(order) {
     });
   } catch (e) {
     // console.log(PosPrinter);
-    console.log(e);
+   // console.log(e);
     return e;
   }
 }

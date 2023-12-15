@@ -77,14 +77,18 @@ export class OrderGridComponent {
   sort(array: any = []): any[] {
     return Array.from(array).sort((a: any, b: any) => b.quantity - a.quantity);
   }
+
   onClickCategory(item: any, event: any) {
     var rect = event.target.getBoundingClientRect();
     const midle = rect.left + rect.width / 2;
-    this.categories.forEach((x: Product) => {
+    this.categories.forEach((x: any) => {
       if (x.id == item.id) {
         x.quantity =
           event.clientX - midle < 0 ? x.quantity - 1 : x.quantity + 1;
-        if (x.quantity < 0) x.quantity = 0;
+        if (x.quantity < 0)x.quantity = 0;
+        x.inventory =
+          event.clientX - midle < 0 ? x.inventory + 1 : x.inventory - 1;
+        if (x.inventory < 0) x.inventory = 0;
         return;
       }
     });

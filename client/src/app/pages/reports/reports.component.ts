@@ -79,14 +79,14 @@ export class ReportsComponent {
   getDonhangs(obj: any = null) {
     if (!obj)
       obj = {
-        pageSize: 10000,
+        pageSize: 100000,
         page: 0,
         startDay: new Date(),
         endDay: new Date(),
       };
     this.service.get(BaseApiUrl.Orders, obj).then((e: any) => {
       this.donhangs = e.items;
-      console.log(this.donhangs)
+    //  console.log(this.donhangs);
       this.filterOrders();
     });
   }
@@ -152,13 +152,14 @@ export class ReportsComponent {
     this.filterOrder = Array.from(this.donhangs as any).filter((x: any) => {
       return x.status != "Đã Hủy";
     });
+
     this.dataService.sendMessage({ filterOrder: this.filterOrder });
     const tongDon = Array.from(this.filterOrder).length;
     const tongDoanhThu = Array.from(this.filterOrder)
-      .map((x: any) => parseInt(x["pay"])||0)
+      .map((x: any) => parseInt(x["pay"]))
       .reduce((a: number, b: number) => a + b, 0);
     const tiencong = Array.from(this.filterOrder)
-      .map((x: any) => parseInt(x["wage"])||0)
+      .map((x: any) => parseInt(x["wage"]) )
       .reduce((a: number, b: number) => a + b, 0);
     const tongChietKhau = Array.from(this.filterOrder)
       .map((x: any) => (x["discount"] ? parseInt(x["discount"]) : 0))
@@ -177,13 +178,17 @@ export class ReportsComponent {
       chitiets: this.chitiets,
     });
     const ttChiTiet = Array.from(this.filterChiTiets)
-      .map((x: any) => parseInt(x.quantity||0) * parseInt(x.importPrice||0))
+      .map((x: any) => {
+        if (!x.quantity) x.quantity = '0';
+        if (!x.importPrice) x.importPrice = '0';
+        return parseInt(x.quantity) * parseInt(x.importPrice);
+      })
       .reduce((a: number, b: number) => a + b, 0);
+     // console.log(tongDoanhThu ,tongChietKhau , ttChiTiet , tiencong,tongDoanhThu - tongChietKhau - ttChiTiet + tiencong)
     this.overviews.push({
       title: "Lợi Nhuận",
       sum: tongDoanhThu - tongChietKhau - ttChiTiet + tiencong,
     });
-  
   }
   onRangeDate(start: any, event: any) {
     if (start == "start") {

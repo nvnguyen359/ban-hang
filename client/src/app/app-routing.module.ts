@@ -3,7 +3,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { BaseApiUrl } from "./general";
 
 const routes: Routes = [
-  { path: '',   redirectTo: `/${BaseApiUrl.BaoCaos}`, pathMatch: 'full' }, // redirect to ,
+ // { path: '',   redirectTo: `/${BaseApiUrl.BaoCaos}`, pathMatch: 'full' }, // redirect to ,
   {
     path: BaseApiUrl.Orders,
     loadChildren: () =>
@@ -27,6 +27,7 @@ const routes: Routes = [
   { path: BaseApiUrl.Setting, loadChildren: () => import('./Pages/setting/setting.module').then(m => m.SettingModule) },
   { path: 'debt', loadChildren: () => import('./Pages/debt/debt.module').then(m => m.DebtModule) },
   { path: 'ghn', loadChildren: () => import('./Pages/ghn/ghn.module').then(m => m.GhnModule) },
+  { path: 'inventory', loadChildren: () => import('./Pages/inventory/inventory.module').then(m => m.InventoryModule) },
 ];
 
 @NgModule({

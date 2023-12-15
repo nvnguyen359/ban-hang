@@ -145,6 +145,10 @@ interface Date {
   startDay(): Date;
   endDay(): Date;
 }
+interface Object {
+  mapOrder(): any;
+  mapOrderDetails(): any[];
+}
 Date.prototype.addHours = function (h: any) {
   this.setTime(this.getTime() + h * 60 * 60 * 1000);
   return this;
@@ -262,4 +266,43 @@ Array.prototype.convertDateVNView = function () {
   } catch (error) {
     return this;
   }
+};
+Object.prototype.mapOrder = function () {
+  const t = this as any;
+  return {
+    id: t.id,
+    customerId: t.customerId,
+    name: t.name,
+    status: t.status,
+    wage: t.wage,
+    discount: t.discount,
+    shippingFee: t.shippingFee,
+    quantity: t.quantity,
+    intoMney: t.intoMney,
+    pay: t.pay,
+    createdAt: t.createdAt,
+    updatedAt: t.updatedAt,
+  };
+};
+Object.prototype.mapOrderDetails = function () {
+  let array = this as any;
+  if (!Array.isArray(array)) {
+    array = [array];
+  }
+  array = array.map((t: any) => {
+    return {
+      id: t.id,
+      productId:t.productId,
+      name: t.name,
+      quantity: t.quantity,
+      unit: t.unit,
+      price: t.price,
+      intoMoney: t.intoMoney,
+      importPrice: t.importPrice,
+      orderId: t.orderId,
+      createdAt: t.createdAt,
+      updatedAt: t.updatedAt,
+    };
+  });
+  return array.length == 1 ? array[0] : array;
 };

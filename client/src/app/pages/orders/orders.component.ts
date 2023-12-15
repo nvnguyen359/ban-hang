@@ -6,7 +6,7 @@ import { BaseApiUrl, IdsContant, Status, delay, getLocalStorage } from "src/app/
 import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
-
+import './../../lib.extensions'
 import {
   trigger,
   state,
@@ -98,13 +98,21 @@ export class OrdersComponent {
             this.getOrders();
           });
       }
+      this.activatedRoute.params.subscribe(async (obj: any) => {
+        if (!obj.name) return;
+        await this.getCustomers();
+        await this.getProduct();
+        const ob = { name: obj.name, customerId: obj.id, status: "Đặt Hàng" };
+        await this.onCreate(ob);
+      });
       if (data?.saveOrPrint) {
         const order = data.saveOrPrint.order;
         order.details = data.saveOrPrint.details;
         await this.startPrinter(order);
+        return;
       }
       if (data.status == Status.Search) {
-        if (!data) return;
+        if (!data &&!data.value) return;
         const pageIndex = this.pageEvent?.pageIndex || 0;
         const pageSize = this.pageEvent?.pageSize || 10;
         const items = Array.from(
@@ -130,16 +138,9 @@ export class OrdersComponent {
         this.changeDetectorRefs.detectChanges();
       }
     });
-    this.activatedRoute.params.subscribe(async (obj: any) => {
-      if (!obj.name) return;
-      await this.getCustomers();
-      await this.getProduct();
-      const ob = { name: obj.name, customerId: obj.id, status: "Đặt Hàng" };
-      await this.onCreate(ob);
-    });
+
   }
   openDialog(obj: any = null) {
-    console.log(obj);
     return new Promise((res: any, rej) => {
       this.products = this.products.map((x: any) => {
         x.quantity = 0;
@@ -239,13 +240,15 @@ export class OrdersComponent {
   }
   async onCreate(obj: any = null) {
     const { order, details } = (await this.openDialog(obj)) as any;
-    const orderId = (await this.service.create(BaseApiUrl.Order, order)) as any;
+    const orderId = (await this.service.create(BaseApiUrl.Order, order.mapOrder())) as any;
+
     await delay(200);
     let details1 = details.map((x: any) => {
       x.orderId = orderId?.result[0].id;
       return x;
     });
-    await this.service.create(BaseApiUrl.ChiTietDonHangs, details1);
+    //.log(details1.mapOrderDetails())
+    await this.service.create(BaseApiUrl.ChiTietDonHangs, details1.mapOrderDetails());
     this.getOrders();
   }
   async onDelete(element: any) {
@@ -323,7 +326,7 @@ export class OrdersComponent {
     item.createdAt = new Date(item.createdAt);
     item.updatedAt = new Date();
     const result = await this.service.update(BaseApiUrl.Order, item);
-    console.log(result);
+    //console.log(result);
   }
 
   IsNumber(value: any): string {

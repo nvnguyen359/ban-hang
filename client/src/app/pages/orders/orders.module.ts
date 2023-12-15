@@ -29,6 +29,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AutocompleteComponent } from "src/app/Components/autocomplete/autocomplete.component";
 import { InforCustomerInOrderComponent } from "src/app/Components/infor-customer-in-order/infor-customer-in-order.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
 @NgModule({
   declarations: [
     OrdersComponent,
@@ -59,7 +60,7 @@ import { InforCustomerInOrderComponent } from "src/app/Components/infor-customer
     FormsModule,
     MatAutocompleteModule,
     StatusComponent,
-    InforCustomerInOrderComponent
+    InforCustomerInOrderComponent,MatTooltipModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })

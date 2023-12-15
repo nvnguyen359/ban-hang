@@ -6,8 +6,8 @@ export enum Status {
   isDonhang,
   resultDelete = "resultDelete",
 }
-export enum IdsContant{
-  idSetting='14'
+export enum IdsContant {
+  idSetting = "14",
 }
 export enum groupItem {
   IsumImport = "sumImport",
@@ -33,7 +33,8 @@ export enum BaseApiUrl {
   listOrders = "listOrders",
   Printers = "printers",
   Setting = "setting",
-  Debt='debt'
+  Debt = "debt",
+  Inventory = "inventory",
 }
 export enum fieldData {
   importPrice = "importPrice",
@@ -78,10 +79,15 @@ export function links() {
       icon: "monetization_on",
     },
     {
-      text: "Cài Dặt",
+      text: "Tồn Kho",
+      link: `/${BaseApiUrl.Inventory}`,
+      icon: `store`,
+    },
+    {
+      text: "Cài Đặt",
       link: `/${BaseApiUrl.Setting}`,
       icon: `${BaseApiUrl.Setting}s`,
-    }
+    },
   ];
 }
 const pageSizeOptions: any[] = [9, 10, 25, 100, 1000, 5000];
@@ -210,7 +216,7 @@ export function fields() {
       text: "Tiền Nhập",
     },
     {
-      field: 'kh_ncc',
+      field: "kh_ncc",
       text: "K.Hàng-NCC",
     },
   ];

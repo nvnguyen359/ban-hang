@@ -19,7 +19,7 @@
                     <input type="hidden" formControlName="id">
                     <input placeholder="id" type="hidden" [formControlName]="item.field"
                         *ngFor="let item of fieldsHidden" />
-                    <button mat-mini-fab disabled style="margin-top: -21px;margin-right: 5px;">
+                    <button mat-mini-fab disabled style="margin-top: -21px;margin-right: 5px;" tabindex="1">
                         {{i+1}}
                     </button>
                     <div *ngFor="let item of fieldsShow">
@@ -84,9 +84,10 @@
         </div>
     </div>
     <div class="full-width flex center" style="justify-content: flex-end;">
+        
         <button mat-flat-button color="primary" [disabled]="!form.valid" mat-dialog-close type="submit"
-            style="margin-right: 4px;">Lưu
-            &nbsp;<mat-icon>save</mat-icon></button>
-
+            style="margin-right: 4px;"><mat-icon>save</mat-icon>&nbsp;Lưu
+            </button>
+            <button type="button"  class="close" mat-stroked-button mat-dialog-close style="margin-right: 8px;"><mat-icon>close</mat-icon> &nbsp;Thoát</button>
     </div>
 </form>

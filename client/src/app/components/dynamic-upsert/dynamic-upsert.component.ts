@@ -330,32 +330,5 @@ export class DynamicUpsertComponent {
   onStatus(event: any) {
     this.onselectedStatus = event.value;
   }
-  async onNew(index: number, v: any = "") {
-    if (this.url == BaseApiUrl.ImportGoods) {
-      const listData = this.form.controls["formArray"].value;
-      console.log(listData, this.textName);
-      const columns = ["name", "importPrice", "price", "unit"];
-      const obj = {
-        id: "",
-        name: [this.textName, Validators.required],
-        importPrice: ["", Validators.required],
-        price: ["", Validators.required],
-        unit: ["", Validators.required],
-      };
-      const fieldFilter = (fields() as Fields[]).filter((x: any) =>
-        columns.includes(x.field)
-      );
-      const dialogRef = this.dialog.open(DynamicUpsertComponent, {
-        data: { value: [], fields: fieldFilter, obj, numberRow: 1 },
-      });
-      console.log(dialogRef.afterClosed());
-      if (dialogRef.afterClosed()) {
-        this.dataService.currentMessage.subscribe((r: any) => {
-          if (r.status == Status.Add) {
-            console.log(r);
-          }
-        });
-      }
-    }
-  }
+
 }

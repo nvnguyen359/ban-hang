@@ -29,7 +29,6 @@ export class ProductsComponent {
     private dialog: MatDialog
   ) {}
   onUpsert(event: any) {
-    console.log(event);
     const fieldFilter = (fields() as Fields[])
       .filter((x: Fields) =>
         this.columns.concat(this.columnDate).includes(x.field)
