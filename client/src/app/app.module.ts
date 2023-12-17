@@ -46,12 +46,14 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
+
 @NgModule({
   declarations: [
     AppComponent,
     SpinnerComponent,
     MenuLeftComponent,
     DialogConfirmComponent,
+
   ],
   imports: [
     CommonModule,
@@ -99,7 +101,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     NgApexchartsModule,
     MatChipsModule,
     MatInputModule,
-    MatTooltipModule,
+    MatTooltipModule    
   ],
   providers: [
     MatDatepickerModule,

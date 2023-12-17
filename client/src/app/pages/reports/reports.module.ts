@@ -22,14 +22,15 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCardModule } from '@angular/material/card';
 import { NumberRoundPipe } from 'src/app/Pipes/number-round.pipe';
 import { DonutProductComponent } from 'src/app/Components/donut-product/donut-product.component';
-import { ChartOrderComponent } from 'src/app/Components/chart-order/chart-order.component';
-import { NgApexchartsModule } from 'ng-apexcharts';
+import { ChartOrderComponent } from 'src/app/Charts/chart-order/chart-order.component';
 import { StackedColumnsComponent } from 'src/app/Charts/stacked-columns/stacked-columns.component';
+
+
 
 @NgModule({
   declarations: [
     ReportsComponent,
-    NumberRoundPipe,ChartOrderComponent,DonutProductComponent,StackedColumnsComponent
+    NumberRoundPipe,
   ],
   imports: [
     CommonModule,
@@ -57,7 +58,9 @@ import { StackedColumnsComponent } from 'src/app/Charts/stacked-columns/stacked-
     MatNativeDateModule,
     ReactiveFormsModule,
     MatCardModule,
-    NgApexchartsModule
-  ],schemas:[NO_ERRORS_SCHEMA,CUSTOM_ELEMENTS_SCHEMA]
+    DonutProductComponent,StackedColumnsComponent,ChartOrderComponent
+    
+  ],schemas:[NO_ERRORS_SCHEMA,CUSTOM_ELEMENTS_SCHEMA],
+  providers:[]
 })
 export class ReportsModule { }

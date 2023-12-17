@@ -1,5 +1,4 @@
-import { Component, ViewChild } from "@angular/core";
-import * as ApexCharts from "apexcharts";
+import { CUSTOM_ELEMENTS_SCHEMA, Component, ViewChild } from "@angular/core";
 
 import {
   ApexNonAxisChartSeries,
@@ -9,6 +8,7 @@ import {
   ApexDataLabels,
   ApexLegend,
   ChartComponent,
+  NgApexchartsModule,
 } from "ng-apexcharts";
 import { delay } from "src/app/general";
 
@@ -28,19 +28,22 @@ export type ChartOptions = {
   selector: "app-donut-product",
   templateUrl: "./donut-product.component.html",
   styleUrls: ["./donut-product.component.scss"],
+  standalone: true,
+  imports: [NgApexchartsModule],
 })
 export class DonutProductComponent {
-  @ViewChild("chart", { static: true }) chart!: ChartComponent;
+
   public chartOptions!: Partial<ChartOptions>;
+
   labels: any[] = [];
   series: any[] = [];
   title: string = "";
   width = 600;
   constructor(private dataService: DataService) {
-
     this.onInitChart();
   }
   onInitChart() {
+    this.series = [100, 55, 41, 17, 15];
     this.chartOptions = {
       series: [44, 55, 41, 17, 15],
       chart: {
@@ -61,7 +64,7 @@ export class DonutProductComponent {
       },
       responsive: [
         {
-          // breakpoint: 480,
+          breakpoint: 480,
           options: {
             chart: {
               width: this.width,
@@ -73,10 +76,12 @@ export class DonutProductComponent {
         },
       ],
     };
+    setTimeout(() => {
+      this.chartOptions.series = this.series;
+    }, 100);
   }
   async ngOnInit() {
-    await delay(2000);
-    this.dataService.currentMessage.subscribe(async(result: any) => {
+    this.dataService.currentMessage.subscribe(async (result: any) => {
       if (result.donut) {
         const array = Array.from(result.donut) as any[];
         if (array.length > 0) {
@@ -90,11 +95,13 @@ export class DonutProductComponent {
               .reduce((a: number, b: number) => a + b, 0);
             this.series.push(t);
           });
-         // this.chartOptions.chart.width= this.width;
+          this.chartOptions.chart!.width = this.width;
+          this.chartOptions.labels = this.labels;
+          await delay(100)
           this.chartOptions.labels = this.labels;
           this.chartOptions.series = this.series;
-
         }
+      
       }
     });
   }

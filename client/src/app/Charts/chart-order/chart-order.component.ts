@@ -9,9 +9,8 @@ import {
   ApexTooltip,
   ApexTitleSubtitle,
   ApexXAxis,
-  NgApexchartsModule
+  NgApexchartsModule,
 } from "ng-apexcharts";
-import { delay } from "src/app/general";
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -25,15 +24,18 @@ export type ChartOptions = {
   fill: ApexFill;
   tooltip: ApexTooltip;
 };
+import { Order } from "src/app/Models/order";
+import { delay } from "src/app/general";
+import { DataService } from "src/app/services/data.service";
 
 @Component({
-  selector: "app-stacked-columns",
-  templateUrl: "./stacked-columns.component.html",
-  styleUrls: ["./stacked-columns.component.scss"],
-  standalone:true,
-  imports:[NgApexchartsModule]
+  selector: "app-chart-order",
+  templateUrl: "./chart-order.component.html",
+  styleUrls: ["./chart-order.component.scss"],
+  standalone: true,
+  imports: [NgApexchartsModule],
 })
-export class StackedColumnsComponent {
+export class ChartOrderComponent {
   columnsOrders: any[] = [23, 42, 35, 27, 43, 22, 17, 31, 22, 22, 12, 16];
   columnsDoanhThu: any[] = [440, 505, 414, 671, 227, 413, 201, 352, 752, 320, 257, 160];
   columnsLoiNhuan: any[] = [];

@@ -22,13 +22,14 @@
     </mat-card>
   </div>
   <div>
-    <app-donut-product *ngIf="filterOrder" ></app-donut-product>
+    <!-- <app-stacked-columns></app-stacked-columns>  -->
+     <app-donut-product ></app-donut-product>
   </div>
 </div>
 <mat-card>
   <div class="full-width flex" style="margin-top: -0px;">
+    <!-- <app-stacked-columns style="width: 100%;"></app-stacked-columns> -->
     <app-chart-order  style="width: 100%;"></app-chart-order>
-    <!-- <app-stacked-columns></app-stacked-columns> -->
   </div>
 </mat-card>
 <mat-menu #menu="matMenu">
