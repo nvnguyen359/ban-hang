@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { FormGroup, FormControl } from "@angular/forms";
+import { Options } from "src/app/Models/chartjs";
 import { Order } from "src/app/Models/order";
 import { OrderDetails } from "src/app/Models/orderDetails";
 import {
@@ -9,6 +10,7 @@ import {
   getQuarter,
   getStartEndMonthInQuarter,
   getStarEndDateInQuarter,
+  typeChart,
 } from "src/app/general";
 import { ApiService } from "src/app/services/api.service";
 import { DataService } from "src/app/services/data.service";
@@ -45,6 +47,7 @@ export class ReportsComponent {
   });
 
   title = `Ngày ${new Date().toLocaleDateString("vi")}`;
+  optionsChart: any | undefined;
   constructor(private service: ApiService, private dataService: DataService) {
     const date = firstLastDate();
     this.firstDay = date.firstDate;
@@ -52,6 +55,10 @@ export class ReportsComponent {
     this.title = `Ngày ${new Date().toLocaleDateString("vi")}`;
   }
   async ngOnInit() {
+    this.optionsChart={
+      isPie:true,
+      type:typeChart.Doughnut
+    }
     this.getMonths();
     this.getQuanter();
     this.getYears();
@@ -75,7 +82,6 @@ export class ReportsComponent {
     }
   }
   //#endregion
-  getAll() {}
   getDonhangs(obj: any = null) {
     if (!obj)
       obj = {
@@ -86,7 +92,7 @@ export class ReportsComponent {
       };
     this.service.get(BaseApiUrl.Orders, obj).then((e: any) => {
       this.donhangs = e.items;
-    //  console.log(this.donhangs);
+      //  console.log(this.donhangs);
       this.filterOrders();
     });
   }
@@ -159,7 +165,7 @@ export class ReportsComponent {
       .map((x: any) => parseInt(x["pay"]))
       .reduce((a: number, b: number) => a + b, 0);
     const tiencong = Array.from(this.filterOrder)
-      .map((x: any) => parseInt(x["wage"]) )
+      .map((x: any) => parseInt(x["wage"]))
       .reduce((a: number, b: number) => a + b, 0);
     const tongChietKhau = Array.from(this.filterOrder)
       .map((x: any) => (x["discount"] ? parseInt(x["discount"]) : 0))
@@ -169,22 +175,41 @@ export class ReportsComponent {
     this.overviews.push({ title: "Chiết Khấu", sum: tongChietKhau });
     this.chitiets = this.filterOrder.map((x: any) => x["details"]).flat();
     this.filterChiTiets = Array.from(this.chitiets);
-    //console.log(this.filterOrder.map((x:any)=>x.createdAt))
-
-    this.dataService.sendMessage({
-      donut: this.filterChiTiets,
-      title: this.title,
-      donhangs: this.filterOrder,
-      chitiets: this.chitiets,
+    const xxs = [...this.filterChiTiets];
+    let donutData: any[] = [];
+    this.filterChiTiets.forEach((a: any) => {
+      const y = xxs
+        .filter((f: any) => f.name == a.name)
+        .map((f: any) => parseInt(f.quantity))
+        .reduce((a: number, b: number) => a + b, 0);
+      const item = {
+        x: a.name,
+        y,
+      };
+      donutData.push(item);
     });
+
+    this.optionsChart = {
+      type: typeChart.Line,
+      data: donutData,
+
+    };
+   this.dataService.sendMessage({ chart: this.optionsChart });
+   this.dataService.sendMessage( {
+    donut: this.filterChiTiets,
+    title: this.title,
+    donhangs: this.filterOrder,
+    chitiets: this.chitiets,
+  });
+   
     const ttChiTiet = Array.from(this.filterChiTiets)
       .map((x: any) => {
-        if (!x.quantity) x.quantity = '0';
-        if (!x.importPrice) x.importPrice = '0';
+        if (!x.quantity) x.quantity = "0";
+        if (!x.importPrice) x.importPrice = "0";
         return parseInt(x.quantity) * parseInt(x.importPrice);
       })
       .reduce((a: number, b: number) => a + b, 0);
-     // console.log(tongDoanhThu ,tongChietKhau , ttChiTiet , tiencong,tongDoanhThu - tongChietKhau - ttChiTiet + tiencong)
+    // console.log(tongDoanhThu ,tongChietKhau , ttChiTiet , tiencong,tongDoanhThu - tongChietKhau - ttChiTiet + tiencong)
     this.overviews.push({
       title: "Lợi Nhuận",
       sum: tongDoanhThu - tongChietKhau - ttChiTiet + tiencong,

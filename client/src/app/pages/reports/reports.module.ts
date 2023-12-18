@@ -24,6 +24,7 @@ import { NumberRoundPipe } from 'src/app/Pipes/number-round.pipe';
 import { DonutProductComponent } from 'src/app/Components/donut-product/donut-product.component';
 import { ChartOrderComponent } from 'src/app/Charts/chart-order/chart-order.component';
 import { StackedColumnsComponent } from 'src/app/Charts/stacked-columns/stacked-columns.component';
+import { ChartjsComponent } from 'src/app/Charts/chartjs/chartjs.component';
 
 
 
@@ -58,7 +59,7 @@ import { StackedColumnsComponent } from 'src/app/Charts/stacked-columns/stacked-
     MatNativeDateModule,
     ReactiveFormsModule,
     MatCardModule,
-    DonutProductComponent,StackedColumnsComponent,ChartOrderComponent
+    DonutProductComponent,StackedColumnsComponent,ChartOrderComponent,ChartjsComponent
     
   ],schemas:[NO_ERRORS_SCHEMA,CUSTOM_ELEMENTS_SCHEMA],
   providers:[]

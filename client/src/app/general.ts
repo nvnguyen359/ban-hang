@@ -17,7 +17,10 @@ export enum groupItem {
   sumImport = "sumImport",
   sumSale = "sumSale",
 }
-
+export enum typeChart{
+  Pie='pie',
+  Line='line',Doughnut='doughnut'
+}
 export enum BaseApiUrl {
   ImportGoods = "importGoods",
   ChiTietDonHangs = "orderDetails",

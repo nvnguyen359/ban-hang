@@ -30,6 +30,10 @@
 .mat-card {
     margin: 4px;
 }
+.mat-card-chart *{
+    width: 100%;
+    height: 100%;
+}
 
 .stacked-columns {
     max-height: 300px;
