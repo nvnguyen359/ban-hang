@@ -13,10 +13,10 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Options } from "src/app/Models/chartjs";
 import { delay, typeChart } from "src/app/general";
 import { DataService } from "src/app/services/data.service";
-import { CreateChart, TYPEJS } from "./createChart";
+import { CreateChart, DatasetChartjs, TYPEJS } from "./createChart";
 import { MatIcon, MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
-Chart.register(ChartDataLabels);
+
 Chart.register(...registerables);
 @Component({
   selector: "app-chartjs",
@@ -29,41 +29,66 @@ export class ChartjsComponent {
   @Input() options!: Options;
   currentValue: any;
   chartJs!: Chart;
+  valueType = "line";
   id = Math.floor(Math.random() * 10000 + 1) + "-chart";
+  public Axes: string[] = [];
+  labels: any;
+  datasets: any;
   typeArray: any[] = [];
   constructor(
     private dataService: DataService,
-    private _createChart: CreateChart
+    private createChart: CreateChart
   ) {}
 
   async ngOnInit() {
     await delay(100);
-    this._createChart._idElement =  this.id;
-    this._createChart.mixChart();
+    this.createChart.IdElement = this.id;
+    this.createChart.mixChart();
     this.typeArray = Object.values(TYPEJS);
   }
   ngOnChanges(changes: SimpleChanges) {
+    
     this.dataService.currentMessage.subscribe(async (e: any) => {
+     // Chart.register(ChartDataLabels);
       if (e["chart"]) {
-        console.log(e["chart"]);
+        const repone = e["chart"];
+
+        if (repone.type) {
+          this.createChart.Type = repone.type;
+          this.valueType = repone.type;
+          console.log(repone["data"]);
+          const data = repone["data"];
+          if (data.length < 1) return;
+          if (data[0]?.x) {
+            this.datasets = [
+              {
+                type: this.valueType,
+                label: "Bar Dataset",
+                axesX: "x",
+                axesY: "y",
+                data: data.map((a: any) => a.y),
+              },
+            ];
+            this.labels = data.map((a: any) => a.x);
+            this.createChart.drawChart(this.labels, this.datasets);
+          } else {
+            this.Axes = Object.keys(data[0]);
+            console.log(this.Axes);
+          }
+        }
       }
     });
   }
   async onChangeType(event: any) {
     const val = event.target.value;
-    console.log(val);
     try {
-      this._createChart._idElement = /* In the given code, `this` refers to the current instance of the
-      `ChartjsComponent` class. It is used to access properties and
-      methods of the class within its own scope. */
-      /* In the given code, `this` refers to the current instance of the
-      `ChartjsComponent` class. It is used to access properties and
-      methods of the class within its own scope. */
-      this.id;
-      this._createChart.Type = val;
-      this._createChart.mixChart();
+      this.createChart.IdElement = this.id;
+      this.createChart.Type = val;
+      this.valueType = val;
+      this.datasets= Array.from(this.datasets).map((x:any)=>{x.type=val;return x})
+      this.createChart.drawChart(this.labels, this.datasets,val);
     } catch (error) {
-      // this._createChart._idElement = "chart"+this.id;
+      // this.createChart._idElement = "chart"+this.id;
       console.log(error);
     }
   }

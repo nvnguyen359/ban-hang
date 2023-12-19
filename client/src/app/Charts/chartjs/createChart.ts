@@ -8,11 +8,12 @@ import { typeChart } from "src/app/general";
 })
 export class CreateChart {
   _options!: Options;
-  _idElement: any;
+  private _idElement: any;
   chartJs!: Chart;
-  _datasets: any;
-  _type: any;
-  _labels: string[] = [];
+  private _datasets: any;
+  private _type: any;
+  private _labels: string[] = [];
+  private Axes: string[] = [];
   backgroundColor = [
     "rgba(255, 99, 132, 0.95)",
     "rgba(255, 159, 64, 0.95)",
@@ -26,7 +27,7 @@ export class CreateChart {
   set Options(op: any) {
     this._options = op;
   }
-  set idElement(op: any) {
+  set IdElement(op: any) {
     this._idElement = op;
   }
   get Options() {
@@ -86,9 +87,12 @@ export class CreateChart {
       datasets: this._datasets,
     };
   }
-  drawChart() {
+  drawChart(labels: any, datasets: any,type='line') {
+    this._labels = labels;
+    this._datasets = datasets;
+   console.log(datasets)
     const config = {
-      type: "scatter",
+      type:type,
       data: this.changeData(),
       options: {
         scales: {
@@ -145,7 +149,6 @@ export class CreateChart {
         },
       },
     };
-    console.log(this.chartJs);
     if (this.chartJs) {
       this.chartJs.destroy();
     }
@@ -201,10 +204,11 @@ export class CreateChart {
   }
 }
 export interface DatasetChartjs {
-  type: typeChart;
+  type: string;
   label?: string;
-  axesX: string[];
-  axesY: any[];
+  axesX: string;
+  axesY: any;
+  data: any;
 }
 export enum TYPEJS {
   Pie = "pie",

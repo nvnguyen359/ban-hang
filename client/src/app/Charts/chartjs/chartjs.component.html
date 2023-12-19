@@ -2,26 +2,20 @@
     <div class="flex" style="flex-grow: 1;">
         <div style="margin-right: 8px;">
             Chọn kiểu
-            <select name="cars" id="cars" (change)="onChangeType($event)">
-                <option value="{{item}}" *ngFor="let item of typeArray">{{item}}</option>
+            <select name="cars"  (change)="onChangeType($event)" >
+                <option   [value]="item"*ngFor="let item of typeArray">{{item}}</option>
               </select>
         </div>
-        <div style="margin-right: 8px;">
+        <div style="margin-right: 8px;" *ngIf="Axes.length>0">
             0X
-            <select name="cars" id="cars">
-                <option value="volvo">Volvo</option>
-                <option value="saab">Saab</option>
-                <option value="opel">Opel</option>
-                <option value="audi">Audi</option>
+            <select name="cars" >
+                <option   [value]="item"*ngFor="let item of Axes">{{item}}</option>
               </select>
         </div>
-        <div style="margin-right: 8px;">
+        <div style="margin-right: 8px;" *ngIf="Axes.length>0">
             0Y
-            <select name="cars" id="cars">
-                <option value="volvo">Volvo</option>
-                <option value="saab">Saab</option>
-                <option value="opel">Opel</option>
-                <option value="audi">Audi</option>
+            <select name="cars" >
+                <option   [value]="item"*ngFor="let item of Axes">{{item}}</option>               
               </select>
         </div>
     </div>
