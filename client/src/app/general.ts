@@ -18,8 +18,13 @@ export enum groupItem {
   sumSale = "sumSale",
 }
 export enum typeChart{
-  Pie='pie',
-  Line='line',Doughnut='doughnut'
+  Pie = "pie",
+  Bar = "bar",
+  Line = "line",
+  Area = "area",
+  Scatter = "scatter",
+  Radar = "radar",
+  Stacked = "stacked",Doughnut='doughnut'
 }
 export enum BaseApiUrl {
   ImportGoods = "importGoods",
