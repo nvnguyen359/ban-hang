@@ -47,9 +47,8 @@ export class ChartjsComponent {
     this.typeArray = Object.values(TYPEJS);
   }
   ngOnChanges(changes: SimpleChanges) {
-    
     this.dataService.currentMessage.subscribe(async (e: any) => {
-     // Chart.register(ChartDataLabels);
+      // Chart.register(ChartDataLabels);
       if (e["chart"]) {
         const repone = e["chart"];
 
@@ -85,8 +84,11 @@ export class ChartjsComponent {
       this.createChart.IdElement = this.id;
       this.createChart.Type = val;
       this.valueType = val;
-      this.datasets= Array.from(this.datasets).map((x:any)=>{x.type=val;return x})
-      this.createChart.drawChart(this.labels, this.datasets,val);
+      this.datasets = Array.from(this.datasets).map((x: any) => {
+        x.type = val;
+        return x;
+      });
+      this.createChart.drawChart(this.labels, this.datasets, val);
     } catch (error) {
       // this.createChart._idElement = "chart"+this.id;
       console.log(error);

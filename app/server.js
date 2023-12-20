@@ -1,7 +1,7 @@
 require("dotenv").config({ path: "./../.env" });
 const { getListPrinter, allApisPrinter } = require("./apis/apiInfo");
 require('./features/upsertGgsheet')
-
+const fs= require('fs')
 var bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
@@ -9,6 +9,7 @@ const cors = require("cors");
 const { apisSqlite } = require("./apis/apiSqlite");
 const express = require("express");
 const app = express();
+const https = require('https');
 const port = process.env.PORT || 3176;
 app.get("/", (req, res, next) => {
   res.send("Api ready!");
@@ -82,5 +83,4 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/imgs", express.static(path.join(__dirname, "imgs")));
 app.use("/public", express.static("public"));
 app.use("/app/public", express.static("public"));
-
 module.exports = app;

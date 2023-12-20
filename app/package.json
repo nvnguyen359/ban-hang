@@ -42,6 +42,7 @@
   "dependencies": {
     "@electron-forge/publisher-github": "^6.4.0",
     "body-parser": "^1.20.2",
+    "certbot": "^5.0.3",
     "colors": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
