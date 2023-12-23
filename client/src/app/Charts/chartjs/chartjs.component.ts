@@ -47,36 +47,29 @@ export class ChartjsComponent {
     this.typeArray = Object.values(TYPEJS);
   }
   ngOnChanges(changes: SimpleChanges) {
-    this.dataService.currentMessage.subscribe(async (e: any) => {
-      // Chart.register(ChartDataLabels);
-      if (e["chart"]) {
-        const repone = e["chart"];
-
-        if (repone.type) {
-          this.createChart.Type = repone.type;
-          this.valueType = repone.type;
-          console.log(repone["data"]);
-          const data = repone["data"];
-          if (data.length < 1) return;
-          if (data[0]?.x) {
-            this.datasets = [
-              {
-                type: this.valueType,
-                label: "Bar Dataset",
-                axesX: "x",
-                axesY: "y",
-                data: data.map((a: any) => a.y),
-              },
-            ];
-            this.labels = data.map((a: any) => a.x);
-            this.createChart.drawChart(this.labels, this.datasets);
-          } else {
-            this.Axes = Object.keys(data[0]);
-            console.log(this.Axes);
-          }
-        }
-      }
-    });
+   const repone=changes['options']['currentValue'];
+   console.log(repone)
+   this.createChart.Type = repone.type;
+   this.valueType = repone.type;
+  // console.log(repone["data"]);
+   const data = repone["data"];
+   if (data?.length < 1) return;
+   if (data&&data[0]?.x) {
+     this.datasets = [
+       {
+         type: this.valueType,
+         label: "Bar Dataset",
+         axesX: "x",
+         axesY: "y",
+         data: data.map((a: any) => a.y),
+       },
+     ];
+     this.labels = data.map((a: any) => a.x);
+     this.createChart.drawChart(this.labels, this.datasets);
+   } else {
+     this.Axes = Object.keys(data[0]);
+     console.log(this.Axes);
+   }
   }
   async onChangeType(event: any) {
     const val = event.target.value;

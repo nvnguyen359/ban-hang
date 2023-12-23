@@ -90,7 +90,6 @@ export class CreateChart {
   drawChart(labels: any, datasets: any,type='line') {
     this._labels = labels;
     this._datasets = datasets;
-   console.log(datasets)
     const config = {
       type:type,
       data: this.changeData(),
@@ -127,7 +126,7 @@ export class CreateChart {
         },
         {
           type: this._type || "doughnut",
-          label: "Line Dataset",
+          label: "Line Dataset 2",
           data: [12, 510, 180, 150],
           fill: false,
           backgroundColor: this.backgroundColor,

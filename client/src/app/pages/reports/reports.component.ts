@@ -55,10 +55,10 @@ export class ReportsComponent {
     this.title = `Ngày ${new Date().toLocaleDateString("vi")}`;
   }
   async ngOnInit() {
-    this.optionsChart={
-      isPie:true,
-      type:typeChart.Doughnut
-    }
+    this.optionsChart = {
+      isPie: true,
+      type: typeChart.Doughnut,
+    };
     this.getMonths();
     this.getQuanter();
     this.getYears();
@@ -190,18 +190,17 @@ export class ReportsComponent {
     });
 
     this.optionsChart = {
-      type: typeChart.Line,
+      type: typeChart.Doughnut,
       data: donutData,
-
     };
-   this.dataService.sendMessage({ chart: this.optionsChart });
-   this.dataService.sendMessage( {
-    donut: this.filterChiTiets,
-    title: this.title,
-    donhangs: this.filterOrder,
-    chitiets: this.chitiets,
-  });
-   
+    this.dataService.sendMessage({ chart: this.optionsChart });
+    this.dataService.sendMessage({
+      donut: this.filterChiTiets,
+      title: this.title,
+      donhangs: this.filterOrder,
+      chitiets: this.chitiets,
+    });
+
     const ttChiTiet = Array.from(this.filterChiTiets)
       .map((x: any) => {
         if (!x.quantity) x.quantity = "0";

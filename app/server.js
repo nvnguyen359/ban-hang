@@ -1,3 +1,6 @@
+// Import builtin NodeJS modules to instantiate the service
+
+
 require("dotenv").config({ path: "./../.env" });
 const { getListPrinter, allApisPrinter } = require("./apis/apiInfo");
 require('./features/upsertGgsheet')
@@ -11,6 +14,7 @@ const express = require("express");
 const app = express();
 const https = require('https');
 const port = process.env.PORT || 3176;
+
 app.get("/", (req, res, next) => {
   res.send("Api ready!");
   next();
@@ -32,7 +36,11 @@ app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 app.use(cors({ origin: "*" }));
-
+// https
+//   .createServer({},app)
+//   .listen(4000, ()=>{
+//     console.log('server is runing at port 4000')
+//   });
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
 
@@ -83,4 +91,5 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/imgs", express.static(path.join(__dirname, "imgs")));
 app.use("/public", express.static("public"));
 app.use("/app/public", express.static("public"));
+
 module.exports = app;
