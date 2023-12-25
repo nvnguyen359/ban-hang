@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import Chart, { ChartItem, elements, registerables } from "chart.js/auto";
+import Chart, { ChartItem, elements, registerables ,Colors} from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Options } from "src/app/Models/chartjs";
 import { delay, typeChart } from "src/app/general";
@@ -16,7 +16,8 @@ import { DataService } from "src/app/services/data.service";
 import { CreateChart, DatasetChartjs, TYPEJS } from "./createChart";
 import { MatIcon, MatIconModule } from "@angular/material/icon";
 import { CommonModule } from "@angular/common";
-
+import { ChartjsService } from "src/app/services/chartjs.service";
+Chart.register(Colors);
 Chart.register(...registerables);
 @Component({
   selector: "app-chartjs",
@@ -37,13 +38,16 @@ export class ChartjsComponent {
   typeArray: any[] = [];
   constructor(
     private dataService: DataService,
-    private createChart: CreateChart
+    private createChart: CreateChart,
+    private chartService:ChartjsService
   ) {}
 
   async ngOnInit() {
     await delay(100);
     this.createChart.IdElement = this.id;
-    this.createChart.mixChart();
+    //this.createChart.mixChart();
+    this.chartService.IdElementHtml=this.id;
+    this.chartService.drawChart()
     this.typeArray = Object.values(TYPEJS);
   }
   ngOnChanges(changes: SimpleChanges) {
