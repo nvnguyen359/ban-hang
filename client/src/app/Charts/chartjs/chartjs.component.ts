@@ -8,7 +8,12 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import Chart, { ChartItem, elements, registerables ,Colors} from "chart.js/auto";
+import Chart, {
+  ChartItem,
+  elements,
+  registerables,
+  Colors,
+} from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Options } from "src/app/Models/chartjs";
 import { delay, typeChart } from "src/app/general";
@@ -39,41 +44,46 @@ export class ChartjsComponent {
   constructor(
     private dataService: DataService,
     private createChart: CreateChart,
-    private chartService:ChartjsService
+    private chartService: ChartjsService
   ) {}
 
   async ngOnInit() {
     await delay(100);
     this.createChart.IdElement = this.id;
     //this.createChart.mixChart();
-    this.chartService.IdElementHtml=this.id;
-    this.chartService.drawChart()
+    this.chartService.IdElementHtml = this.id;
+    this.chartService.drawChart();
     this.typeArray = Object.values(TYPEJS);
   }
   ngOnChanges(changes: SimpleChanges) {
-   const repone=changes['options']['currentValue'];
-   console.log(repone)
-   this.createChart.Type = repone.type;
-   this.valueType = repone.type;
-  // console.log(repone["data"]);
-   const data = repone["data"];
-   if (data?.length < 1) return;
-   if (data&&data[0]?.x) {
-     this.datasets = [
-       {
-         type: this.valueType,
-         label: "Bar Dataset",
-         axesX: "x",
-         axesY: "y",
-         data: data.map((a: any) => a.y),
-       },
-     ];
-     this.labels = data.map((a: any) => a.x);
-     this.createChart.drawChart(this.labels, this.datasets);
-   } else {
-     this.Axes = Object.keys(data[0]);
-     console.log(this.Axes);
-   }
+    const repone = changes["options"]["currentValue"];
+    console.log(repone);
+    this.createChart.Type = repone.type;
+    this.valueType = repone.type;
+    // console.log(repone["data"]);
+    const data = repone["data"];
+    if (data?.length < 1) return;
+    if (data && data[0]?.x) {
+      console.log('pl')
+      this.chartService.IdElementHtml = this.id;
+      this.chartService.Oys = data.map((a: any) => a.y);
+      this.chartService.Oxs = data.map((a: any) => a.x);
+      this.chartService.drawChart();
+      //  this.datasets = [
+      //    {
+      //      type: this.valueType,
+      //      label: "Bar Dataset",
+      //      axesX: "x",
+      //      axesY: "y",
+      //      data: data.map((a: any) => a.y),
+      //    },
+      //  ];
+      //  this.labels = data.map((a: any) => a.x);
+      //  this.createChart.drawChart(this.labels, this.datasets);
+    } else {
+      this.Axes = Object.keys(data[0]);
+      console.log(this.Axes);
+    }
   }
   async onChangeType(event: any) {
     const val = event.target.value;
