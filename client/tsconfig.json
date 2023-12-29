@@ -29,5 +29,8 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "skipLibCheck": true, // if your TS is lower than 4.0
+  "experimentalDecorators": true, // for @automapper/classes
+  "emitDecoratorMetadata": true // for @automapper/classes
 }
