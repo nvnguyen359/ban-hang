@@ -175,6 +175,7 @@ export class ReportsComponent {
     this.overviews.push({ title: "Chiết Khấu", sum: tongChietKhau });
     this.chitiets = this.filterOrder.map((x: any) => x["details"]).flat();
     this.filterChiTiets = Array.from(this.chitiets);
+    console.log(this.filterChiTiets)
     const xxs = [...this.filterChiTiets];
     let donutData: any[] = [];
     this.filterChiTiets.forEach((a: any) => {

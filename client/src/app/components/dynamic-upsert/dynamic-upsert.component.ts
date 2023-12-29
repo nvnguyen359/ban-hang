@@ -197,6 +197,7 @@ export class DynamicUpsertComponent {
       if (x.id == null) x.id = "";
       return x;
     }) as any[];
+    // console.log(array,this.url)
     if (this.url == BaseApiUrl.ImportGoods) {
       for (let index = 0; index < array.length; index++) {
         const element = array[index];
@@ -218,11 +219,21 @@ export class DynamicUpsertComponent {
         }
       }
     }
-    const arrUpdate = array.filter((x: any) => x.id != "");
-    const arrCreate = array.filter((x: any) => x.id == "");
-
+    const arrUpdate = array
+      .filter((x: any) => x.id != "")
+      .map((x: any) => {
+        if (x.inventory) delete x.inventory;
+        return x;
+      });
+    const arrCreate = array
+      .filter((x: any) => x.id == "")
+      .map((x: any) => {
+        if (x.inventory) delete x.inventory;
+        return x;
+      });
     if (arrUpdate.length > 0) {
       const resul = await this.service.update(this.url, arrUpdate);
+      console.log(resul);
     }
     if (arrCreate.length > 0) {
       const t = await this.service.create(this.url, arrCreate);
@@ -330,5 +341,4 @@ export class DynamicUpsertComponent {
   onStatus(event: any) {
     this.onselectedStatus = event.value;
   }
-
 }
