@@ -95,9 +95,6 @@ export class ChartjsService {
             color: "white",
             anchor: "center",
             align :'center',
-            clamp :true,
-            display: 'auto',
-      
             formatter: function (value: any, context: any) {
               if (type == typeChart.Doughnut) {
                 // console.log(context.dataset.data)

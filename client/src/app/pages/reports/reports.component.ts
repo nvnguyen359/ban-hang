@@ -96,6 +96,7 @@ export class ReportsComponent {
       this.filterOrders();
     });
   }
+  //#region onClosedMenu
   onClosedMenu(event: any = null) {
     const now = new Date();
     const y = now.getFullYear();
@@ -152,6 +153,9 @@ export class ReportsComponent {
     this.getDonhangs(obj);
     this.filterOrders();
   }
+  //#endregion onClosedMenu
+
+  //#region filterOrders
   filterOrders() {
     if (!this.donhangs) return;
     this.overviews = [];
@@ -175,7 +179,6 @@ export class ReportsComponent {
     this.overviews.push({ title: "Chiết Khấu", sum: tongChietKhau });
     this.chitiets = this.filterOrder.map((x: any) => x["details"]).flat();
     this.filterChiTiets = Array.from(this.chitiets);
-    console.log(this.filterChiTiets)
     const xxs = [...this.filterChiTiets];
     let donutData: any[] = [];
     this.filterChiTiets.forEach((a: any) => {
@@ -214,7 +217,66 @@ export class ReportsComponent {
       title: "Lợi Nhuận",
       sum: tongDoanhThu - tongChietKhau - ttChiTiet + tiencong,
     });
+    this.convertDataProduct();
+    this.createChartOrder();
   }
+  convertDataProduct() {
+    const ttChiTiet = Array.from(this.filterChiTiets).map((x: any) => {
+      if (!x.quantity) x.quantity = 0;
+      if (!x.importPrice) x.importPrice = 0;
+      return x;
+    });
+    // console.log(ttChiTiet)
+    const names = [...new Set(ttChiTiet.map((x: any) => x.name))];
+    //console.log(names)
+    let data = [];
+    for (let index = 0; index < names.length; index++) {
+      const name = names[index];
+      const filters = ttChiTiet.filter((x: any) => x.name == name);
+      const count = filters
+        .map((x: any) => x.quantity)
+        .reduce((a: any, b: any) => a + b, 0);
+      const sumImportPrices = filters
+        .map((x: any) => parseInt(x.importPrice) * parseInt(x.quantity))
+        .reduce((a: any, b: any) => a + b, 0);
+      const sumProfit = filters
+        .map(
+          (x: any) =>
+            (parseInt(x.price) - parseInt(x.importPrice)) * parseInt(x.quantity)
+        )
+        .reduce((a: any, b: any) => a + b, 0);
+      const item = {
+        name,
+        count,
+        sumImportPrices,
+        sumProfit,
+      };
+      data.push(item);
+    }
+    console.log(data);
+  }
+  createChartOrder() {
+    const ttChiTiet = Array.from(this.filterChiTiets).map((x: any) => {
+      if (!x.quantity) x.quantity = 0;
+      if (!x.importPrice) x.importPrice = 0;
+      return x;
+    });
+    const orders = this.filterOrder.map((x: any) => {
+      x.createdAt = new Date(x.createdAt).toLocaleDateString("vi");
+      return x;
+    });
+    const dates = [...new Set(orders.map((x: any) => x.createdAt))];
+    console.log(dates);
+    let data=[];
+    for (let index = 0; index < dates.length; index++) {
+      const date = dates[index];
+      const filter=Array.from(orders).filter((x:any)=>x.createdAt==date)
+      const count= filter.length;
+      const discounts= filter.map((x:any)=>x.discount).reduce((a: any, b: any) => a + b, 0);
+      
+    }
+  }
+  //#endregion
   onRangeDate(start: any, event: any) {
     if (start == "start") {
       this.firstDay = new Date(event.target.value);
