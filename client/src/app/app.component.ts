@@ -68,6 +68,15 @@ export class AppComponent {
   }
   onClose() {
     this.search = "";
-    this.dataService.sendMessage({ value: '', status: Status.Search });
+    this.dataService.sendMessage({ value: "", status: Status.Search });
+  }
+  onCloseWindow() {
+    this.service.eventWindow("close").then((e: any) => console.log(e));
+  }
+  onMinimize() {
+    this.service.eventWindow("min").then((e: any) => console.log(e));
+  }
+  onMaximize() {
+    this.service.eventWindow("max").then((e: any) => console.log(e));
   }
 }

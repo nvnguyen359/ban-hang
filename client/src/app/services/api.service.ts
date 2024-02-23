@@ -3,16 +3,13 @@ import {
   HttpClient,
   HttpErrorResponse,
   HttpHeaders,
-  HttpParams,
 } from "@angular/common/http";
 import { environment } from "./../environment";
-import { Observable, async, catchError, retry, throwError } from "rxjs";
-import { BaseApiUrl, Status, delay } from "../general";
+import { catchError, retry } from "rxjs";
+import { BaseApiUrl } from "../general";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogConfirmComponent } from "../Components/dialog-confirm/dialog-confirm.component";
 import { DataService } from "./data.service";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
-import { AnimationStyleMetadata } from "@angular/animations";
 import { SnackbarService } from "./snackbar.service";
 
 @Injectable({
@@ -269,6 +266,20 @@ export class ApiService {
         .subscribe((e) => {
           const arr = e as any;
           res(arr[0][0][0]);
+        });
+    });
+  }
+  async eventWindow(v:string='min'){
+    const pathUrl = `${this.baseServer}/window/${v}`;
+    return new Promise((res, rej) => {
+      this.http
+        .get(pathUrl, this.httpOptions)
+        .pipe(
+          retry(3), // retry a failed request up to 3 times
+          catchError(this.handleError)
+        )
+        .subscribe((data) => {
+          return res(data);
         });
     });
   }

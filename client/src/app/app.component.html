@@ -14,12 +14,15 @@ z-index: 1000000;">
         <input autocomplete="off" class="input-search" id="id-input-search" (keyup)="onSearch()" matInput [(ngModel)]="search" placeholder="Nhấn Enter hoặc Click button search để tìm kiếm"  >
         <mat-icon class="right {{onShowSearch()}}" matSuffix  (click)="onClose()">close</mat-icon>
     </div>
-    <!-- <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-        <mat-icon>favorite</mat-icon>
+    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="onMinimize()">
+        <mat-icon>minimize</mat-icon>
     </button>
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-        <mat-icon>share</mat-icon>
-    </button> -->
+    <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon"  (click)="onMaximize()">
+        <mat-icon>crop_din</mat-icon>
+    </button>
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon" (click)="onCloseWindow()">
+        <mat-icon>close</mat-icon>
+    </button>
 </mat-toolbar>
 <mat-drawer-container class="example-container" autosize>
     <mat-drawer #drawer class="example-sidenav margin-top64" mode="side" opened>
