@@ -1,7 +1,8 @@
 require("dotenv").config();
+require('colors')
 const { app, BrowserWindow, ipcMain, globalShortcut,nativeImage  } = require("electron");
 const path = require("path");
-const remote = require('electron').remote
+
 
 class MainScreen {
   window;
@@ -27,7 +28,7 @@ class MainScreen {
       fullscreenable: false,
       webPreferences: {
         contextIsolation: true,
-        devTools: false,
+        devTools: true,
         webSecurity: false,
         preload: path.join(__dirname, "./mainPreload.js"),
       },
@@ -35,7 +36,7 @@ class MainScreen {
 
     this.window.once("ready-to-show", () => {
       this.window.show();
-
+    //  this.window.webContents.openDevTools();
       if (this.position.maximized) {
         this.window.maximize();
       }
@@ -45,14 +46,14 @@ class MainScreen {
 
     let wc = this.window.webContents;
     wc.openDevTools({ mode: "undocked" });
-
-    this.window.loadFile("./screens/main/dist/index.html");
+const test=false;
+  test?  this.window.loadFile("./screens/main/main.html")
+    :this.window.loadFile("./screens/main/dist/index.html");
     
   }
 
   showMessage(message) {
-    console.log("showMessage trapped");
-    console.log(message);
+    console.log(`=======${message}======`.green);
     this.window.webContents.send("updateMessage", message);
   }
 

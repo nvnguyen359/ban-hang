@@ -36,7 +36,6 @@ let demClose = 0;
 const getEventWindow = (app) => {
   app.get(`/api/window/:id`, async (req, res, next) => {
     const v = req.params.id;
-    console.log(v);
     const w = electron.BrowserWindow.getFocusedWindow();
     switch (v) {
       case "min":
@@ -45,9 +44,7 @@ const getEventWindow = (app) => {
       case "max":
         {
           demMax++;
-          console.log("demMax", demMax, process.env.width);
           if (demMax % 2 == 0) {
-            console.log("ban dau");
             w.unmaximize();
           } else {
             w.maximize();
@@ -56,30 +53,28 @@ const getEventWindow = (app) => {
         break;
       case "close":
         w.hide();
-        demClose++;
-        if (demClose == 1) {
-          let icon = nativeImage.createFromPath("./icons/electron-icon.png");
-          let tray = new Tray(icon);
+        let icon = nativeImage.createFromPath("./icons/electron-icon.png");
+        let tray = new Tray(icon);
 
-          const contextMenu = Menu.buildFromTemplate([
-            {
-              label: "Open",
-              click: () => {
-                w.show();
-              },
+        const contextMenu = Menu.buildFromTemplate([
+          {
+            label: "Open",
+            click: () => {
+              w.show();
+              tray.destroy()
             },
-            {
-              label: "Close",
-              click: () => {
-                electron.app.exit();
-              },
+          },
+          {
+            label: "Close",
+            click: () => {
+              electron.app.exit();
             },
-            // { label: "Item3", click: handleClick, checked: true },
-            // { label: "Item4", click: handleClick },
-          ]);
-          tray.setToolTip("Hieu Ngan Store");
-          tray.setContextMenu(contextMenu);
-        }
+          },
+          // { label: "Item3", click: handleClick, checked: true },
+          // { label: "Item4", click: handleClick },
+        ]);
+        tray.setToolTip("Hieu Ngan Store");
+        tray.setContextMenu(contextMenu);
 
         break;
 

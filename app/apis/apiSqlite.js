@@ -5,7 +5,7 @@ const lib = require("../shares/lib");
 const apisSqlite = async (app) => {
   createDatabase(app);
   const array = await getAllTables();
-  console.log(array);
+  //console.log(array);
   array.forEach((element) => {
     let crud = new CRUDKNEX(element);
     findAll(element, app, crud);
@@ -244,7 +244,7 @@ const bulkDelete = (element, app, crud) => {
     const gg = new CRUD(element);
     for (let index = 0; index < ids.length; index++) {
       const id = ids[index];
-      console.log("delete gg", element, id);
+      //console.log("delete gg", element, id);
       await gg.deleteId(id);
       await lib.delay(1000);
     }

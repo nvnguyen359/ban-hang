@@ -21,12 +21,13 @@ lib.setEnvValue("localDatabase", movepath);
 let curWindow;
 let tray;
 //Basic flags
-autoUpdater.autoDownload = false;
+autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
 function createWindow() {
   curWindow = new MainScreen();
 }
+let mes = "";
 app.serve = require(pathServer);
 app.whenReady().then(() => {
   createWindow();
@@ -36,31 +37,31 @@ app.whenReady().then(() => {
   });
 
   autoUpdater.checkForUpdates();
-  curWindow.showMessage(
-    `Checking for updates. Current version ${app.getVersion()}`
-  );
+  mes = `Checking for updates. Current version ${app.getVersion()}`;
+  curWindow.showMessage(mes);
+  lib.setEnvValue("ver", `${mes}`);
 });
 
 /*New Update Available*/
 autoUpdater.on("update-available", (info) => {
-  curWindow.showMessage(
-    `Update available. Current version ${app.getVersion()}`
-  );
+  mes = `Update available. Current version ${app.getVersion()}`;
+  curWindow.showMessage(mes);
   let pth = autoUpdater.downloadUpdate();
   curWindow.showMessage(pth);
+  lib.setEnvValue("ver", `${mes}`);
 });
 
 autoUpdater.on("update-not-available", (info) => {
-  curWindow.showMessage(
-    `No update available. Current version ${app.getVersion()}`
-  );
+  mes = `No update available. Current version ${app.getVersion()}`;
+  curWindow.showMessage(mes);
+  lib.setEnvValue("ver", `${mes}`);
 });
 
 /*Download Completion Message*/
 autoUpdater.on("update-downloaded", (info) => {
-  curWindow.showMessage(
-    `Update downloaded. Current version ${app.getVersion()}`
-  );
+  mes = `Update downloaded. Current version ${app.getVersion()}`;
+  curWindow.showMessage(mes);
+  lib.setEnvValue("ver", `${mes}`);
 });
 
 autoUpdater.on("error", (info) => {
@@ -72,7 +73,7 @@ process.on("uncaughtException", function (err) {
   console.log(err);
 });
 const openWindow = () => {
-  console.log('ok')
+  console.log("ok");
   // console.log(process.env.width,process.env.height)
   electron.BrowserWindow.getFocusedWindow().setSize(
     parseInt(process.env.width),
@@ -80,7 +81,6 @@ const openWindow = () => {
   );
 };
 app.on("window-all-closed", function () {
-
   if (process.platform != "darwin") {
     let icon = nativeImage.createFromPath("./icons/electron-icon.png");
     tray = new Tray(icon);

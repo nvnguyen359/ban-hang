@@ -4,7 +4,7 @@ const createTableOrders = async (knex) => {
     const tbl = "order";
     const hasTable = await knex.schema.hasTable(tbl);
     if (hasTable) {
-      console.log(tbl, "already exist!");
+      //  console.log(tbl, "already exist!");
       return tbl;
     }
     await knex.schema.createTable(tbl, (table) => {
@@ -23,7 +23,7 @@ const createTableOrders = async (knex) => {
       table.integer("pay");
       exoend(table);
     });
-    console.log(tbl, "successfully created");
+    // console.log(tbl, "successfully created");
     return tbl;
   } catch (error) {
     console.error(error.message);
@@ -35,7 +35,7 @@ const createTableDetailsOrders = async (knex) => {
     const tbl = "orderDetails";
     const hasTable = await knex.schema.hasTable(tbl);
     if (hasTable) {
-      console.log(tbl, "already exist!");
+      // console.log(tbl, "already exist!");
       return tbl;
     }
     await knex.schema.createTable(tbl, (table) => {
@@ -53,7 +53,7 @@ const createTableDetailsOrders = async (knex) => {
       table.string("orderId");
       exoend(table);
     });
-    console.log(tbl, "successfully created");
+    // console.log(tbl, "successfully created");
     return tbl;
   } catch (error) {
     console.error(error.message);
@@ -64,7 +64,7 @@ const createTableCustomer = async (knex) => {
     const tbl = "customer";
     const hasTable = await knex.schema.hasTable(tbl);
     if (hasTable) {
-      console.log(tbl, "already exist!");
+      // console.log(tbl, "already exist!");
       return tbl;
     }
     await knex.schema.createTable(tbl, (table) => {
@@ -78,7 +78,7 @@ const createTableCustomer = async (knex) => {
       table.string("email");
       exoend(table);
     });
-    console.log(tbl, "successfully created");
+    // console.log(tbl, "successfully created");
     return tbl;
   } catch (error) {
     console.error(error.message);
@@ -89,7 +89,7 @@ const createTableProduct = async (knex) => {
     const tbl = "product";
     const hasTable = await knex.schema.hasTable(tbl);
     if (hasTable) {
-      console.log(tbl, "already exist!");
+      //console.log(tbl, "already exist!");
       return tbl;
     }
     await knex.schema.createTable(tbl, (table) => {
@@ -103,7 +103,7 @@ const createTableProduct = async (knex) => {
       table.string("unit");
       exoend(table);
     });
-    console.log(tbl, "successfully created");
+    //console.log(tbl, "successfully created");
     return tbl;
   } catch (error) {
     console.error(error.message);
@@ -119,7 +119,7 @@ const createInputProduct = async (knex) => {
     const tbl = "importGoods";
     const hasTable = await knex.schema.hasTable(tbl);
     if (hasTable) {
-      console.log(tbl, "already exist!");
+      //console.log(tbl, "already exist!");
       return tbl;
     }
     await knex.schema.createTable(tbl, (table) => {
@@ -136,7 +136,7 @@ const createInputProduct = async (knex) => {
       table.integer("intoMoney").notNullable();
       exoend(table);
     });
-    console.log(tbl, "successfully created");
+    // console.log(tbl, "successfully created");
     return tbl;
   } catch (error) {
     console.error(error.message);
@@ -147,7 +147,7 @@ const createCost = async (knex) => {
     const tbl = "expense";
     const hasTable = await knex.schema.hasTable(tbl);
     if (hasTable) {
-      console.log(tbl, "already exist!");
+      //console.log(tbl, "already exist!");
       return tbl;
     }
     await knex.schema.createTable(tbl, (table) => {
@@ -160,7 +160,7 @@ const createCost = async (knex) => {
       table.string("note");
       exoend(table);
     });
-    console.log(tbl, "successfully created");
+    //console.log(tbl, "successfully created");
     return tbl;
   } catch (error) {
     console.error(error.message);
@@ -171,8 +171,8 @@ const createCongNoKh = async (knex) => {
     const tbl = "debt";
     const hasTable = await knex.schema.hasTable(tbl);
     if (hasTable) {
-      console.log(tbl, "already exist!");
-      console.log("tao column");
+      //console.log(tbl, "already exist!");
+      // console.log("tao column");
 
       return tbl;
     }
@@ -190,7 +190,7 @@ const createCongNoKh = async (knex) => {
       exoend(table);
     });
 
-    console.log(tbl, "successfully created");
+    //console.log(tbl, "successfully created");
     return tbl;
   } catch (error) {
     console.error(error.message);
@@ -201,7 +201,7 @@ const setting = async (knex) => {
     const tbl = "setting";
     const hasTable = await knex.schema.hasTable(tbl);
     if (hasTable) {
-      console.log(tbl, "already exist!");
+      //console.log(tbl, "already exist!");
       return tbl;
     }
     await knex.schema.createTable(tbl, (table) => {
@@ -214,7 +214,7 @@ const setting = async (knex) => {
       exoend(table);
     });
 
-    console.log(tbl, "successfully created");
+    // console.log(tbl, "successfully created");
     return tbl;
   } catch (error) {
     console.error(error.message);
