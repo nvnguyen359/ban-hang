@@ -18,6 +18,7 @@ const pathServer = path.join(__dirname, "server.js");
 const lib = require("./shares/lib");
 const movepath = app.getPath("userData");
 lib.setEnvValue("localDatabase", movepath);
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 let curWindow;
 let tray;
 //Basic flags
@@ -37,14 +38,14 @@ app.whenReady().then(() => {
   });
 
   autoUpdater.checkForUpdates();
-  mes = `Checking for updates. Current version ${app.getVersion()}`;
+  mes = `Đang kiểm tra các bản cập nhật. Phiên bản hiện tại :${app.getVersion()}`; 
   curWindow.showMessage(mes);
   lib.setEnvValue("ver", `${mes}`);
 });
 
 /*New Update Available*/
 autoUpdater.on("update-available", (info) => {
-  mes = `Update available. Current version ${app.getVersion()}`;
+  mes = `Cập nhật có sẵn. Phiên bản hiện tại :${app.getVersion()}`;
   curWindow.showMessage(mes);
   let pth = autoUpdater.downloadUpdate();
   curWindow.showMessage(pth);
@@ -52,14 +53,14 @@ autoUpdater.on("update-available", (info) => {
 });
 
 autoUpdater.on("update-not-available", (info) => {
-  mes = `No update available. Current version ${app.getVersion()}`;
+  mes = `Không có bản cập nhật nào. Phiên bản hiện tại :${app.getVersion()}`;
   curWindow.showMessage(mes);
   lib.setEnvValue("ver", `${mes}`);
 });
 
 /*Download Completion Message*/
 autoUpdater.on("update-downloaded", (info) => {
-  mes = `Update downloaded. Current version ${app.getVersion()}`;
+  mes = `Đã tải xuống bản cập nhật. Phiên bản hiện tại :${app.getVersion()}`;
   curWindow.showMessage(mes);
   lib.setEnvValue("ver", `${mes}`);
 });

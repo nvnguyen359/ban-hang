@@ -1,4 +1,6 @@
 const { posPrintThermal, setThermal } = require("../shares/posPrinter");
+require("dotenv").config();
+const lib = require('../shares/lib');
 const {
   app,
   BrowserWindow,
@@ -32,9 +34,9 @@ const thermalPrinter = (app) => {
   });
 };
 let demMax = 0;
-let demClose = 0;
 const getEventWindow = (app) => {
   app.get(`/api/window/:id`, async (req, res, next) => {
+    let data ='';
     const v = req.params.id;
     const w = electron.BrowserWindow.getFocusedWindow();
     switch (v) {
@@ -49,6 +51,7 @@ const getEventWindow = (app) => {
           } else {
             w.maximize();
           }
+          data='done';
         }
         break;
       case "close":
@@ -67,7 +70,7 @@ const getEventWindow = (app) => {
           {
             label: "Close",
             click: () => {
-              electron.app.exit();
+              electron.app.exit(); 
             },
           },
           // { label: "Item3", click: handleClick, checked: true },
@@ -75,14 +78,15 @@ const getEventWindow = (app) => {
         ]);
         tray.setToolTip("Hieu Ngan Store");
         tray.setContextMenu(contextMenu);
-
+        data='done';
         break;
 
       default:
+        data= process.env.ver;
+        console.log(data)
         break;
     }
-    electron.BrowserWindow.getFocusedWindow();
-    res.send({ remote: "a" });
+    res.send({data });
     next();
   });
 };

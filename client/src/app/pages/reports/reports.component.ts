@@ -83,12 +83,25 @@ export class ReportsComponent {
   }
   //#endregion
   getDonhangs(obj: any = null) {
+    let today;
+    if (localStorage.getItem("filter")) {
+      const today1 = JSON.parse(localStorage.getItem("filter") + "");
+      this.firstDay = new Date(today1.firstDay);
+      this.lastDay = new Date(today1.lastDay);
+      if (localStorage.getItem("reportTitle")) {
+        this.title = localStorage.getItem("reportTitle") + "";
+      }
+    } else {
+      this.firstDay = new Date();
+      this.lastDay = new Date();
+      this.title = `Ngày ${this.firstDay.toLocaleDateString("vi")}`;
+    }
     if (!obj)
       obj = {
         pageSize: 100000,
         page: 0,
-        startDay: new Date(),
-        endDay: new Date(),
+        startDay: this.firstDay,
+        endDay: this.lastDay,
       };
     this.service.get(BaseApiUrl.Orders, obj).then((e: any) => {
       this.donhangs = e.items;
@@ -100,8 +113,12 @@ export class ReportsComponent {
   onClosedMenu(event: any = null) {
     const now = new Date();
     const y = now.getFullYear();
-    const today = now.firstLastDate();
+    let today = now.firstLastDate();
+
     if (!event) {
+      if (localStorage.getItem("filter")) {
+        today = JSON.parse(localStorage.getItem("filter") + "");
+      }
       this.firstDay = today.firstDate;
       this.lastDay = today.lastDate;
       this.title = `Ngày ${this.firstDay.toLocaleDateString("vi")}`;
@@ -114,6 +131,7 @@ export class ReportsComponent {
       this.title = `Tháng ${
         this.firstDay.getMonth() + 1
       }/${this.firstDay.getFullYear()}`;
+      localStorage.setItem("reportTitle", this.title);
     }
     if (`${event}`.includes("thangnay")) {
       const m = new Date().getMonth();
@@ -143,13 +161,17 @@ export class ReportsComponent {
       this.lastDay = new Date(y, 11, 31, 23, 59, 59, 999);
       this.title = `Năm ${this.lastDay.getFullYear()}`;
     }
+    localStorage.setItem("reportTitle", this.title);
     const obj = {
       pageSize: 10000,
       page: 0,
       startDay: this.firstDay,
       endDay: this.lastDay,
     };
-
+    localStorage.setItem(
+      "filter",
+      JSON.stringify({ firstDay: this.firstDay, lastDay: this.lastDay })
+    );
     this.getDonhangs(obj);
     this.filterOrders();
   }
@@ -253,7 +275,7 @@ export class ReportsComponent {
       };
       data.push(item);
     }
-    console.log(data);
+    //console.log(data);
   }
   createChartOrder() {
     const ttChiTiet = Array.from(this.filterChiTiets).map((x: any) => {
@@ -266,14 +288,15 @@ export class ReportsComponent {
       return x;
     });
     const dates = [...new Set(orders.map((x: any) => x.createdAt))];
-    console.log(dates);
-    let data=[];
+    // console.log(dates);
+    let data = [];
     for (let index = 0; index < dates.length; index++) {
       const date = dates[index];
-      const filter=Array.from(orders).filter((x:any)=>x.createdAt==date)
-      const count= filter.length;
-      const discounts= filter.map((x:any)=>x.discount).reduce((a: any, b: any) => a + b, 0);
-      
+      const filter = Array.from(orders).filter((x: any) => x.createdAt == date);
+      const count = filter.length;
+      const discounts = filter
+        .map((x: any) => x.discount)
+        .reduce((a: any, b: any) => a + b, 0);
     }
   }
   //#endregion

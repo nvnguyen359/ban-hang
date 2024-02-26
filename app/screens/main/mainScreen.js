@@ -1,22 +1,27 @@
 require("dotenv").config();
-require('colors')
-const { app, BrowserWindow, ipcMain, globalShortcut,nativeImage  } = require("electron");
+require("colors");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  globalShortcut,
+  nativeImage,
+} = require("electron");
 const path = require("path");
-
 
 class MainScreen {
   window;
 
   position = {
-    width: parseInt(process.env.width),
-    height: parseInt(process.env.height),
+    width: parseInt(process.env.width) | 1360,
+    height: parseInt(process.env.height) | 768,
     maximized: false,
   };
   tray;
 
   constructor() {
     this.window = new BrowserWindow({
-      closable :false,
+      closable: false,
       width: this.position.width,
       height: this.position.height,
       title: "This is a test application",
@@ -28,7 +33,7 @@ class MainScreen {
       fullscreenable: false,
       webPreferences: {
         contextIsolation: true,
-        devTools: true,
+        devTools: false,
         webSecurity: false,
         preload: path.join(__dirname, "./mainPreload.js"),
       },
@@ -36,20 +41,16 @@ class MainScreen {
 
     this.window.once("ready-to-show", () => {
       this.window.show();
-    //  this.window.webContents.openDevTools();
+      this.window.webContents.openDevTools();
       if (this.position.maximized) {
         this.window.maximize();
       }
     });
 
-    this.handleMessages();
-
-    let wc = this.window.webContents;
-    wc.openDevTools({ mode: "undocked" });
-const test=false;
-  test?  this.window.loadFile("./screens/main/main.html")
-    :this.window.loadFile("./screens/main/dist/index.html");
-    
+    const test = false;
+    test
+      ? this.window.loadFile("./screens/main/main.html")
+      : this.window.loadFile("./screens/main/dist/index.html");
   }
 
   showMessage(message) {
@@ -64,17 +65,12 @@ const test=false;
   minimize() {
     this.window.minimize();
   }
-  maximize(){
-  //  this.window.isMinimized() ? this.window.restore() : this.window.minimize()
+  maximize() {
+    //  this.window.isMinimized() ? this.window.restore() : this.window.minimize()
   }
   hide() {
     this.window.hide();
   }
-
-  handleMessages() {
-    //Ipc functions go here.
-  }
-  
 }
 
 module.exports = MainScreen;

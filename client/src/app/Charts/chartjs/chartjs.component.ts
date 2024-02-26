@@ -59,7 +59,7 @@ export class ChartjsComponent {
   ngOnChanges(changes: SimpleChanges) {
     const repone = changes["options"]["currentValue"];
     if (!repone && !repone["data"]) return;
-    console.log(repone);
+   // console.log(repone);
     this.createChart.Type = repone.type;
     this.valueType = repone.type;
     // console.log(repone["data"]);

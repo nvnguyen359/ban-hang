@@ -35,9 +35,9 @@ export class AppComponent {
     });
   }
   ngOnInit(): void {
-    this.http
-      .get("http://localhost:3177/api/database")
-      .subscribe((data: any) => console.log(data));
+    // this.http
+    //   .get("http://localhost:3177/api/database")
+    //   .subscribe((data: any) => console.log(data));
     this.vi();
     setTimeout(() => {
       if (location.pathname == "/")

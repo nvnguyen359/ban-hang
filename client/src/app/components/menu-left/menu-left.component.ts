@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { BaseApiUrl, links } from "src/app/general";
+import { ApiService } from "src/app/services/api.service";
 
 @Component({
   selector: "app-menu-left",
@@ -8,6 +9,21 @@ import { BaseApiUrl, links } from "src/app/general";
 })
 export class MenuLeftComponent {
   ver: string = JSON.stringify(localStorage.getItem("ver"));
+  info: any = "";
   links = links();
-  constructor() {}
+  constructor(private service: ApiService) {
+  // this.getApi()
+  }
+  getApi(){
+    this.service.eventWindow("ver").then((e: any) => {
+      this.ver = `${e.data}`.split(":")[1];
+      this.info = e.data;
+      localStorage.setItem('ver',this.ver);
+      // const mes = document.getElementById("message");
+      // if (mes) mes.innerHTML = this.info;
+    });
+  }
+  ngOnInit() {
+    this.getApi()
+  }
 }

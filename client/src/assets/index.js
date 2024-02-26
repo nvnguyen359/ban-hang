@@ -1,7 +1,6 @@
 setTimeout(() => {
   jsRun();
   window.addEventListener("hashchange", (event) => {
-    console.log(`should render page: ${window.location.hash}`);
     getMenu(window.location.hash);
   });
 }, 500);
@@ -24,7 +23,6 @@ function jsRun() {
   });
 }
 function getMenu(hash) {
-  console.log("hash", hash, this.location.href.split(";")[0]);
   const menus = document.querySelectorAll(".menu  a.menu-item");
   const urlM = this.location.href.split(";")[0].split("#");
   const url = hash ? hash : urlM[urlM.length - 1].replace("/", "");
