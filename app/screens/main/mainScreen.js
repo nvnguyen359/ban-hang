@@ -13,8 +13,8 @@ class MainScreen {
   window;
 
   position = {
-    width: parseInt(process.env.width) | 1360,
-    height: parseInt(process.env.height) | 768,
+    width: parseInt(process.env.width) || 1360,
+    height: parseInt(process.env.height) || 768,
     maximized: false,
   };
   tray;

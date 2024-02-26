@@ -83,7 +83,7 @@ const openWindow = () => {
 };
 app.on("window-all-closed", function () {
   if (process.platform != "darwin") {
-    let icon = nativeImage.createFromPath("./icons/electron-icon.png");
+    let icon = nativeImage.createFromPath("./img/electron.png");
     tray = new Tray(icon);
 
     const contextMenu = Menu.buildFromTemplate([
