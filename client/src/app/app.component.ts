@@ -3,10 +3,11 @@ import { DateAdapter, MAT_DATE_LOCALE } from "@angular/material/core";
 import "./lib.extensions";
 import { NavigationStart, Router, RouterEvent } from "@angular/router";
 import { BaseApiUrl, Status, links } from "./general";
-import { filter } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { DataService } from "./services/data.service";
 import { ApiService } from "./services/api.service";
+import { IpcService } from "./services/ipc.service";
+
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -24,8 +25,10 @@ export class AppComponent {
     private router: Router,
     private http: HttpClient,
     private dataService: DataService,
-    private service: ApiService
+    private service: ApiService,
+    private  _ipc: IpcService
   ) {
+
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationStart) {
         const url = event.url;
@@ -35,6 +38,11 @@ export class AppComponent {
     });
   }
   ngOnInit(): void {
+    this._ipc.on('pong', (event: Electron.IpcMessageEvent) => {
+      console.log('pong');
+    });
+
+    this._ipc.send('ping');
     // this.http
     //   .get("http://localhost:3177/api/database")
     //   .subscribe((data: any) => console.log(data));

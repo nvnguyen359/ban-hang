@@ -10,6 +10,7 @@ const {
 } = require("electron");
 const electron = require("electron");
 require("dotenv").config();
+
 const MainScreen = require("./screens/main/mainScreen");
 const Globals = require("./globals");
 const { autoUpdater, AppUpdater } = require("electron-updater");
@@ -22,7 +23,7 @@ process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 let curWindow;
 let tray;
 //Basic flags
-autoUpdater.autoDownload = true;
+autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
 
 function createWindow() {
@@ -83,7 +84,8 @@ const openWindow = () => {
 };
 app.on("window-all-closed", function () {
   if (process.platform != "darwin") {
-    let icon = nativeImage.createFromPath("./img/electron.png");
+    let icon = path.join(__dirname,"./img/electron.png");
+    console.log(icon)
     tray = new Tray(icon);
 
     const contextMenu = Menu.buildFromTemplate([

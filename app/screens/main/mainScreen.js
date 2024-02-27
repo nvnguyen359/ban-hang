@@ -33,8 +33,9 @@ class MainScreen {
       fullscreenable: false,
       webPreferences: {
         contextIsolation: true,
+        nodeIntegration: true,
+        enableRemoteModule: true, 
         devTools: false,
-        webSecurity: false,
         preload: path.join(__dirname, "./mainPreload.js"),
       },
     });
@@ -46,15 +47,10 @@ class MainScreen {
         this.window.maximize();
       }
     });
-
-    const test = false;
-    test
-      ? this.window.loadFile("./screens/main/main.html")
-      : this.window.loadFile("./screens/main/dist/index.html");
+    this.window.loadFile("./screens/main/dist/index.html");
   }
 
   showMessage(message) {
-    console.log(`=======${message}======`.green);
     this.window.webContents.send("updateMessage", message);
   }
 

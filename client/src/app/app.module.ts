@@ -45,6 +45,7 @@ import { NgApexchartsModule } from "ng-apexcharts";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { IpcService } from "./services/ipc.service";
 
 
 @NgModule({
@@ -101,10 +102,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     NgApexchartsModule,
     MatChipsModule,
     MatInputModule,
-    MatTooltipModule    
+    MatTooltipModule ,  
   ],
   providers: [
-    MatDatepickerModule,
+    MatDatepickerModule, 
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoadingInterceptor,
