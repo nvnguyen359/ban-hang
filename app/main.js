@@ -85,7 +85,6 @@ const openWindow = () => {
 app.on("window-all-closed", function () {
   if (process.platform != "darwin") {
     let icon = path.join(__dirname,"./img/electron.png");
-    console.log(icon)
     tray = new Tray(icon);
 
     const contextMenu = Menu.buildFromTemplate([

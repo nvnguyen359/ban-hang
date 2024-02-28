@@ -40,8 +40,8 @@ const getEventWindow = (app) => {
     const v = req.params.id;
     const w = electron.BrowserWindow.getFocusedWindow();
     switch (v) {
-      case "min":
-        w.minimize();
+      case "close":
+        electron.app.exit();
         break;
       case "max":
         {
@@ -54,7 +54,7 @@ const getEventWindow = (app) => {
           data = "done";
         }
         break;
-      case "close":
+      case "min":
         w.hide();
         let icon = nativeImage.createFromPath("./img/electron.png");
         let tray = new Tray(icon);
