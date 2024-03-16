@@ -8,7 +8,7 @@ import { ApiService } from "src/app/services/api.service";
   styleUrls: ["./menu-left.component.scss"],
 })
 export class MenuLeftComponent {
-  ver: string = JSON.stringify(localStorage.getItem("ver"));
+  ver: string = '';
   info: any = "";
   links = links();
   constructor(private service: ApiService) {
@@ -16,9 +16,9 @@ export class MenuLeftComponent {
   }
   getApi(){
     this.service.eventWindow("ver").then((e: any) => {
-      this.ver = `${e.data}`.split(":")[1];
-      this.info = e.data;
-      localStorage.setItem('ver',this.ver);
+      // this.ver = `${e.data}`.split(":")[1];
+      // this.info = e.data;
+      // localStorage.setItem('ver',this.ver);
       // const mes = document.getElementById("message");
       // if (mes) mes.innerHTML = this.info;
     });

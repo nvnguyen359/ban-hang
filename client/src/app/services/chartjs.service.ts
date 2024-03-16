@@ -73,10 +73,8 @@ export class ChartjsService {
       this.chartjs.data.labels = this.Oxs;
       this.chartjs.data.datasets[0].data = _0ys;
       this.chartjs.update();
-      return;
     }
-
-    this.chartjs = new Chart(this._idElement, {
+    const obj = {
       type: this._type,
       data: this._data,
       options: {
@@ -94,7 +92,7 @@ export class ChartjsService {
           datalabels: {
             color: "white",
             anchor: "center",
-            align :'center',
+            align: "center",
             formatter: function (value: any, context: any) {
               if (type == typeChart.Doughnut) {
                 // console.log(context.dataset.data)
@@ -102,7 +100,7 @@ export class ChartjsService {
                   (a: any, b: any) => a + b,
                   0
                 ) as any;
-                let it =Number(value * 100 / sum);
+                let it = Number((value * 100) / sum);
 
                 return it < 4 && context.dataset.data.length > 15
                   ? ""
@@ -126,38 +124,35 @@ export class ChartjsService {
           },
         },
       },
-    });
+    };
+    if(this.chartjs!=undefined)
+    {
+      this.chartjs.destroy();
+    }
+    this.chartjs = new Chart(this._idElement, obj);
+  
   }
 }
 var barChartData = {
-  labels: [
-    "5月",
-    "6月",
-    "7月",
-    "8月",
-    "9月",
-    "10月",
-    "11月",
-    "12月"
-  ],
+  labels: ["5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
   datasets: [
     {
-      label: 'So Luong',
+      label: "So Luong",
       yAxisID: "line",
       backgroundColor: "pink",
       borderColor: "red",
-      type: 'line',
+      type: "line",
       fill: false,
-      data: [80, 130, 100, 140, 138, 125,110, 145],
+      data: [80, 130, 100, 140, 138, 125, 110, 145],
     },
     {
       label: "Paypal",
-      yAxisID: 'bar-stack',
+      yAxisID: "bar-stack",
       backgroundColor: "lightgreen",
       borderColor: "green",
       borderWidth: 1,
-      stack: 'now',
-      data: [100,70,40,60,90,70]
+      stack: "now",
+      data: [100, 70, 40, 60, 90, 70],
     },
     {
       label: "Visa",
@@ -165,38 +160,39 @@ var barChartData = {
       backgroundColor: "yellow",
       borderColor: "orange",
       borderWidth: 1,
-      stack: 'now',
-      data: [60,90,70,30,100,70]
-    }
-  ]
+      stack: "now",
+      data: [60, 90, 70, 30, 100, 70],
+    },
+  ],
 };
 
 var chartOptions = {
   responsive: true,
   scales: {
     yAxes: [
-    {
-      id: "bar-stack",
-      position: "left",
-      stacked: true,
-      ticks: {
-        beginAtZero: true
-      }
-    },
-    
-    {
-      id: "line",
-      position: "right",
-      stacked: false,
-      ticks: {
-        beginAtZero: true
+      {
+        id: "bar-stack",
+        position: "left",
+        stacked: true,
+        ticks: {
+          beginAtZero: true,
+        },
       },
-      gridLines: {
-        drawOnChartArea: false, 
+
+      {
+        id: "line",
+        position: "right",
+        stacked: false,
+        ticks: {
+          beginAtZero: true,
+        },
+        gridLines: {
+          drawOnChartArea: false,
+        },
       },
-    }]
-  }
-}
+    ],
+  },
+};
 
 // window.onload = function() {
 //   var ctx = document.getElementById("canvas").getContext("2d");

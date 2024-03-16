@@ -105,7 +105,7 @@ export class ReportsComponent {
       };
     this.service.get(BaseApiUrl.Orders, obj).then((e: any) => {
       this.donhangs = e.items;
-      //  console.log(this.donhangs);
+      console.log(this.donhangs);
       this.filterOrders();
     });
   }
@@ -119,8 +119,14 @@ export class ReportsComponent {
       if (localStorage.getItem("filter")) {
         today = JSON.parse(localStorage.getItem("filter") + "");
       }
-      this.firstDay = today.firstDate;
-      this.lastDay = today.lastDate;
+
+      this.firstDay = new Date(today.firstDay);
+      this.lastDay = new Date(today.lastDay);
+      this.title = `Ngày ${this.firstDay.toLocaleDateString("vi")}`;
+    }
+    if (`${event}`.includes("homnay")) {
+      this.firstDay = new Date();
+      this.lastDay = new Date();
       this.title = `Ngày ${this.firstDay.toLocaleDateString("vi")}`;
     }
     if (`${event}`.includes("Tháng")) {
@@ -179,6 +185,7 @@ export class ReportsComponent {
 
   //#region filterOrders
   filterOrders() {
+  //  console.log(this.donhangs)
     if (!this.donhangs) return;
     this.overviews = [];
     this.filterOrder = Array.from(this.donhangs as any).filter((x: any) => {
