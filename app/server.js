@@ -12,7 +12,6 @@ const cors = require("cors");
 const { apisSqlite } = require("./apis/apiSqlite");
 const express = require("express");
 const app = express();
-const https = require('https');
 const port = process.env.PORT || 3176;
 
 app.get("/", (req, res, next) => {

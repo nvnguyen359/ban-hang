@@ -1,6 +1,6 @@
 const { exec } = require("child_process");
 const fs = require("fs");
-const os = require('os');
+const os = require("os");
 Date.prototype.addHours = function (h) {
   this.setTime(this.getTime() + h * 60 * 60 * 1000);
   return this;
@@ -9,11 +9,25 @@ Date.prototype.addDays = function (d = 0) {
   this.setTime(this.getTime() + 24 * 60 * 60 * 1000 * d);
   return this;
 };
-Date.prototype.startDay =function(){
+Date.prototype.startDay = function () {
   return new Date(this.setHours(0, 0, 0, 0));
 };
-Date.prototype.endDay =function(){
+Date.prototype.endDay = function () {
   return new Date(this.setHours(23, 59, 59, 999));
+};
+function isEqualObj(obj,obj1) {
+  let result = true;
+  const objArr = Object.keys(obj);
+  const objArr1 = Object.keys(obj1);
+  let oTemp = objArr.length >= objArr1 ? objArr : objArr1;
+  for (let index = 0; index <= oTemp.length; index++) {
+    const key = oTemp[index];
+    if (`${objArr[key]}` != `${objArr1[key]}`) {
+      result = false;
+      return;
+    }
+  }
+  return result;
 };
 String.prototype.removeAccents = function () {
   return this.normalize("NFD")
@@ -182,5 +196,6 @@ module.exports = {
   writeFileSync,
   delay,
   moveFile,
-  setEnvValue
+  setEnvValue,
+  isEqualObj
 };

@@ -8,7 +8,7 @@ const {
   nativeImage,
 } = require("electron");
 const path = require("path");
-
+app.disableHardwareAcceleration()
 class MainScreen {
   window;
 

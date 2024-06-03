@@ -1,37 +1,43 @@
-import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { OrderUpsertComponent } from "./order-upsert/order-upsert.component";
-import { ApiService } from "src/app/services/api.service";
-import { BaseApiUrl, IdsContant, Status, delay, getLocalStorage } from "src/app/general";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
-import './../../lib.extensions'
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { OrderUpsertComponent } from './order-upsert/order-upsert.component';
+import { ApiService } from 'src/app/services/api.service';
+import {
+  BaseApiUrl,
+  IdsContant,
+  Status,
+  delay,
+  getLocalStorage,
+} from 'src/app/general';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import './../../lib.extensions';
 import {
   trigger,
   state,
   style,
   transition,
   animate,
-} from "@angular/animations";
-import { DataService } from "src/app/services/data.service";
-import { SelectionModel } from "@angular/cdk/collections";
-import { PrintHtmlService } from "src/app/services/print-html.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { ActivatedRoute } from "@angular/router";
-import { InfoStore } from "src/app/Models/inforStore";
+} from '@angular/animations';
+import { DataService } from 'src/app/services/data.service';
+import { SelectionModel } from '@angular/cdk/collections';
+import { PrintHtmlService } from 'src/app/services/print-html.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
+import { InfoStore } from 'src/app/Models/inforStore';
 
 @Component({
-  selector: "app-orders",
-  templateUrl: "./orders.component.html",
-  styleUrls: ["./orders.component.scss"],
+  selector: 'app-orders',
+  templateUrl: './orders.component.html',
+  styleUrls: ['./orders.component.scss'],
   animations: [
-    trigger("detailExpand", [
-      state("collapsed,void", style({ height: "0px", minHeight: "0" })),
-      state("expanded", style({ height: "*" })),
+    trigger('detailExpand', [
+      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
       transition(
-        "expanded <=> collapsed",
-        animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")
+        'expanded <=> collapsed',
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
       ),
     ]),
   ],
@@ -48,26 +54,26 @@ export class OrdersComponent {
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
   columnsToDisplay: string[] = [
-    "no",
-    "name",
-    "status",
-    "wage",
-    "discount",
+    'no',
+    'name',
+    'status',
+    'wage',
+    'discount',
     // "shippingFee",
-    "quantity",
-    "intoMney",
-    "pay",
-    "createdAt",
+    'quantity',
+    'intoMney',
+    'pay',
+    'createdAt',
   ];
   columnsChild?: any = [
-    { key: "no", value: "#" },
-    { key: "name", value: "Tên Sản Phẩm" },
-    { key: "quantity", value: "Số Lượng" },
-    { key: "price", value: "Đơn Giá" },
-    { key: "intoMoney", value: "Thành Tiền" },
-    { key: "createdAt", value: "Ngày" },
+    { key: 'no', value: '#' },
+    { key: 'name', value: 'Tên Sản Phẩm' },
+    { key: 'quantity', value: 'Số Lượng' },
+    { key: 'price', value: 'Đơn Giá' },
+    { key: 'intoMoney', value: 'Thành Tiền' },
+    { key: 'createdAt', value: 'Ngày' },
   ];
-  columnsToDisplayWithExpand = [...this.columnsToDisplay, "expand"];
+  columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
   expandedElement: any | null;
   details: any = [];
   getCustomer: any;
@@ -85,9 +91,11 @@ export class OrdersComponent {
     this.getOrders();
     await this.getCustomers();
     await this.getProduct();
-    this.service.getId(BaseApiUrl.Setting, IdsContant.idSetting).then((e: any) => {
-      this.getInfoStore = JSON.parse(e.jsonData);
-    });
+    this.service
+      .getId(BaseApiUrl.Setting, IdsContant.idSetting)
+      .then((e: any) => {
+        this.getInfoStore = JSON.parse(e.jsonData);
+      });
   }
   ngAfterViewInit() {
     this.dataService.currentMessage.subscribe(async (data: any) => {
@@ -102,7 +110,7 @@ export class OrdersComponent {
         if (!obj.name) return;
         await this.getCustomers();
         await this.getProduct();
-        const ob = { name: obj.name, customerId: obj.id, status: "Đặt Hàng" };
+        const ob = { name: obj.name, customerId: obj.id, status: 'Đặt Hàng' };
         await this.onCreate(ob);
       });
       if (data?.saveOrPrint) {
@@ -112,7 +120,7 @@ export class OrdersComponent {
         return;
       }
       if (data.status == Status.Search) {
-        if (!data &&!data.value) return;
+        if (!data && !data.value) return;
         const pageIndex = this.pageEvent?.pageIndex || 0;
         const pageSize = this.pageEvent?.pageSize || 10;
         const items = Array.from(
@@ -138,7 +146,6 @@ export class OrdersComponent {
         this.changeDetectorRefs.detectChanges();
       }
     });
-
   }
   openDialog(obj: any = null) {
     return new Promise((res: any, rej) => {
@@ -158,7 +165,7 @@ export class OrdersComponent {
     // console.log(item);
   }
   getOrders() {
-    console.time("order");
+    console.time('order');
     const pageIndex = this.pageEvent?.pageIndex || 0;
     const pageSize = this.pageEvent?.pageSize || 10;
     this.service
@@ -178,13 +185,13 @@ export class OrdersComponent {
         this.dataSource.data = items;
         this.changeDetectorRefs.detectChanges();
         // this.dataSource.paginator = this.paginator;
-        console.timeEnd("order");
+        console.timeEnd('order');
       });
   }
   async getCustomers() {
     this.cusomers = (
       (await this.service.get(BaseApiUrl.KhachHangs, {
-        columns: "*",
+        columns: '*',
       })) as any
     ).items;
   }
@@ -227,20 +234,22 @@ export class OrdersComponent {
     const newDetails = orderDetailsAfterUpdate.filter(
       (x: any) => !ids.includes(x.id)
     );
-    // console.log(oldDetails, newDetails);
+    console.log(oldDetails);
     if (oldDetails) {
       await this.service.update(url, oldDetails);
-      // for (let index = 0; index < oldDetails.length; index++) {
-      //   const element = oldDetails[index];
-
-      //   await delay(100);
-      // }
+      const oldDetailsDlete = oldDetails.filter((x: any) => x.quantity == 0);
+      if (oldDetailsDlete.length > 0) {
+        await this.onDelete(oldDetailsDlete);
+      }
     }
     if (newDetails.length > 0) await this.service.create(url, newDetails);
   }
   async onCreate(obj: any = null) {
     const { order, details } = (await this.openDialog(obj)) as any;
-    const orderId = (await this.service.create(BaseApiUrl.Order, order.mapOrder())) as any;
+    const orderId = (await this.service.create(
+      BaseApiUrl.Order,
+      order.mapOrder()
+    )) as any;
 
     await delay(200);
     let details1 = details.map((x: any) => {
@@ -248,12 +257,15 @@ export class OrdersComponent {
       return x;
     });
     //.log(details1.mapOrderDetails())
-    await this.service.create(BaseApiUrl.ChiTietDonHangs, details1.mapOrderDetails());
+    await this.service.create(
+      BaseApiUrl.ChiTietDonHangs,
+      details1.mapOrderDetails()
+    );
     this.getOrders();
   }
   async onDelete(element: any) {
     await this.service.destroy(BaseApiUrl.Order, element.id);
-    const details = element["details"];
+    const details = element['details'];
     if (details?.length > 0) {
       await this.service.bulkDelete(
         BaseApiUrl.ChiTietDonHangs,
@@ -284,7 +296,7 @@ export class OrdersComponent {
     order.customer = cusomerx;
     this.printHtmt.order = order;
     this.printHtmt.infoStore = this.getInfoStore;
-    this.printHtmt.pageSize = !local.page.value ? "80mm" : local.page.value;
+    this.printHtmt.pageSize = !local.page.value ? '80mm' : local.page.value;
     order.store = this.getInfoStore;
     if (local.isThermal == true) {
       const rawHtml = this.printHtmt.rawHtml();
@@ -298,7 +310,7 @@ export class OrdersComponent {
           if (result.error) {
             // console.log(result.error,result.text)
             this.service.translate(result.text).then((data: any) => {
-              this.snckbar.open(data, "", { duration: 13000 });
+              this.snckbar.open(data, '', { duration: 13000 });
             });
           }
         })
@@ -316,9 +328,9 @@ export class OrdersComponent {
   onSelectStatus(event: any, element: any) {
     let item = element;
     item.status = event.value;
-    const details = item["details"];
-    delete item["details"];
-    delete item["no"];
+    const details = item['details'];
+    delete item['details'];
+    delete item['no'];
     this.updateOrder(item);
     this.getOrders();
   }
@@ -330,11 +342,11 @@ export class OrdersComponent {
   }
 
   IsNumber(value: any): string {
-    value = `${value}`.replaceAll(".", "");
+    value = `${value}`.replaceAll('.', '');
     try {
-      return Number.isInteger(parseInt(value)) ? "text-right" : "text-left";
+      return Number.isInteger(parseInt(value)) ? 'text-right' : 'text-left';
     } catch (error) {
-      return "";
+      return '';
     }
   }
   selection = new SelectionModel<any>(true, []);
@@ -359,9 +371,9 @@ export class OrdersComponent {
   /** The label for the checkbox on the passed row */
   checkboxLabel(row?: any): string {
     if (!row) {
-      return `${this.isAllSelected() ? "deselect" : "select"} all`;
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
     }
-    return `${this.selection.isSelected(row) ? "deselect" : "select"} row ${
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${
       row.position + 1
     }`;
   }
@@ -369,8 +381,8 @@ export class OrdersComponent {
     const orders = this.selection.selected;
     for (let index = 0; index < orders.length; index++) {
       const order = orders[index];
-      const details = order["details"];
-      delete order["details"];
+      const details = order['details'];
+      delete order['details'];
       await this.service.destroy(
         BaseApiUrl.Order,
         order.id,
