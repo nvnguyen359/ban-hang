@@ -44,7 +44,7 @@
     "nodemon": "^3.0.1"
   },
   "dependencies": {
-    "@electron-forge/publisher-github": "^6.4.0",
+    "@electron-forge/publisher-github": "^7.0.0",
     "body-parser": "^1.20.2",
     "certbot": "^5.0.3",
     "colors": "^1.4.0",
